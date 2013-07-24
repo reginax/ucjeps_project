@@ -3,6 +3,8 @@
 <html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
     <title>{% block title %}{% endblock %}</title>
+    
+    {% block scripts %}{% endblock %}
 
     <link rel="stylesheet" type="text/css" href="{% static "cspace_django_site/css/reset.css" %}" />
     <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "cspace_django_site/css/base.css" %}{% endblock %}" />
