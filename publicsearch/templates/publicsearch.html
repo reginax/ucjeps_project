@@ -1,0 +1,117 @@
+{% extends "cspace_django_site/base_site.html" %}
+{% load i18n admin_static %}
+{% load staticfiles %}
+
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/tablesorter.css" %}" />
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="{% static "cspace_django_site/js/jquery-1.10.0.min.js" %}"></script>
+<script type="text/javascript" src="{% static "publicsearch/js/PublicSearch.js" %}"></script>
+<script type="text/javascript" src="{% static "publicsearch/js/jquery.tablesorter.js" %}"></script>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+
+    <div class="line">
+        <div class="unit size1of4">
+            <form method="post" class="searchForm" action=".">
+                {% csrf_token %}
+                
+                <label>Keyword</label>
+                <input type="text" id="keyword" name="keyword" value="{{ searchValues.keyword }}"/>
+                
+                <label>Determination</label>
+                <input type="text" id="determination" name="collectionobjects_naturalhistory:taxonomicIdentGroupList/*/taxon"/>
+                
+                <div class="options">
+                    <div class="drillDown">
+                        <a>More Options</a>
+                    </div>
+                    <div class="drilled">
+                        <label>Major Group</label>
+                        <input type="text" id="majorGroup" name="majorGroup"/>
+                        <label>Genus</label>
+                        <input type="text" id="genus" name="genus"/>
+                        <label>Species</label>
+                        <input type="text" id="species" name="species"/>
+                    </div>
+                    <div class="drillUp">
+                        <a>Fewer Options</a>
+                    </div>
+                </div>
+                
+                <label>Locality</label>
+                <input type="text" id="locality" name="locality"/>
+                <div class="options">
+                    <div class="drillDown">
+                        <a>More Options</a>
+                    </div>
+                    <div class="drilled">
+                        <label>County</label>
+                        <input type="text" id="county" name="county"/>
+                        <label>State</label>
+                        <input type="text" id="state" name="state"/>
+                        <label>Country</label>
+                        <input type="text" id="country" name="country"/>
+                    </div>
+                    <div class="drillUp">
+                        <a>Fewer Options</a>
+                    </div>
+                </div>
+                
+                <label>Year Collected</label>
+                <input type="text" id="year" name="year"/>
+                
+                <label>Collector</label>
+                <input type="text" id="collector" name="collector"/>
+                
+                <label>Specimen ID</label>
+                <input type="text" id="specimenId" name="collectionobjects_common:objectNumber"/>
+                
+                <br><br>
+                
+                <button type="submit" id="search-submit" class="prettyBtn">search</button>
+                <button type="reset" id="search-reset" class="prettyBtn">reset</button>
+            </form>
+        </div>
+        <div class="unit lastUnit size3of4">
+            <table cellspace="1" id="resultsListing" class="tablesorter">
+                <thead>
+                    <tr>
+                        <th>Specimen ID</th>
+                        <th>Determination</th>
+                        <th>Collector</th>
+                        <th>Collection Date</th>
+                        <th>Collection No.</th>
+                        <th>County/Prov</th>
+                        <th>State</th>
+                        <th>Country</th>
+                        <th>Locality</th>
+                        <th>CSpace</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                        <tr>
+                            <td><a href="../../service{{ item.uri }}">{{ item.objectNumber }}</a></td>
+                            <td>{{ item.taxon }}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td><a href="http://ucjeps-dev.cspace.berkeley.edu:8180/collectionspace/ui/ucjeps/html/cataloging.html?csid={{ item.csid }}" target="_blank">go</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
