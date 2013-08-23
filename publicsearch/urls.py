@@ -1,4 +1,4 @@
-__author__ = 'amywieliczka'
+__author__ = 'amywieliczka, jblowe'
 
 from django.conf.urls import patterns, url
 from publicsearch import views

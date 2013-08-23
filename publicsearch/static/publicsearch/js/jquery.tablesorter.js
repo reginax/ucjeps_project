@@ -401,9 +401,14 @@
                         if (table.config.onRenderHeader) table.config.onRenderHeader.apply($th);
                     }
 
+                    if((table.config.headers[index]) && (table.config.headers[index].width)) {
+                        $(this).css('width', table.config.headers[index].width);
+                    }
+
                     // add cell to headerList
                     table.config.headerList[index] = this;
                 });
+
 
                 if (table.config.debug) {
                     benchmark("Built headers:", time);
