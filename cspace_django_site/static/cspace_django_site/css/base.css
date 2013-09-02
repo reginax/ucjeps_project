@@ -83,6 +83,21 @@ p.tiny{
     font-size:10px;
     margin: 0 0 0 0;
 }
+
+.sectionheader {
+    width: 100%;
+    padding-top: 10px;
+    height: 20px;
+    background: lightgray;
+    text-align: left;
+    padding: 3px;
+    margin-bottom: 6px;
+}
+
+li.facet {
+    padding-left: 20px ;
+    text-indent: -20px ;
+}
 /*******************************************
     SPECIFIC LAYOUT STYLES - LAYOUT IDS
     ------------------------------------
@@ -172,6 +187,11 @@ p.tiny{
     line-height: 13px;
 }
 
+.big {
+    font-weight: bold;
+    font-size: 14px;
+    padding-right: 10px;
+}
 /*********************************************
     SPECIFIC CONTENT STYLES - CONTENT IDS
     ------------------------------------
@@ -219,7 +239,7 @@ a#logout:hover { background-color: #333; color: #FFF; }
         Then comment the following background line, and uncomment the line after that. */
     
     background: url(../images/header-logo-cspace.png) no-repeat right top;
-    /*    background: url(../images/header-logo.png) no-repeat left top, url(../images/header-logo-cspace.png) no-repeat right top;*/
+    background: url(../images/header-logo-ucjeps.png) no-repeat left top, url(../images/header-logo-cspace.png) no-repeat right top;
 }
 
 #login-content p {

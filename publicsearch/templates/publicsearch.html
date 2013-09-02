@@ -17,392 +17,455 @@
     <div id="content-main">
     <div class="line">
     <div class="unit size1of4">
-    <form method="post" class="searchForm" action=".">
-    {% csrf_token %}
-    <table>
-        <tr>
-            <td>
-                <label>Keyword</label></td>
-            <td>
-                <input type="text" id="keyword" name="keyword" value="{{ searchValues.keyword }}"/>
-            </td>
-            <td>
-                <label>Specimen ID</label>
-            </td>
-            <td>
-                <input type="text" id="accession" name="accession"
-                       value="{{ searchValues.accession }}"/>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <label>Determination</label>
-            </td>
-            <td>
-                <input type="text" id="determination" name="determination"
-                       value="{{ searchValues.determination }}"/>
-            </td>
-            <td>
-                <label>Major Group</label></td>
-            <td>
-                <input type="text" id="majorgroup" name="majorgroup"
-                       value="{{ searchValues.majorgroup }}"/>
-            </td>
-            <td>
-                <label>Year Collected</label></td>
-            <td>
-                <input type="text" id="collectiondate" name="collectiondate"
-                       value="{{ searchValues.collectiondate }}"/>
-            </td>
-            <td>
-                <label>Collector</label>
-            </td>
-            <td>
-                <input type="text" id="collector" name="collector"
-                       value="{{ searchValues.collector }}"/>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <label>Locality</label>
-            </td>
-            <td>
-                <input type="text" id="locality" name="locality" value="{{ searchValues.locality }}"/>
-            </td>
-            <td>
-                <label>County</label>
-            </td>
-            <td>
-                <input type="text" id="county" name="county" value="{{ searchValues.county }}"/>
-            </td>
-            <td>
-                <label>State</label>
-            </td>
-            <td>
-                <input type="text" id="state" name="state" value="{{ searchValues.state }}"/>
-            </td>
-            <td>
-                <label>Country</label>
-            </td>
-            <td>
-                <input type="text" id="country" name="country" value="{{ searchValues.country }}"/>
-            </td>
-        </tr>
-    </table>
-    <br><br>
-
-    <button type="submit" id="search-submit" name="search" class="prettyBtn">search</button>
-    <button type="submit" id="search-csv" name="csv" class="prettyBtn">download selected as csv</button>
-    <!-- button type="submit" id="search-email" name="email" class="prettyBtn">email selected</button -->
-    <button type="submit" id="search-map" name="map" class="prettyBtn">map selected</button>
-    <button type="submit" id="search-reset" name="reset" class="prettyBtn">reset</button>
-
-    <label for="">Display format: </label>
-    {% for displayTypeItem in displayTypes %}
-        <input type="radio" name="displayType" value="{{ displayTypeItem.0 }}"
-                {% ifequal displayTypeItem.0 displayType %}
-               checked="checked"
-                {% endifequal %}/>
-        <label for="">{{ displayTypeItem.1 }}</label>
-    {% endfor %}
-    <div class="unit lastUnit size3of4">
-    <hr/>
-    <div>
-        {{ time }} seconds; {{ count }} {% if recordlimit %}{{ recordlimit }} {% else %}items found.{% endif %}
-        {% if url %}
-            emailable version of query: <i><a href="?{{ url }}">{{ url }}</a></i>
-        {% endif %}
-    </div>
-    {% if count > 0 %}
-        {% if action == 'map' and markerlist %}
-            <hr/>
-            {% for m in mapmsg %}
-                <p style="color:red">{{ m }}</p>
-            {% endfor %}
-            <img src="http://maps.google.com/maps/api/staticmap?size=1000x800&maptype=roadmap&markers={{ markerlist }}&sensor=false"/>
-            <!-- p>http://maps.google.com/maps/api/staticmap?&zoom=0&size=800x400&maptype=roadmap&markers={{ markerlist }}&sensor=false</p -->
-        {% endif %}
-        <hr/>
-        <a href="#" onclick="textToggle('facets'); return false;">
-            <span id="facets_toggle">show</span> facets</a>
-        <div id="facets" style="display:none;">
-            <table width="100%"><tr>
-            {% for f in fields %}
-                <th>{{ f }}</th>
-            {% endfor %}
-            </tr><tr>
-                {%  for facet in facetflds %}
+    <form method="post" class="searchForm" id="search" action=".">
+        {% csrf_token %}
+        <table width="100%">
+            <tr>
                 <td>
-                    {% for f in facet.1 %}
-                        <li><a href="?displayType=short&{{ facet.0 }}={{ f.0 }}">{{ f.0 }}</a> {{ f.1 }}</li>
-                    {%  endfor %}
+                    <label>Keyword</label></td>
+                <td>
+                    <input type="text" id="keyword" name="keyword" value="{{ searchValues.keyword }}"/>
                 </td>
-                {% endfor %}
-            </tr></table>
-        </div>
-        <hr/>
-        <div>
-        <input type="checkbox" name="select-item" id="select-items" checked/> select all
-        </div>
-        <hr/>
-        {% if displayType == 'short' %}
-            <table cellspace="1" id="resultsListing" class="tablesorter">
-                <thead>
-                <tr>
-                    <th></th>
-                    <th>Specimen ID</th>
-                    <th>Determination</th>
-                    <th>Collector</th>
-                    <th>Collection Date</th>
-                    <th>Collection No.</th>
-                    <th>County/Prov</th>
-                    <th>State</th>
-                    <th>Country</th>
-                    <th>Locality</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for item in items %}
-                    <tr>
-                        <td>
-                            <input type="checkbox" name="item-{{ item.csid }}" value="{{ item.csid }}" checked>
-                        </td>
-                        <td>
-                            <a href="?accession={{ item.accession }}&displayType=v2">{{ item.accession }}</a></td>
-                        <!-- a href="http://ucjeps.cspace.berkeley.edu:8180/collectionspace/ui/ucjeps/html/cataloging.html?csid={{ item.csid }}"
-                                       >{{ item.objectNumber }}</a></td -->
-                        <td>
-                            <a href="?displayType=short&determination={{ item.determination }}">{{ item.determination }}</a>
-                        </td>
-                        <td><a href="?displayType=short&collector={{ item.collector }}">{{ item.collector }}</a></td>
-                        <td>
-                            <a href="?displayType=short&collectiondate={{ item.collectiondate }}">{{ item.collectiondate }}</a>
-                        </td>
-                        <td>
-                            <a href="?displayType=short&collectionnumber={{ item.collectionnumber }}">{{ item.collectionnumber }}</a>
-                        </td>
-                        <td><a href="?displayType=short&county={{ item.county }}">{{ item.county }}</a></td>
-                        <td><a href="?displayType=short&state={{ item.state }}">{{ item.state }}</a></td>
-                        <td><a href="?displayType=short&country={{ item.country }}">{{ item.country }}</a></td>
-                        <td><a href="?displayType=short&locality={{ item.locality }}">{{ item.locality }}</a></td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        {% elif displayType == 'v1' %}
-            {% for item in items %}
-                <div style="float:right;">
-                    {% if item.blob_ss %}
-                        {% for t in item.blob_ss %}
-                            <a target="image"
-                               href="http://ucjeps.cspace.berkeley.edu:8180/cspace-services/blobs/{{ t }}/derivatives/OriginalJpeg/content">
-                                <image height="100px"
-                                       src="http://ucjeps.cspace.berkeley.edu:8180/cspace-services/blobs/{{ t }}/derivatives/Thumbnail/content"/>
-                            </a>
+                <td>
+                    <label>Specimen ID</label>
+                </td>
+                <td>
+                    <input type="text" id="accession" name="accession"
+                           value="{{ searchValues.accession }}"/>
+                </td>
+                <td>
+                    <label>Collection Number</label>
+                </td>
+                <td>
+                    <input type="text" id="collectionnumber" name="collectionnumber"
+                           value="{{ searchValues.collectionnumber }}"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Determination</label>
+                </td>
+                <td>
+                    <input type="text" id="determination" name="determination"
+                           value="{{ searchValues.determination }}"/>
+                </td>
+                <td>
+                    <label>Major Group</label></td>
+                <td>
+                    <input type="text" id="majorgroup" name="majorgroup"
+                           value="{{ searchValues.majorgroup }}"/>
+                </td>
+                <td>
+                    <label>Year Collected</label></td>
+                <td>
+                    <input type="text" id="collectiondate" name="collectiondate"
+                           value="{{ searchValues.collectiondate }}"/>
+                </td>
+                <td>
+                    <label>Collector</label>
+                </td>
+                <td>
+                    <input type="text" id="collector" name="collector"
+                           value="{{ searchValues.collector }}"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>Locality</label>
+                </td>
+                <td>
+                    <input type="text" id="locality" name="locality" value="{{ searchValues.locality }}"/>
+                </td>
+                <td>
+                    <label>County</label>
+                </td>
+                <td>
+                    <input type="text" id="county" name="county" value="{{ searchValues.county }}"/>
+                </td>
+                <td>
+                    <label>State</label>
+                </td>
+                <td>
+                    <input type="text" id="state" name="state" value="{{ searchValues.state }}"/>
+                </td>
+                <td>
+                    <label>Country</label>
+                </td>
+                <td>
+                    <input type="text" id="country" name="country" value="{{ searchValues.country }}"/>
+                </td>
+            </tr>
+        </table>
+        <br>
+        <button type="submit" id="search-submit" name="search" class="prettyBtn">search</button>
+        <button type="submit" id="search-reset" name="reset" class="prettyBtn">reset</button>
+        <label for="">Display format: </label>
+        {% for displayTypeItem in displayTypes %}
+            <input type="radio" name="displayType" value="{{ displayTypeItem.0 }}"
+                    {% ifequal displayTypeItem.0 displayType %}
+                   checked="checked"
+                    {% endifequal %}/>
+            <label for="">{{ displayTypeItem.1 }}</label>
+        {% endfor %}
+        <div class="">
+            <div style="height: 30px; padding-top: 15px;">
+                {{ time }} seconds; {{ count }} {% if recordlimit %}{{ recordlimit }} {% else %}items found.{% endif %}
+                {% if url %}
+                    emailable version of query: <i><a href="?{{ url }}">{{ url }}</a></i>
+                    <input type="hidden" name="url" value="{{ url }}"/>
+                {% endif %}
+            </div>
+            {% if count > 0 %}
+                {% if markerlist %}
+                    <div class="sectionheader"><span class="big">map</span>
+                        <a href="#" onclick="textToggle('map')"><span id="map_toggle">hide</span></a>
+                    </div>
+                    <div id="map" style="display:block;">
+                        {% for m in mapmsg %}
+                            <p style="color:red">{{ m }}</p>
                         {% endfor %}
-                    {% endif %}
+                        <img src="http://maps.google.com/maps/api/staticmap?size=1000x800&maptype=roadmap&markers={{ markerlist }}&sensor=false"/>
+
+                        <!-- p>
+                            http://maps.google.com/maps/api/staticmap?&zoom=0&size=800x400&maptype=roadmap&markers={{ markerlist }}&sensor=false</p -->
+                    </div>
+                {% endif %}
+                <div class="sectionheader"><span class="big">facets</span>
+                    <a href="#" onclick="textToggle('facets')"><span id="facets_toggle">
+                        {%  if facetContext == 'none' %}show{% else %}hide{% endif %}
+                    </span></a>
                 </div>
-                <div>
-                    <div class="result-title">
-                        <input type="checkbox" id="item-{{ item.csid }}" value="{{ item.csid }}" checked>
-                        <b>{{ item.accession }} </b></div>
-                    <div><h2>{{ item.determination }}</h2> ({{ item.majorgroup }})</div>
-                    <div>{{ item.country }} / {{ item.state }} / {{ item.county }}</div>
-                    {% if item.L1 and item.L2 %}
-                        <div>LatLong: {{ item.L1 }} {{ item.L2 }}
-                            {% if item.marker %}
-                                <a href="#" onclick="textToggle('map_{{ item.L1 }}+{{ item.L2 }}'); return false;">
-                                    <span id="map_{{ item.L1 }}+{{ item.L2 }}_toggle">show</span> map</a>
-                                <div id="map_{{ item.L1 }}+{{ item.L2 }}" style="display:none;">
-                                    <img src="http://maps.google.com/maps/api/staticmap?&zoom=10&size=400x200&maptype=roadmap&markers={{ item.marker }}&sensor=false"/>
-                                    <div>
-                                        <small><a target="_map"
-                                                  href="http://maps.google.com/?q=loc:{{ item.marker }}&amp;source=embed">Larger
-                                            Map</a>
-                                        </small>
-                                    </div>
-                                </div>
-                            {% endif %}
-                        </div>
-                    {% endif %}
-                    <div>Collector: {{ item.collector }}</div>
-                    <div>Collection Number: {{ item.collectionnumber }}</div>
-                    <div>Locality: {{ item.locality }}</div>
-                    {% if item.earlycollectiondate %}
-                        <div>Collection date: {{ item.collectiondate }}</div>{% endif %}
-                    {% if item.habitat %}
-                        <div>Habitat: {{ item.habitat }}</div>{% endif %}
-                    {% if item.elevation %}
-                        <div>Elevation: {{ item.elevation }} {{ item.elevationunit }}</div>{% endif %}
+                <div id="facets" style="display:{{ facetContext }};">
+                    <table width="100%">
+                        <tr>
+                            {% for f in fields %}
+                                <th>{{ f }}</th>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            {% for facet in facetflds %}
+                                <td style="max-width: 220px;">
+                                    {% for f in facet.1 %}
+                                        <li class="facet"><a href="#"
+                                               onclick="submitForm('block','{{ facet.0 }}','{{ f.0 }}')">{{ f.0 }}</a> {{ f.1 }}
+                                        </li>
+                                        <!-- li><a href="#" onclick="submitForm('{{ facet.0 }}={{ f.0 }}">{{ f.0 }}</a> {{ f.1 }}</li -->
+                                    {% endfor %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    </table>
                 </div>
-                <hr/>
-            {% endfor %}
-        {% elif displayType == 'v2' %}
-            <table cellspace="1" id="resultsListing" class="">
-                <thead>
-                </thead>
-                <tbody>
-                {% for item in items %}
-                    <tr>
-                        <td colspan="6">
-                            <h2><input type="checkbox" name="item-{{ item.csid }}" value="{{ item.csid }}" checked>
-                                Detail of specimen {{ item.accession }}</h2>
-                        </td>
-                    <tr>
-                        <td colspan="6">
+                </div>
+                <input type="hidden" value="none" name="facetContext" id="facetContext"/>
+                </form>
+                <form method="post" class="searchForm" id="selectedItems" action=".">
+                {% csrf_token %}
+                <div class="unit size1of4" id="results">
+                <div style="height: 30px; padding-top: 15px;">
+                    <input type="checkbox" name="select-item" id="select-items" checked/> select all
+                    <button type="submit" name="csv" id="search-csv" class="prettyBtn">download selected as csv</button>
+                    <button type="submit" name="map" id="search-map" class="prettyBtn">map selected</button>
+                    <input type="hidden" name="displayType" id="displayType" value="short"/>
+                    <input type="hidden" name="querystring" id="querystring" value="{{ querystring }}"/>
+                    <input type="hidden" name="url" id="url" value="{{ url }}"/>
+                    <!-- button type="submit" id="search-email" name="email" class="prettyBtn">email selected</button -->
+                </div>
+                {% if displayType == 'short' %}
+                    <table cellspace="1" id="resultsListing" class="tablesorter">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th>Specimen ID</th>
+                            <th>Determination</th>
+                            <th>Collector</th>
+                            <th>Collection Date</th>
+                            <th>Collection No.</th>
+                            <th>County/Prov</th>
+                            <th>State</th>
+                            <th>Country</th>
+                            <th>Locality</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in items %}
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="item-{{ item.counter }}" value="{{ item.csid }}"
+                                           checked>
+                                </td>
+                                <td>
+                                    <a href="?accession={{ item.accession }}&displayType=v2">{{ item.accession }}</a>
+                                </td>
+                                <td>
+                                    <a href="#"
+                                       onclick="submitForm('none','determination','{{ item.determination }}')">{{ item.determination }}</a>
+                                </td>
+                                <td><a href="#"
+                                       onclick="submitForm('none','collector','{{ item.collector }}')">{{ item.collector }}</a>
+                                </td>
+                                <td>
+                                    <a href="#"
+                                       onclick="submitForm('none','collectiondate','{{ item.collectiondate }}')">{{ item.collectiondate }}</a>
+                                </td>
+                                <td>
+                                    <a href="#"
+                                       onclick="submitForm('none','collectionnumber','{{ item.collectionnumber }}')">{{ item.collectionnumber }}</a>
+                                </td>
+                                <td><a href="#" onclick="submitForm('none','county','{{ item.county }}')">{{ item.county }}</a>
+                                </td>
+                                <td><a href="#" onclick="submitForm('none','state','{{ item.state }}')">{{ item.state }}</a>
+                                </td>
+                                <td><a href="#"
+                                       onclick="submitForm('none','country','{{ item.country }}')">{{ item.country }}</a></td>
+                                <td><a href="#"
+                                       onclick="submitForm('none','locality','{{ item.locality }}')">{{ item.locality }}</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% elif displayType == 'v1' %}
+                    {% for item in items %}
+                        <div style="float:right;">
                             {% if item.blob_ss %}
                                 {% for t in item.blob_ss %}
                                     <a target="image"
                                        href="http://ucjeps.cspace.berkeley.edu:8180/cspace-services/blobs/{{ t }}/derivatives/OriginalJpeg/content">
-                                        <image height="100px"
-                                               src="http://ucjeps.cspace.berkeley.edu:8180/cspace-services/blobs/{{ t }}/derivatives/Thumbnail/content"/>
+                                        <img height="100px"
+                                             src="http://ucjeps.cspace.berkeley.edu:8180/cspace-services/blobs/{{ t }}/derivatives/Thumbnail/content"/>
                                     </a>
                                 {% endfor %}
                             {% endif %}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="size1of10">Specimen ID</td>
-                        <td class="size2of10"><a
-                                href="?displayType=v2&accession={{ item.accession }}">{{ item.accession }}</a></td>
-                    </tr>
-                    <tr>
-                        <td class="size1of10">Determination</td>
-                        <td colspan="3"><a
-                                href="?displayType=short&determination={{ item.determination }}">{{ item.determination }}</a>
-                        </td>
-                        <td class="size1of10">Major Group</td>
-                        <td colspan="2"><a
-                                href="?displayType=short&majorgroup={{ item.majorgroup }}">{{ item.majorgroup }}</a>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td class="size1of10">Collector</td>
-                        <td class="size2of10"><a
-                                href="?displayType=short&collector={{ item.collector }}">{{ item.collector }}</a></td>
-                        <td class="size1of10">Date</td>
-                        <td class="size2of10"><a
-                                href="?displayType=short&collectiondate={{ item.collectiondate }}">{{ item.collectiondate }}</a>
-                        </td>
-                        <td class="size1of10">No.</td>
-                        <td class="size2of10"><a
-                                href="?displayType=short&collectionnumber={{ item.collectionnumber }}">{{ item.collectionnumber }}</a>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td class="size1of10">County</td>
-                        <td class="size2of10"><a
-                                href="?displayType=short&county={{ item.county }}">{{ item.county }}</a></td>
-                        <td class="size1of10">State</td>
-                        <td class="size2of10"><a href="?displayType=short&state={{ item.state }}">{{ item.state }}</a>
-                        </td>
-                        <td class="size1of10">Country</td>
-                        <td class="size2of10"><a
-                                href="?displayType=short&country={{ item.country }}">{{ item.country }}</a></td>
-                    </tr>
-
-                    <tr>
-                        <td class="size1of10">Locality</td>
-                        <td colspan="5"><a
-                                href="?displayType=short&locality={{ item.locality }}">{{ item.locality }}</a></td>
-                    </tr>
-                    <tr>
-                        <td class="size1of10">Habitat</td>
-                        <td colspan="5">{{ item.habitat }}</td>
-                    </tr>
-
-
-                    <tr>
-                        <td class="size1of10">Latitude</td>
-                        <td class="size2of10"><a href="?displayType=short&L1={{ item.L1 }}">{{ item.L1 }}</a></td>
-                        <td class="size1of10">Longitude</td>
-                        <td class="size2of10"><a href="?displayType=short&L2={{ item.L2 }}">{{ item.L2 }}</a></td>
-                        <td class="size1of10">Elevation</td>
-                        <td class="size2of10"><a
-                                href="?displayType=short&elevation={{ item.elevation }}">{{ item.elevation }}</a></td>
-                    </tr>
-
-                    <tr>
-                        <td class="size1of10">Min elevation</td>
-                        <td class="size2of10">{{ item.minelevation }}</td>
-                        <td class="size1of10">Max elevation</td>
-                        <td class="size2of10">{{ item.maxelevation }}</td>
-                        <td class="size1of10">Elevation unit</td>
-                        <td class="size2of10">{{ item.elevationunit }}</td>
-                    </tr>
-
-                    <tr>
-                        <td class="size1of10">TRS coordinates</td>
-                        <td class="size2of10"><a
-                                href="?displayType=short&={{ item.trscoordinates }}">{{ item.trscoordinates }}</a></td>
-
-                    <tr>
-                        <td class="size1of10">Datum</td>
-                        <td colspan="5"><a href="?displayType=short&={{ item.datum }}">{{ item.datum }}</a></td>
-                    </tr>
-
-                    <tr>
-                        <td class="size1of10">Coordinate source</td>
-                        <td class="size2of10"><a
-                                href="?displayType=short&coordinatesource={{ item.coordinatesource }}">{{ item.coordinatesource }}</a>
-                        </td>
-                        <td class="size1of10">uncertainty</td>
-                        <td class="size2of10">{{ item.coordinateuncertainty }} {{ item.coordinateuncertaintyunit }}</td>
-                    </tr>
-                    <!-- tr>
-                        <td colspan="6">
-                            <hr/>
-                        </td>
-                    </tr -->
-                {% endfor %}
-            </table>
-        {% elif displayType == 'grid' %}
-            {% for item in items %}
-                <div class="float">
-                    {% if item.blob_ss %}
-                        <div>
-                            {% for t in item.blob_ss %}
-                                <a target="image"
-                                   href="http://ucjeps.cspace.berkeley.edu:8180/cspace-services/blobs/{{ t }}/derivatives/OriginalJpeg/content">
-                                    <image height="100px"
-                                           src="http://ucjeps.cspace.berkeley.edu:8180/cspace-services/blobs/{{ t }}/derivatives/Thumbnail/content"/>
-                                </a>
-                            {% endfor %}
                         </div>
-                    {% else %}
                         <div>
-                            <a target="image"
-                               href="#">
-                                <image height="100px" src="#"/>
-                            </a>
+                            <div class="result-title">
+                                <input type="checkbox" id="item-{{ item.csid }}" value="{{ item.csid }}" checked>
+                                <b>{{ item.accession }} </b></div>
+                            <div><h2>{{ item.determination }}</h2> ({{ item.majorgroup }})</div>
+                            <div>{{ item.country }} / {{ item.state }} / {{ item.county }}</div>
+                            {% if item.L1 and item.L2 %}
+                                <div>LatLong: {{ item.L1 }} {{ item.L2 }}
+                                    {% if item.marker %}
+                                        <a href="#"
+                                           onclick="textToggle('map_{{ item.L1 }}+{{ item.L2 }}')">
+                                            <span id="map_{{ item.L1 }}+{{ item.L2 }}_toggle">show</span> map</a>
+                                        <div id="map_{{ item.L1 }}+{{ item.L2 }}" style="display:none;">
+                                            <img src="http://maps.google.com/maps/api/staticmap?&zoom=10&size=400x200&maptype=roadmap&markers','{{ item.marker }}&sensor=false,"/>
+
+                                            <div>
+                                                <small><a target="_map"
+                                                          href="http://maps.google.com/?q=loc:{{ item.marker }}&amp;source=embed">Larger
+                                                    Map</a>
+                                                </small>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                            <div>Collector: <a href="#"
+                                               onclick="submitForm('none','collector','{{ item.collector }}')">{{ item.collector }}</a>
+                            </div>
+                            <div>Collection Number: <a href="#"
+                                                       onclick="submitForm('none','collectionnumber','{{ item.collectionnumber }}')">{{ item.collectionnumber }}</a>
+                            </div>
+                            <div>Locality: <a href="#"
+                                              onclick="submitForm('none','locality','{{ item.locality }}')">{{ item.locality }}</a>
+                            </div>
+                            {% if item.earlycollectiondate %}
+                                <div>Collection date: <a href="#"
+                                                         onclick="submitForm('none','collectiondate','{{ item.collectiondate }}')">{{ item.collectiondate }}</a>
+                                </div>{% endif %}
+                            {% if item.habitat %}
+                                <div>Habitat: <a href="#"
+                                                 onclick="submitForm('none','habitat','{{ item.habitat }}')">{{ item.habitat }}</a>
+                                </div>{% endif %}
+                            {% if item.elevation %}
+                                <div>Elevation: {{ item.elevation }} {{ item.elevationunit }}</div>{% endif %}
                         </div>
-                    {% endif %}
-                    <div class="tiny" style="float:right;vertical-align: top">
-                        <input type="checkbox" name="item-{{ item.csid }}" value="{{ item.csid }}" checked>
-                        <a href="?accession={{ item.accession }}&displayType=v2">{{ item.accession }}</a>
-                    </div>
-                    <p><h4>{{ item.determination }}</h4></p>
-                    <p class="tiny">{{ item.country }} / {{ item.state }} / {{ item.county }}</p>
+                        <hr/>
+                    {% endfor %}
+                {% elif displayType == 'v2' %}
+                    <table cellspace="1" id="resultsListing" class="">
+                        <thead>
+                        </thead>
+                        <tbody>
+                        {% for item in items %}
+                            <tr>
+                                <td colspan="6">
+                                    <h2><input type="checkbox" name="item-{{ item.csid }}" value="{{ item.csid }}"
+                                               checked>
+                                        Detail of specimen {{ item.accession }}</h2>
+                                </td>
+                            <tr>
+                                <td colspan="6">
+                                    {% if item.blob_ss %}
+                                        {% for t in item.blob_ss %}
+                                            <a target="image"
+                                               href="http://ucjeps.cspace.berkeley.edu:8180/cspace-services/blobs/{{ t }}/derivatives/OriginalJpeg/content">
+                                                <img height="100px"
+                                                     src="http://ucjeps.cspace.berkeley.edu:8180/cspace-services/blobs/{{ t }}/derivatives/Thumbnail/content"/>
+                                            </a>
+                                        {% endfor %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="size1of10">Specimen ID</td>
+                                <td class="size2of10"><a
+                                        href="?displayType=v2&accession={{ item.accession }}">{{ item.accession }}</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="size1of10">Determination</td>
+                                <td colspan="3"><a href="#"
+                                                   onclick="submitForm('none','determination','{{ item.determination }}')">{{ item.determination }}</a>
+                                </td>
+                                <td class="size1of10">Major Group</td>
+                                <td colspan="2"><a href="#"
+                                                   onclick="submitForm('none','majorgroup','{{ item.majorgroup }}')">{{ item.majorgroup }}</a>
+                                </td>
+                            </tr>
 
-                    <p class="tiny">Collector: {{ item.collector }}</p>
+                            <tr>
+                                <td class="size1of10">Collector</td>
+                                <td class="size2of10"><a href="#"
+                                                         onclick="submitForm('none','collector','{{ item.collector }}')">{{ item.collector }}</a>
+                                </td>
+                                <td class="size1of10">Date</td>
+                                <td class="size2of10"><a href="#"
+                                                         onclick="submitForm('none','collectiondate','{{ item.collectiondate }}')">{{ item.collectiondate }}</a>
+                                </td>
+                                <td class="size1of10">No.</td>
+                                <td class="size2of10"><a href="#"
+                                                         onclick="submitForm('none','collectionnumber','{{ item.collectionnumber }}')">{{ item.collectionnumber }}</a>
+                                </td>
+                            </tr>
 
-                    <p class="tiny">Collection Number: {{ item.collectionnumber }}</p>
+                            <tr>
+                                <td class="size1of10">County</td>
+                                <td class="size2of10"><a href="#"
+                                                         onclick="submitForm('none','county','{{ item.county }}')">{{ item.county }}</a>
+                                </td>
+                                <td class="size1of10">State</td>
+                                <td class="size2of10"><a href="#"
+                                                         onclick="submitForm('none','state','{{ item.state }}')">{{ item.state }}</a>
+                                </td>
+                                <td class="size1of10">Country</td>
+                                <td class="size2of10"><a href="#"
+                                                         onclick="submitForm('none','country','{{ item.country }}')">{{ item.country }}</a>
+                                </td>
+                            </tr>
 
-                    <p class="tiny">Locality: {{ item.locality }}</p>
-                    {% if item.earlycollectiondate %}
-                        <p class="tiny">Collection date: {{ item.collectiondate }}</p>{% endif %}
-                    {% if item.habitat %}
-                        <p class="tiny">Habitat: {{ item.habitat }}</p>{% endif %}
-                    {% if item.elevation %}
-                        <p class="tiny">Elevation: {{ item.elevation }} {{ item.elevationunit }}</p>{% endif %}
+                            <tr>
+                                <td class="size1of10">Locality</td>
+                                <td colspan="5"><a href="#"
+                                                   onclick="submitForm('none','locality','{{ item.locality }}')">{{ item.locality }}</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="size1of10">Habitat</td>
+                                <td colspan="5">{{ item.habitat }}</td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="size1of10">Latitude</td>
+                                <td class="size2of10"><a href="#"
+                                                         onclick="submitForm('none','L1','{{ item.L1 }}')">{{ item.L1 }}</a>
+                                </td>
+                                <td class="size1of10">Longitude</td>
+                                <td class="size2of10"><a href="#"
+                                                         onclick="submitForm('none','L2','{{ item.L2 }}')">{{ item.L2 }}</a>
+                                </td>
+                                <td class="size1of10">Elevation</td>
+                                <td class="size2of10"><a href="#"
+                                                         onclick="submitForm('none','elevation','{{ item.elevation }}')">{{ item.elevation }}</a>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="size1of10">Min elevation</td>
+                                <td class="size2of10">{{ item.minelevation }}</td>
+                                <td class="size1of10">Max elevation</td>
+                                <td class="size2of10">{{ item.maxelevation }}</td>
+                                <td class="size1of10">Elevation unit</td>
+                                <td class="size2of10">{{ item.elevationunit }}</td>
+                            </tr>
+
+                            <tr>
+                                <td class="size1of10">TRS coordinates</td>
+                                <td class="size2of10"><a href="#"
+                                                         onclick="submitForm('none','trscoordinates','{{ item.trscoordinates }}')">{{ item.trscoordinates }}</a>
+                                </td>
+
+                            <tr>
+                                <td class="size1of10">Datum</td>
+                                <td colspan="5"><a href="#"
+                                                   onclick="submitForm('none','datum','{{ item.datum }}')">{{ item.datum }}</a></td>
+                            </tr>
+
+                            <tr>
+                                <td class="size1of10">Coordinate source</td>
+                                <td class="size2of10"><a href="#"
+                                                         onclick="submitForm('none','coordinatesource','{{ item.coordinatesource }}')">{{ item.coordinatesource }}</a>
+                                </td>
+                                <td class="size1of10">uncertainty</td>
+                                <td class="size2of10">{{ item.coordinateuncertainty }} {{ item.coordinateuncertaintyunit }}</td>
+                            </tr>
+                            <!-- tr>
+                                <td colspan="6">
+                                    <hr/>
+                                </td>
+                            </tr -->
+                        {% endfor %}
+                    </table>
+                {% elif displayType == 'grid' %}
+                    {% for item in items %}
+                        <div class="float">
+                            {% if item.blob_ss %}
+                                <div>
+                                    {% for t in item.blob_ss %}
+                                        <a target="image"
+                                           href="http://ucjeps.cspace.berkeley.edu:8180/cspace-services/blobs/{{ t }}/derivatives/OriginalJpeg/content">
+                                            <img height="100px"
+                                                 src="http://ucjeps.cspace.berkeley.edu:8180/cspace-services/blobs/{{ t }}/derivatives/Thumbnail/content"/>
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div>
+                                    <a target="image"
+                                       href="#">
+                                        <img height="100px" src="#"/>
+                                    </a>
+                                </div>
+                            {% endif %}
+                            <div class="tiny" style="float:right;vertical-align: top">
+                                <input type="checkbox" name="item-{{ item.csid }}" value="{{ item.csid }}" checked>
+                                <a href="?accession={{ item.accession }}&displayType=v2">{{ item.accession }}</a>
+                            </div>
+                            <p><h4>{{ item.determination }}</h4></p>
+                            <p class="tiny">{{ item.country }} / {{ item.state }} / {{ item.county }}</p>
+
+                            <p class="tiny">Collector: {{ item.collector }}</p>
+
+                            <p class="tiny">Collection Number: {{ item.collectionnumber }}</p>
+
+                            <p class="tiny">Locality: {{ item.locality }}</p>
+                            {% if item.earlycollectiondate %}
+                                <p class="tiny">Collection date: {{ item.collectiondate }}</p>{% endif %}
+                            {% if item.habitat %}
+                                <p class="tiny">Habitat: {{ item.habitat }}</p>{% endif %}
+                            {% if item.elevation %}
+                                <p class="tiny">Elevation: {{ item.elevation }} {{ item.elevationunit }}</p>{% endif %}
+                        </div>
+                    {% endfor %}
+                {% endif %}
                 </div>
-            {% endfor %}
-        {% endif %}
-        </div>
-    {% endif %}
-    </form>
+                </form>
+                </div>
+            {% endif %}
     </div>
     </div>
     </div>

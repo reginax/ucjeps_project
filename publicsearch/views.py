@@ -3,12 +3,15 @@ __author__ = 'amywieliczka, jblowe'
 import os
 import re
 import time
+import csv
 import solr
 import cgi
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, render_to_response
+from django.http import HttpResponse
 from django import forms
+from django.utils.encoding import smart_unicode
 
 from operator import itemgetter
 from urllib import urlencode, quote, unquote
@@ -119,125 +122,173 @@ def makeMarker(result):
     else:
         return None
 
+def doSearch(solr_core, context):
+    requestObject = context['searchValues']
+    elapsedtime = time.time()
+    if 'reset' in requestObject:
+        context = {}
+    else:
+        # create a connection to a solr server
+        s = solr.SolrConnection(url='http://localhost:8983/solr/%s' % solr_core)
+        queryterms = []
+        urlterms = []
+        if 'map' in requestObject or 'csv' in requestObject:
+            querystring = requestObject['querystring']
+        else:
+            for p in requestObject:
+                if p in ['csrfmiddlewaretoken', 'displayType', 'url', 'querystring', 'facetContext']: continue
+                if 'select-' in p: continue # select control for map markers
+                if not p in requestObject: continue
+                if not requestObject[p]: continue
+                if 'item-' in p:
+                    continue
+                if p == 'keyword':
+                    queryterms.append('text:%s' % parseTerm(requestObject[p]))
+                    urlterms.append('%s=%s' % (p, cgi.escape(requestObject[p])))
+                else:
+                    #queryterms.append('(%s LIKE "%s")' % (parms[p][3], requestObject[p]))
+                    queryterms.append('%s:"%s"' % (parms[p][3], requestObject[p]))
+                    urlterms.append('%s=%s' % (p, cgi.escape(requestObject[p])))
+            querystring = ' AND '.join(queryterms)
+
+        if urlterms != []: urlterms.append('displayType=%s' % requestObject['displayType'])
+        url = '&'.join(urlterms)
+        fqs = {}
+        try:
+            pixonly = requestObject['pixonly']
+        except:
+            pixonly = None
+        fields = getfields()
+        response = s.query(querystring, facet='true',
+                           facet_field=fields,
+                           fq=fqs,
+                           rows=200, facet_limit=40, facet_mincount=1)
+
+        facetflds = getfacets(response)
+        print 'num:', response._numFound
+        if pixonly:
+            results = [r for r in response.results if r.has_key('blobs_ss')]
+        else:
+            results = response.results
+
+        for i,listItem in enumerate(results):
+            item = {}
+            item['counter'] = i
+            for p in parms:
+                try:
+                    # make all arrays into strings for display
+                    if type(listItem[parms[p][3]]) == type([]):
+                        item[p] = ', '.join(listItem[parms[p][3]])
+                    else:
+                        item[p] = listItem[parms[p][3]]
+                except:
+                    #raise
+                    pass
+            # the list of blob csids need to remain an array, so restore it from psql result
+            item['blob_ss'] = listItem.get('blob_ss')
+            item['marker'] = makeMarker(item)
+            context['items'].append(item)
+
+        if requestObject['displayType'] in ['v1','v2', 'grid'] and response._numFound > 30:
+            context['recordlimit'] = 'items. (limited to 30 for long display)'
+            context['items'] = context['items'][:30]
+
+        context['count'] = response._numFound
+        m = {}
+        for p in parms: m[parms[p][3].replace('_txt','_s')] = p
+        context['fields'] = [m[f] for f in fields]
+        context['facetflds'] = [[m[f],facetflds[f]] for f in fields]
+        context['range'] = range(len(fields))
+        context['fq'] = fqs
+        context['url'] = url
+        context['pixonly'] = pixonly
+        context['querystring'] = querystring
+        context['url'] = url
+        try:
+            context['facetContext'] = requestObject['facetContext']
+        except:
+            context['facetContext'] = 'none'
+
+    context['core'] = solr_core
+    context['time'] = '%8.3f' % (time.time() - elapsedtime)
+    return context
+
 #@login_required()
 def publicsearch(request):
     solr_core = 'ucjeps-metadata'
+    MAXMARKERS = 65
 
     if request.method == 'GET':
         requestObject = request.GET
-    else:
+    elif request.method == 'POST':
         requestObject = request.POST
+    else:
+        pass
+        #error!
 
     context = {'items': [], 'searchValues': requestObject}
     if requestObject != {}:
         form = forms.Form(requestObject)
 
         if form.is_valid() or request.method == 'GET':
-            elapsedtime = time.time()
-            if 'reset' in requestObject:
-                context = {}
-            else:
-                # create a connection to a solr server
-                s = solr.SolrConnection(url='http://localhost:8983/solr/%s' % solr_core)
-                queryterms = []
-                urlterms = []
+            context = doSearch(solr_core, context)
+            if 'search' in requestObject:
+                pass
+            elif 'csv' in requestObject:
+
+                # Create the HttpResponse object with the appropriate CSV header.
+                response = HttpResponse(content_type='text/csv')
+                response['Content-Disposition'] = 'attachment; filename="ucjeps.csv"'
+
+                #response.write(u'\ufeff'.encode('utf8'))
+                writer = csv.writer(response)
+                for item in context['items']:
+                    #row = [ item[x] if isinstance(x,str) else item[x].encode('utf-8','ignore') for x in item.keys()]
+                    #row = [ smart_unicode(item[x].decode('iso-8859-2')) if isinstance(item[x],str) else item[x] for x in item.keys()]
+                    #row = [ item[x].decode('utf-8','replace') if isinstance(item[x],unicode) else item[x] for x in item.keys()]
+                    row = []
+                    for x in item.keys():
+                        cell = item[x]
+                        if isinstance(item[x],unicode):
+                            try:
+                                cell = cell.translate({0xd7 : u"x"})
+                                cell = cell.decode('utf-8','ignore').encode('utf-8')
+                                #cell = cell.decode('utf-8','ignore').encode('utf-8')
+                                #cell = cell.decode('utf-8').encode('utf-8')
+                            except:
+                                print 'unicode problem',cell.encode('utf-8','ignore')
+                                cell = u'invalid unicode data'
+                        row.append(cell)
+                    #print row
+                    writer.writerow(row)
+
+                return response
+
+            elif 'map' in requestObject:
+                context['url'] = requestObject['url']
                 selected = []
-                markerlist = []
                 for p in requestObject:
-                    if p in ['csrfmiddlewaretoken', 'displayType']: continue
-                    if 'item-' in p: continue
-                    if not requestObject[p]: continue
-                    if 'select-' in p:
-                        selected.append(p)
-                        continue
-                    if p == 'keyword':
-                        queryterms.append('text:%s' % parseTerm(requestObject[p]))
-                        urlterms.append('%s=%s' % (p, cgi.escape(requestObject[p])))
-                    else:
-                        #queryterms.append('(%s LIKE "%s")' % (parms[p][3], requestObject[p]))
-                        queryterms.append('%s:"%s"' % (parms[p][3], requestObject[p]))
-                        urlterms.append('%s=%s' % (p, cgi.escape(requestObject[p])))
-                querystring = ' AND '.join(queryterms)
-
-                if urlterms != []: urlterms.append('displayType=%s' % requestObject['displayType'])
-                url = '&'.join(urlterms)
-                fqs = {}
-                try:
-                    pixonly = requestObject['pixonly']
-                except:
-                    pixonly = None
-                fields = getfields()
-                response = s.query(querystring, facet='true',
-                                   facet_field=fields,
-                                   fq=fqs,
-                                   rows=2000, facet_limit=30, facet_mincount=1)
-
-                facetflds = getfacets(response)
-                print 'num:', response._numFound
-                if pixonly:
-                    results = [r for r in response.results if r.has_key('blobs_ss')]
-                else:
-                    results = response.results
-
-                for listItem in results:
-                    item = {}
-                    for p in parms:
-                        try:
-                            # make all arrays into strings for display
-                            if type(listItem[parms[p][3]]) == type([]):
-                                item[p] = ', '.join(listItem[parms[p][3]])
-                            else:
-                                item[p] = listItem[parms[p][3]]
-                        except:
-                            #raise
-                            pass
-                            #item[p] = ''
-                            #if listItem.find('taxon') is not None:
-                            #    item['taxon'] = deURN(listItem.find('taxon').text)
-                            # the list of blob csids need to remain an array, so restore it from psql result
-                    item['blob_ss'] = listItem.get('blob_ss')
-                    item['marker'] = makeMarker(item)
-                    context['items'].append(item)
-
-                if 'csv' in requestObject:
-                    pass
-                elif 'search' in requestObject:
-                    pass
-                elif 'map' in requestObject:
-                    context['action'] = 'map'
-                    mappableitems = []
-                    for item in context['items']:
+                    if 'item-' in p:
+                        selected.append(requestObject[p])
+                mappableitems = []
+                markerlist = []
+                for item in context['items']:
+                    if item['csid'] in selected:
                         m = makeMarker(item)
-                        if len(mappableitems) >= 70: break
+                        if len(mappableitems) >= MAXMARKERS: break
                         if m is not None:
-                            print 'm= x%sx' % m
+                            #print 'm= x%sx' % m
                             markerlist.append(m)
                             mappableitems.append(item)
-                    context['items'] = mappableitems
-                    context['mapmsg'] = []
-                    if len(mappableitems) < response._numFound:
-                        context['mapmsg'].append('NB: not all points had latlongs.')
-                    context['markerlist'] = '&markers='.join(markerlist[:70])
-                    if len(markerlist) >= 70:
-                        context['mapmsg'].append('70 points is the limit. Only first 70 accessions (with latlongs) plotted!')
-                elif 'email' in requestObject:
-                    pass
-
-                if requestObject['displayType'] in ['v1','v2', 'grid'] and response._numFound > 30:
-                    context['recordlimit'] = 'items. (limited to 30 for long display)'
-                    context['items'] = context['items'][:30]
-
-                context['time'] = '%8.3f' % (time.time() - elapsedtime)
-                context['count'] = response._numFound
-                m = {}
-                for p in parms: m[parms[p][3].replace('_txt','_s')] = p
-                context['fields'] = [m[f] for f in fields]
-                context['facetflds'] = [[m[f],facetflds[f]] for f in fields]
-                context['range'] = range(len(fields))
-                context['fq'] = fqs
-                context['url'] = url
-                context['pixonly'] = pixonly
-                context['core'] = solr_core
+                context['items'] = mappableitems
+                context['mapmsg'] = []
+                if len(mappableitems) < context['count'] and context['count'] < MAXMARKERS:
+                    context['mapmsg'].append('NB: not all points had latlongs.')
+                context['markerlist'] = '&markers='.join(markerlist[:MAXMARKERS])
+                if len(markerlist) >= MAXMARKERS:
+                    context['mapmsg'].append('%s points is the limit. Only first %s accessions (with latlongs) plotted!' % (MAXMARKERS,len(markerlist)))
+            elif 'email' in requestObject:
+                pass
 
     if 'displayType' in requestObject:
         context['displayType'] = requestObject['displayType']
