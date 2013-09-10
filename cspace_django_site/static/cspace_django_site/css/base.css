@@ -92,6 +92,7 @@ p.tiny{
     text-align: left;
     padding: 3px;
     margin-bottom: 6px;
+    display: inline;
 }
 
 li.facet {

@@ -47,9 +47,8 @@ from cspace_django_site.main import cspace_django_site
 config = cspace_django_site.getConfig()
 
 parms = {
-    # these first two are special
+    # this first one is special
     'keyword': ['orchid', 'true', 'a keyword search value, please', 'text', ''],
-    'objectNumber': ['', 'true', '', 'accessionnumber_txt', ''],
 
     # the rest are mapping the solr field names to django form labels and fields
     'csid': ['id', 'true', '', 'id', ''],
@@ -89,9 +88,31 @@ def deURN(urn):
         return m.group(0)[1:len(m.group(0)) - 1]
 
 
-def getfields():
+def getfields(fieldset):
     # for solr faceting
-    return ['determination_s', 'majorgroup_s', 'collector_s', 'collcounty_s', 'collstate_s', 'collcountry_s']
+    if fieldset == 'bmapperheader':
+        return ["Institution Code",
+                "Catalog Number",
+                "Scientific Name",
+                "Collector",
+                "Collector Num Prefix",
+                "Collector Num",
+                "Collector Num Suffix",
+                "Date Collected",
+                "County",
+                "Elevation",
+                "Locality",
+                "Latitude",
+                "Longitude",
+                "Datum"]
+    elif fieldset == 'bmapperdata':
+        return ["na", "accession", "determination", "collector", "na", "collectionnumber", "na", "collectiondate",
+                "county", "elevation", "locality", "L1", "L2", "datum"]
+    elif fieldset == 'csvdata':
+        return ["ucjeps", "accession", "determination", "collector", "", "collectionnumber", "", "collectiondate",
+                "county", "elevation", "locality", "L1", "L2", "datum"]
+    elif fieldset == 'facetfields':
+        return ['determination_s', 'majorgroup_s', 'collector_s', 'collcounty_s', 'collstate_s', 'collcountry_s']
 
 
 def getfacets(response):
@@ -122,6 +143,37 @@ def makeMarker(result):
     else:
         return None
 
+def writeCsv(filehandle,items):
+
+    writer = csv.writer(filehandle)
+    fieldset = getfields('csvdata')
+    # write the berkeley mapper header as the header for the csv file...
+    writer.writerow(getfields('bmapperheader'))
+    for item in items:
+        #row = [ item[x] if isinstance(x,str) else item[x].encode('utf-8','ignore') for x in item.keys()]
+        #row = [ smart_unicode(item[x].decode('iso-8859-2')) if isinstance(item[x],str) else item[x] for x in item.keys()]
+        #row = [ item[x].decode('utf-8','replace') if isinstance(item[x],unicode) else item[x] for x in item.keys()]
+        row = []
+        for x in fieldset:
+            if x in item.keys():
+                cell = item[x]
+            else:
+                cell = ''
+            if isinstance(cell,unicode):
+                try:
+                    cell = cell.translate({0xd7 : u"x"})
+                    cell = cell.decode('utf-8','ignore').encode('utf-8')
+                    #cell = cell.decode('utf-8','ignore').encode('utf-8')
+                    #cell = cell.decode('utf-8').encode('utf-8')
+                except:
+                    print 'unicode problem',cell.encode('utf-8','ignore')
+                    cell = u'invalid unicode data'
+            row.append(cell)
+        #print row
+        writer.writerow(row)
+
+
+
 def doSearch(solr_core, context):
     requestObject = context['searchValues']
     elapsedtime = time.time()
@@ -132,7 +184,7 @@ def doSearch(solr_core, context):
         s = solr.SolrConnection(url='http://localhost:8983/solr/%s' % solr_core)
         queryterms = []
         urlterms = []
-        if 'map' in requestObject or 'csv' in requestObject:
+        if 'map-google' in requestObject or 'csv' in requestObject:
             querystring = requestObject['querystring']
         else:
             for p in requestObject:
@@ -142,14 +194,26 @@ def doSearch(solr_core, context):
                 if not requestObject[p]: continue
                 if 'item-' in p:
                     continue
-                if p == 'keyword':
-                    queryterms.append('text:%s' % parseTerm(requestObject[p]))
-                    urlterms.append('%s=%s' % (p, cgi.escape(requestObject[p])))
-                else:
-                    #queryterms.append('(%s LIKE "%s")' % (parms[p][3], requestObject[p]))
-                    queryterms.append('%s:"%s"' % (parms[p][3], requestObject[p]))
-                    urlterms.append('%s=%s' % (p, cgi.escape(requestObject[p])))
+                searchTerm = requestObject[p]
+                terms = searchTerm.split('|')
+                ORs = []
+                for t in terms:
+                    if t == 'OR': t = '"OR"'
+                    if t == 'AND': t = '"AND"'
+                    ORs.append('%s:%s' % (parms[p][3], t))
+                searchTerm = ' OR '.join(ORs)
+                searchTerm = ' (' + searchTerm + ') '
+                queryterms.append(searchTerm)
+                urlterms.append('%s=%s' % (p, cgi.escape(requestObject[p])))
+                #if p == 'keyword':
+                #    queryterms.append('text:%s' % parseTerm(requestObject[p]))
+                #    urlterms.append('%s=%s' % (p, cgi.escape(requestObject[p])))
+                #else:
+                #    #queryterms.append('(%s LIKE "%s")' % (parms[p][3], requestObject[p]))
+                #    queryterms.append('%s:"%s"' % (parms[p][3], requestObject[p]))
+                #    urlterms.append('%s=%s' % (p, cgi.escape(requestObject[p])))
             querystring = ' AND '.join(queryterms)
+            #print querystring
 
         if urlterms != []: urlterms.append('displayType=%s' % requestObject['displayType'])
         url = '&'.join(urlterms)
@@ -158,14 +222,13 @@ def doSearch(solr_core, context):
             pixonly = requestObject['pixonly']
         except:
             pixonly = None
-        fields = getfields()
+        fields = getfields('facetfields')
         response = s.query(querystring, facet='true',
                            facet_field=fields,
                            fq=fqs,
                            rows=200, facet_limit=40, facet_mincount=1)
 
         facetflds = getfacets(response)
-        print 'num:', response._numFound
         if pixonly:
             results = [r for r in response.results if r.has_key('blobs_ss')]
         else:
@@ -241,30 +304,25 @@ def publicsearch(request):
                 response['Content-Disposition'] = 'attachment; filename="ucjeps.csv"'
 
                 #response.write(u'\ufeff'.encode('utf8'))
-                writer = csv.writer(response)
-                for item in context['items']:
-                    #row = [ item[x] if isinstance(x,str) else item[x].encode('utf-8','ignore') for x in item.keys()]
-                    #row = [ smart_unicode(item[x].decode('iso-8859-2')) if isinstance(item[x],str) else item[x] for x in item.keys()]
-                    #row = [ item[x].decode('utf-8','replace') if isinstance(item[x],unicode) else item[x] for x in item.keys()]
-                    row = []
-                    for x in item.keys():
-                        cell = item[x]
-                        if isinstance(item[x],unicode):
-                            try:
-                                cell = cell.translate({0xd7 : u"x"})
-                                cell = cell.decode('utf-8','ignore').encode('utf-8')
-                                #cell = cell.decode('utf-8','ignore').encode('utf-8')
-                                #cell = cell.decode('utf-8').encode('utf-8')
-                            except:
-                                print 'unicode problem',cell.encode('utf-8','ignore')
-                                cell = u'invalid unicode data'
-                        row.append(cell)
-                    #print row
-                    writer.writerow(row)
-
+                writeCsv(response,context['items'])
                 return response
 
-            elif 'map' in requestObject:
+            elif 'map-bmapper' in requestObject:
+                context['url'] = requestObject['url']
+                mappableitems = []
+                for item in context['items']:
+                    m = makeMarker(item)
+                    if m is not None:
+                        mappableitems.append(item)
+                context['mapmsg'] = []
+                # filehandle = open('someMapperDataFile.csv', 'wb')
+                # writeCsv(filehandle,mappableitems)
+                # filehandle.close
+                context['mapmsg'].append('%s points of the %s selected objects examined had latlongs (%s in result set).' % (len(mappableitems), len(context['items']),context['count']))
+                context['mapmsg'].append('if our connection to berkeley mapper were working, you be able see them plotted there.')
+                context['items'] = mappableitems
+
+            elif 'map-google' in requestObject:
                 context['url'] = requestObject['url']
                 selected = []
                 for p in requestObject:
@@ -280,10 +338,12 @@ def publicsearch(request):
                             #print 'm= x%sx' % m
                             markerlist.append(m)
                             mappableitems.append(item)
-                context['items'] = mappableitems
                 context['mapmsg'] = []
-                if len(mappableitems) < context['count'] and context['count'] < MAXMARKERS:
-                    context['mapmsg'].append('NB: not all points had latlongs.')
+                if len(context['items']) < context['count']:
+                    context['mapmsg'].append('%s points plotted. %s selected objects examined (of %s in result set).' % (len(markerlist), len(context['items']),context['count']))
+                else:
+                    context['mapmsg'].append('%s points plotted. all %s selected objects in result set examined.' % (len(markerlist), context['count']))
+                context['items'] = mappableitems
                 context['markerlist'] = '&markers='.join(markerlist[:MAXMARKERS])
                 if len(markerlist) >= MAXMARKERS:
                     context['mapmsg'].append('%s points is the limit. Only first %s accessions (with latlongs) plotted!' % (MAXMARKERS,len(markerlist)))

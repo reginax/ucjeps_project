@@ -1,0 +1,52 @@
+<table cellspace="1" id="resultsListing" class="tablesorter">
+    <thead>
+    <tr>
+        <th></th>
+        <th>Specimen ID</th>
+        <th>Determination</th>
+        <th>Collector</th>
+        <th>Collection Date</th>
+        <th>Collection No.</th>
+        <th>County/Prov</th>
+        <th>State</th>
+        <th>Country</th>
+        <th>Locality</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for item in items %}
+        <tr>
+            <td>
+                <input type="checkbox" name="item-{{ item.counter }}" value="{{ item.csid }}" checked>
+            </td>
+            <td>
+                <a href="?accession={{ item.accession }}&displayType=v2">{{ item.accession }}</a>
+            </td>
+            <td>
+                <a href="#"
+                   onclick="submitForm('none','determination','{{ item.determination }}')">{{ item.determination }}</a>
+            </td>
+            <td><a href="#"
+                   onclick="submitForm('none','collector','{{ item.collector }}')">{{ item.collector }}</a>
+            </td>
+            <td>
+                <a href="#"
+                   onclick="submitForm('none','collectiondate','{{ item.collectiondate }}')">{{ item.collectiondate }}</a>
+            </td>
+            <td>
+                <a href="#"
+                   onclick="submitForm('none','collectionnumber','{{ item.collectionnumber }}')">{{ item.collectionnumber }}</a>
+            </td>
+            <td><a href="#" onclick="submitForm('none','county','{{ item.county }}')">{{ item.county }}</a>
+            </td>
+            <td><a href="#" onclick="submitForm('none','state','{{ item.state }}')">{{ item.state }}</a>
+            </td>
+            <td><a href="#"
+                   onclick="submitForm('none','country','{{ item.country }}')">{{ item.country }}</a></td>
+            <td><a href="#"
+                   onclick="submitForm('none','locality','{{ item.locality }}')">{{ item.locality }}</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

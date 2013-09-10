@@ -1,0 +1,15 @@
+<div id="maps">
+    <button type="submit" name="map-google" id="search-map" class="prettyBtn">map selected with Google staticmaps API</button>
+    <button type="submit" name="map-bmapper" id="search-map" class="prettyBtn">map selected with Berkeley Mapper</button>
+    <div style="height: 30px; padding-top: 15px;">
+    {% for m in mapmsg %}
+        <p style="color:red">{{ m }}</p>
+    {% endfor %}
+    </div>
+    {% if markerlist %}
+    <img src="http://maps.google.com/maps/api/staticmap?size=1000x800&maptype=roadmap&markers={{ markerlist }}&sensor=false"/>
+    <!-- p>http://maps.google.com/maps/api/staticmap?&zoom=0&size=800x400&maptype=roadmap&markers={{ markerlist }}&sensor=false</p -->
+    {% endif %}
+    {% if berkeleymapper %}
+    {% endif %}
+</div>

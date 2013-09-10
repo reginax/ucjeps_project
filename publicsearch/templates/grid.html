@@ -1,0 +1,40 @@
+{% for item in items %}
+    <div class="float">
+        {% if item.blob_ss %}
+            <div>
+                {% for t in item.blob_ss %}
+                    <a target="image"
+                       href="http://ucjeps.cspace.berkeley.edu:8180/cspace-services/blobs/{{ t }}/derivatives/OriginalJpeg/content">
+                        <img height="100px"
+                             src="http://ucjeps.cspace.berkeley.edu:8180/cspace-services/blobs/{{ t }}/derivatives/Thumbnail/content"/>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div>
+                <a target="image"
+                   href="#">
+                    <img height="100px" src="#"/>
+                </a>
+            </div>
+        {% endif %}
+        <div class="tiny" style="float:right;vertical-align: top">
+            <input type="checkbox" name="item-{{ item.counter }}" value="{{ item.csid }}" checked>
+            <a href="?accession={{ item.accession }}&displayType=v2">{{ item.accession }}</a>
+        </div>
+        <p><h4>{{ item.determination }}</h4></p>
+        <p class="tiny">{{ item.country }} / {{ item.state }} / {{ item.county }}</p>
+
+        <p class="tiny">Collector: {{ item.collector }}</p>
+
+        <p class="tiny">Collection Number: {{ item.collectionnumber }}</p>
+
+        <p class="tiny">Locality: {{ item.locality }}</p>
+        {% if item.earlycollectiondate %}
+            <p class="tiny">Collection date: {{ item.collectiondate }}</p>{% endif %}
+        {% if item.habitat %}
+            <p class="tiny">Habitat: {{ item.habitat }}</p>{% endif %}
+        {% if item.elevation %}
+            <p class="tiny">Elevation: {{ item.elevation }} {{ item.elevationunit }}</p>{% endif %}
+    </div>
+{% endfor %}

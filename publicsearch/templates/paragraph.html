@@ -1,0 +1,58 @@
+{% for item in items %}
+    <div style="float:right;">
+        {% if item.blob_ss %}
+            {% for t in item.blob_ss %}
+                <a target="image"
+                   href="http://ucjeps.cspace.berkeley.edu:8180/cspace-services/blobs/{{ t }}/derivatives/OriginalJpeg/content">
+                    <img height="100px"
+                         src="http://ucjeps.cspace.berkeley.edu:8180/cspace-services/blobs/{{ t }}/derivatives/Thumbnail/content"/>
+                </a>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div>
+        <div class="result-title">
+            <input type="checkbox" name="item-{{ item.counter }}" value="{{ item.csid }}" checked>
+            <b>{{ item.accession }} </b></div>
+        <div><h2>{{ item.determination }}</h2> ({{ item.majorgroup }})</div>
+        <div>{{ item.country }} / {{ item.state }} / {{ item.county }}</div>
+        {% if item.L1 and item.L2 %}
+            <div>LatLong: {{ item.L1 }} {{ item.L2 }}
+                {% if item.marker %}
+                    <a href="#"
+                       onclick="textToggle('map_{{ item.L1 }}+{{ item.L2 }}')">
+                        <span id="map_{{ item.L1 }}+{{ item.L2 }}_toggle">show</span> map</a>
+                    <div id="map_{{ item.L1 }}+{{ item.L2 }}" style="display:none;">
+                        <img src="http://maps.google.com/maps/api/staticmap?&zoom=10&size=400x200&maptype=roadmap&markers={{ item.marker }}&sensor=false"/>
+                        <div>
+                            <small><a target="_map"
+                                      href="http://maps.google.com/?q=loc:{{ item.marker }}&amp;source=embed">Larger
+                                Map</a>
+                            </small>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+        <div>Collector: <a href="#"
+                           onclick="submitForm('none','collector','{{ item.collector }}')">{{ item.collector }}</a>
+        </div>
+        <div>Collection Number: <a href="#"
+                                   onclick="submitForm('none','collectionnumber','{{ item.collectionnumber }}')">{{ item.collectionnumber }}</a>
+        </div>
+        <div>Locality: <a href="#"
+                          onclick="submitForm('none','locality','{{ item.locality }}')">{{ item.locality }}</a>
+        </div>
+        {% if item.earlycollectiondate %}
+            <div>Collection date: <a href="#"
+                                     onclick="submitForm('none','collectiondate','{{ item.collectiondate }}')">{{ item.collectiondate }}</a>
+            </div>{% endif %}
+        {% if item.habitat %}
+            <div>Habitat: <a href="#"
+                             onclick="submitForm('none','habitat','{{ item.habitat }}')">{{ item.habitat }}</a>
+            </div>{% endif %}
+        {% if item.elevation %}
+            <div>Elevation: {{ item.elevation }} {{ item.elevationunit }}</div>{% endif %}
+    </div>
+    <hr/>
+{% endfor %}
