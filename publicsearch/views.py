@@ -1,4 +1,4 @@
-__author__ = 'amywieliczka, jblowe'
+__author__ = 'jblowe, amywieliczka'
 
 import os
 import re
@@ -44,9 +44,14 @@ except ImportError:
 
 from cspace_django_site.main import cspace_django_site
 
+# global variables (at least to this module...)
 config = cspace_django_site.getConfig()
 
-parms = {
+MAXMARKERS = 65
+MAXRESULTS = 1000
+MAXLONGRESULTS = 50
+
+PARMS = {
     # this first one is special
     'keyword': ['orchid', 'true', 'a keyword search value, please', 'text', ''],
 
@@ -201,7 +206,7 @@ def doSearch(solr_core, context):
                 for t in terms:
                     if t == 'OR': t = '"OR"'
                     if t == 'AND': t = '"AND"'
-                    ORs.append('%s:%s' % (parms[p][3], t))
+                    ORs.append('%s:%s' % (PARMS[p][3], t))
                 searchTerm = ' OR '.join(ORs)
                 searchTerm = ' (' + searchTerm + ') '
                 queryterms.append(searchTerm)
@@ -217,42 +222,44 @@ def doSearch(solr_core, context):
         except:
             pixonly = None
         fields = getfields('facetfields')
-        response = s.query(querystring, facet='true',
-                           facet_field=fields,
-                           fq=fqs,
-                           rows=200, facet_limit=40, facet_mincount=1)
+        response = s.query(querystring, facet='true', facet_field=fields, fq=fqs, rows=MAXRESULTS, facet_limit=50,
+                           facet_mincount=1)
 
         facetflds = getfacets(response)
         if pixonly:
-            results = [r for r in response.results if r.has_key('blobs_ss')]
+            results = [r for r in response.results if 'blobs_ss' in r]
         else:
             results = response.results
 
         for i,listItem in enumerate(results):
             item = {}
             item['counter'] = i
-            for p in parms:
+            for p in PARMS:
                 try:
                     # make all arrays into strings for display
-                    if type(listItem[parms[p][3]]) == type([]):
-                        item[p] = ', '.join(listItem[parms[p][3]])
+                    if type(listItem[PARMS[p][3]]) == type([]):
+                        item[p] = ', '.join(listItem[PARMS[p][3]])
                     else:
-                        item[p] = listItem[parms[p][3]]
+                        item[p] = listItem[PARMS[p][3]]
                 except:
                     #raise
                     pass
             # the list of blob csids need to remain an array, so restore it from psql result
-            item['blob_ss'] = listItem.get('blob_ss')
+            #item['blob_ss'] = listItem.get('blob_ss')
+            if 'blob_ss' in item.keys():
+                item['blob_ss'] = item['blob_ss'].split(',')
             item['marker'] = makeMarker(item)
             context['items'].append(item)
 
-        if requestObject['displayType'] in ['v1','v2', 'grid'] and response._numFound > 30:
-            context['recordlimit'] = 'items. (limited to 30 for long display)'
-            context['items'] = context['items'][:30]
+        if requestObject['displayType'] in ['v1','v2', 'grid'] and response._numFound > MAXLONGRESULTS:
+            context['recordlimit'] = 'items. (limited to %s for long display)' % MAXLONGRESULTS
+            context['items'] = context['items'][:MAXLONGRESULTS]
+        if requestObject['displayType'] in ['short'] and response._numFound > MAXRESULTS:
+            context['recordlimit'] = 'items. (display limited to %s)' % MAXRESULTS
 
         context['count'] = response._numFound
         m = {}
-        for p in parms: m[parms[p][3].replace('_txt','_s')] = p
+        for p in PARMS: m[PARMS[p][3].replace('_txt','_s')] = p
         context['fields'] = [m[f] for f in fields]
         context['facetflds'] = [[m[f],facetflds[f]] for f in fields]
         context['range'] = range(len(fields))
@@ -273,7 +280,6 @@ def doSearch(solr_core, context):
 #@login_required()
 def publicsearch(request):
     solr_core = 'ucjeps-metadata'
-    MAXMARKERS = 65
 
     if request.method == 'GET':
         requestObject = request.GET
@@ -302,7 +308,11 @@ def publicsearch(request):
                 return response
 
             elif 'map-bmapper' in requestObject:
-                context['berkeleymapper'] = ''
+                # the following should be moved to a config file:
+                localdir = "/var/www/html/bmapper"  # no final slash
+                publicurl = "http://pahma-dev.cspace.berkeley.edu/bmapper" # no final slash
+                localdir = '.'
+                context['berkeleymapper'] = 'set'
                 context['url'] = requestObject['url']
                 mappableitems = []
                 for item in context['items']:
@@ -310,17 +320,16 @@ def publicsearch(request):
                     if m is not None:
                         mappableitems.append(item)
                 context['mapmsg'] = []
-                filename = 'somefile.csv'
                 filename = 'bmapper%s.csv' % datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S")
-                filehandle = open(filename, 'wb')
-                #filehandle = open('/var/www/html/bmapper/%s' % filename, 'wb')
+                #filehandle = open(filename, 'wb')
+                filehandle = open('%s/%s' % (localdir,filename), 'wb')
                 writeCsv(filehandle,mappableitems,writeheader=False)
                 filehandle.close()
                 context['mapmsg'].append('%s points of the %s selected objects examined had latlongs (%s in result set).' % (len(mappableitems), len(context['items']),context['count']))
-                context['mapmsg'].append('if our connection to berkeley mapper were working, you be able see them plotted there.')
+                #context['mapmsg'].append('if our connection to berkeley mapper were working, you be able see them plotted there.')
                 context['items'] = mappableitems
                 bmapperconfigfile = "http%3A%2F%2Fucjeps.berkeley.edu%2Fucjeps.xml"
-                datafile = 'http://dev.cspace.berkeley.edu/bmapper/%s' % filename
+                datafile = '%s/%s' % (publicurl,filename)
                 context['bmapperurl'] = "http://berkeleymapper.berkeley.edu/run.php?ViewResults=tab&tabfile=%s&configfile=%s&sourcename=Consortium+of+California+Herbaria+result+set&maptype=Terrain" % (datafile,bmapperconfigfile)
 
             elif 'map-google' in requestObject:
