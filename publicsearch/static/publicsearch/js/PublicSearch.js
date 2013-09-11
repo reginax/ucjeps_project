@@ -21,16 +21,27 @@ $(document).ready(function () {
         }
     });
 
-    $('#map-google').click(function () {
-        $('#pane').val(2);
+    // $('#map-google').click(function () {
+    //     $('#pane').val(2);
+    // });
+    // $('#map-bmapper').click(function () {
+    //     $('#pane').val(2);
+    // });
+    
+    var activePane = $('#pane').val();
+    $( "#tabs" ).tabs({ active: activePane,
+        beforeActivate: function(activePane) {
+            return function( e, ui ) {
+                activePane = ui.newPanel.index() - 1;
+                $('#pane').val(activePane);
+                console.log(activePane);
+            }
+        }(activePane) 
     });
-    $('#map-bmapper').click(function () {
-        $('#pane').val(2);
-    });
-
-    $( "#tabs" ).tabs();
+    
+    
     //console.log('pane is:', $('#pane').val());
-    $( "#tabs" ).tabs( "option", "active", $('#pane').val() );
+    // $( "#tabs" ).tabs( "option", "active", $('#pane').val() );
 
     // we copy the input values from the search form and add them to selectedItems form
     // as hidden values to preserve those values after each selection is made.
