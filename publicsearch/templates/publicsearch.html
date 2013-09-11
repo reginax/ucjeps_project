@@ -25,6 +25,7 @@
                         {% include "fields.html" %}
                         {% include "buttons.html" %}
                     </div>
+                    <input type="hidden" value="{{ pane }}" name="pane" id="pane"/>
                 </form>
             </div>
             <div class="xxx">
@@ -40,7 +41,6 @@
                         {% include "results.html" %}
                         {% include "maps.html" %}
                         {% include "facets.html" %}
-                        <input type="hidden" value="none" name="facetContext" id="facetContext"/>
                         </div>
                     {% endif %}
                 </form>

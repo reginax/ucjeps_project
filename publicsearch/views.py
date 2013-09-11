@@ -2,7 +2,7 @@ __author__ = 'amywieliczka, jblowe'
 
 import os
 import re
-import time
+import time, datetime
 import csv
 import solr
 import cgi
@@ -98,6 +98,8 @@ def getfields(fieldset):
                 "Collector Num Prefix",
                 "Collector Num",
                 "Collector Num Suffix",
+                "early J date",
+                "late J date",
                 "Date Collected",
                 "County",
                 "Elevation",
@@ -107,10 +109,10 @@ def getfields(fieldset):
                 "Datum"]
     elif fieldset == 'bmapperdata':
         return ["na", "accession", "determination", "collector", "na", "collectionnumber", "na", "collectiondate",
-                "county", "elevation", "locality", "L1", "L2", "datum"]
+                "", "", "county", "elevation", "locality", "L1", "L2", "datum"]
     elif fieldset == 'csvdata':
         return ["ucjeps", "accession", "determination", "collector", "", "collectionnumber", "", "collectiondate",
-                "county", "elevation", "locality", "L1", "L2", "datum"]
+                "", "", "county", "elevation", "locality", "L1", "L2", "datum"]
     elif fieldset == 'facetfields':
         return ['determination_s', 'majorgroup_s', 'collector_s', 'collcounty_s', 'collstate_s', 'collcountry_s']
 
@@ -143,22 +145,22 @@ def makeMarker(result):
     else:
         return None
 
-def writeCsv(filehandle,items):
+def writeCsv(filehandle,items,writeheader):
 
-    writer = csv.writer(filehandle)
     fieldset = getfields('csvdata')
-    # write the berkeley mapper header as the header for the csv file...
-    writer.writerow(getfields('bmapperheader'))
+    writer = csv.writer(filehandle,delimiter='\t')
+    # write the berkeley mapper header as the header for the csv file, if asked...
+    if writeheader:
+        writer.writerow(getfields('bmapperheader'))
     for item in items:
-        #row = [ item[x] if isinstance(x,str) else item[x].encode('utf-8','ignore') for x in item.keys()]
-        #row = [ smart_unicode(item[x].decode('iso-8859-2')) if isinstance(item[x],str) else item[x] for x in item.keys()]
-        #row = [ item[x].decode('utf-8','replace') if isinstance(item[x],unicode) else item[x] for x in item.keys()]
+        # get the cells from the item dict in the order specified; make empty cells if key is not found.
         row = []
         for x in fieldset:
             if x in item.keys():
                 cell = item[x]
             else:
                 cell = ''
+            # the following few lines is a hack to handle non-unicode data which appears to be present in the solr datasource
             if isinstance(cell,unicode):
                 try:
                     cell = cell.translate({0xd7 : u"x"})
@@ -169,7 +171,6 @@ def writeCsv(filehandle,items):
                     print 'unicode problem',cell.encode('utf-8','ignore')
                     cell = u'invalid unicode data'
             row.append(cell)
-        #print row
         writer.writerow(row)
 
 
@@ -188,7 +189,7 @@ def doSearch(solr_core, context):
             querystring = requestObject['querystring']
         else:
             for p in requestObject:
-                if p in ['csrfmiddlewaretoken', 'displayType', 'url', 'querystring', 'facetContext']: continue
+                if p in ['csrfmiddlewaretoken', 'displayType', 'url', 'querystring', 'pane']: continue
                 if 'select-' in p: continue # select control for map markers
                 if not p in requestObject: continue
                 if not requestObject[p]: continue
@@ -205,13 +206,6 @@ def doSearch(solr_core, context):
                 searchTerm = ' (' + searchTerm + ') '
                 queryterms.append(searchTerm)
                 urlterms.append('%s=%s' % (p, cgi.escape(requestObject[p])))
-                #if p == 'keyword':
-                #    queryterms.append('text:%s' % parseTerm(requestObject[p]))
-                #    urlterms.append('%s=%s' % (p, cgi.escape(requestObject[p])))
-                #else:
-                #    #queryterms.append('(%s LIKE "%s")' % (parms[p][3], requestObject[p]))
-                #    queryterms.append('%s:"%s"' % (parms[p][3], requestObject[p]))
-                #    urlterms.append('%s=%s' % (p, cgi.escape(requestObject[p])))
             querystring = ' AND '.join(queryterms)
             #print querystring
 
@@ -268,9 +262,9 @@ def doSearch(solr_core, context):
         context['querystring'] = querystring
         context['url'] = url
         try:
-            context['facetContext'] = requestObject['facetContext']
+            context['pane'] = requestObject['pane']
         except:
-            context['facetContext'] = 'none'
+            context['pane'] = '0'
 
     context['core'] = solr_core
     context['time'] = '%8.3f' % (time.time() - elapsedtime)
@@ -304,10 +298,11 @@ def publicsearch(request):
                 response['Content-Disposition'] = 'attachment; filename="ucjeps.csv"'
 
                 #response.write(u'\ufeff'.encode('utf8'))
-                writeCsv(response,context['items'])
+                writeCsv(response,context['items'],writeheader=True)
                 return response
 
             elif 'map-bmapper' in requestObject:
+                context['berkeleymapper'] = ''
                 context['url'] = requestObject['url']
                 mappableitems = []
                 for item in context['items']:
@@ -315,12 +310,18 @@ def publicsearch(request):
                     if m is not None:
                         mappableitems.append(item)
                 context['mapmsg'] = []
-                # filehandle = open('someMapperDataFile.csv', 'wb')
-                # writeCsv(filehandle,mappableitems)
-                # filehandle.close
+                filename = 'somefile.csv'
+                filename = 'bmapper%s.csv' % datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S")
+                filehandle = open(filename, 'wb')
+                #filehandle = open('/var/www/html/bmapper/%s' % filename, 'wb')
+                writeCsv(filehandle,mappableitems,writeheader=False)
+                filehandle.close()
                 context['mapmsg'].append('%s points of the %s selected objects examined had latlongs (%s in result set).' % (len(mappableitems), len(context['items']),context['count']))
                 context['mapmsg'].append('if our connection to berkeley mapper were working, you be able see them plotted there.')
                 context['items'] = mappableitems
+                bmapperconfigfile = "http%3A%2F%2Fucjeps.berkeley.edu%2Fucjeps.xml"
+                datafile = 'http://dev.cspace.berkeley.edu/bmapper/%s' % filename
+                context['bmapperurl'] = "http://berkeleymapper.berkeley.edu/run.php?ViewResults=tab&tabfile=%s&configfile=%s&sourcename=Consortium+of+California+Herbaria+result+set&maptype=Terrain" % (datafile,bmapperconfigfile)
 
             elif 'map-google' in requestObject:
                 context['url'] = requestObject['url']

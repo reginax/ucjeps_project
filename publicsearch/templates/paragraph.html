@@ -35,21 +35,21 @@
             </div>
         {% endif %}
         <div>Collector: <a href="#"
-                           onclick="submitForm('none','collector','{{ item.collector }}')">{{ item.collector }}</a>
+                           onclick="submitForm(0,'collector','{{ item.collector }}')">{{ item.collector }}</a>
         </div>
         <div>Collection Number: <a href="#"
-                                   onclick="submitForm('none','collectionnumber','{{ item.collectionnumber }}')">{{ item.collectionnumber }}</a>
+                                   onclick="submitForm(0,'collectionnumber','{{ item.collectionnumber }}')">{{ item.collectionnumber }}</a>
         </div>
         <div>Locality: <a href="#"
-                          onclick="submitForm('none','locality','{{ item.locality }}')">{{ item.locality }}</a>
+                          onclick="submitForm(0,'locality','{{ item.locality }}')">{{ item.locality }}</a>
         </div>
         {% if item.earlycollectiondate %}
             <div>Collection date: <a href="#"
-                                     onclick="submitForm('none','collectiondate','{{ item.collectiondate }}')">{{ item.collectiondate }}</a>
+                                     onclick="submitForm(0,'collectiondate','{{ item.collectiondate }}')">{{ item.collectiondate }}</a>
             </div>{% endif %}
         {% if item.habitat %}
             <div>Habitat: <a href="#"
-                             onclick="submitForm('none','habitat','{{ item.habitat }}')">{{ item.habitat }}</a>
+                             onclick="submitForm(0,'habitat','{{ item.habitat }}')">{{ item.habitat }}</a>
             </div>{% endif %}
         {% if item.elevation %}
             <div>Elevation: {{ item.elevation }} {{ item.elevationunit }}</div>{% endif %}

@@ -9,7 +9,7 @@
             {% for facet in facetflds %}
                 <td style="max-width: 220px;">
                     {% for f in facet.1 %}
-                        <li class="facet"><a href="#" onclick="submitForm('block','{{ facet.0 }}','{{ f.0 }}')">{{ f.0 }}</a> {{ f.1 }}</li>
+                        <li class="facet"><a href="#" onclick="submitForm(1,'{{ facet.0 }}','{{ f.0 }}')">{{ f.0 }}</a> {{ f.1 }}</li>
                     {% endfor %}
                 </td>
             {% endfor %}
