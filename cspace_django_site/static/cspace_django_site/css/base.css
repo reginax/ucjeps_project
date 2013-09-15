@@ -73,7 +73,7 @@ a:hover { color: #036; }
 .size2of10{width:20%;}
 
 .float{
-    padding: 7px;
+    margin: 7px;
 	float: left;
 	width: 210px;
 	height: 250px;

@@ -194,7 +194,7 @@ def doSearch(solr_core, context):
             querystring = requestObject['querystring']
         else:
             for p in requestObject:
-                if p in ['csrfmiddlewaretoken', 'displayType', 'url', 'querystring', 'pane']: continue
+                if p in ['csrfmiddlewaretoken', 'displayType', 'resultsOnly', 'url', 'querystring', 'pane', 'pixonly']: continue
                 if 'select-' in p: continue # select control for map markers
                 if not p in requestObject: continue
                 if not requestObject[p]: continue
@@ -202,12 +202,12 @@ def doSearch(solr_core, context):
                     continue
                 searchTerm = requestObject[p]
                 terms = searchTerm.split('|')
-                ORs = []
+                ANDs = []
                 for t in terms:
                     if t == 'OR': t = '"OR"'
                     if t == 'AND': t = '"AND"'
-                    ORs.append('%s:%s' % (PARMS[p][3], t))
-                searchTerm = ' OR '.join(ORs)
+                    ANDs.append('%s:%s' % (PARMS[p][3], t))
+                searchTerm = ' AND '.join(ANDs)
                 searchTerm = ' (' + searchTerm + ') '
                 queryterms.append(searchTerm)
                 urlterms.append('%s=%s' % (p, cgi.escape(requestObject[p])))
@@ -219,6 +219,7 @@ def doSearch(solr_core, context):
         fqs = {}
         try:
             pixonly = requestObject['pixonly']
+            querystring += " AND blob_ss:[* TO *]"
         except:
             pixonly = None
         fields = getfields('facetfields')
@@ -226,10 +227,11 @@ def doSearch(solr_core, context):
                            facet_mincount=1)
 
         facetflds = getfacets(response)
-        if pixonly:
-            results = [r for r in response.results if 'blobs_ss' in r]
-        else:
-            results = response.results
+        #if pixonly:
+        #    results = [r for r in response.results if 'blob_ss' in r.keys()]
+        #else:
+        #    results = response.results
+        results = response.results
 
         for i,listItem in enumerate(results):
             item = {}
@@ -272,6 +274,10 @@ def doSearch(solr_core, context):
             context['pane'] = requestObject['pane']
         except:
             context['pane'] = '0'
+        try:
+            context['resultsOnly'] = requestObject['resultsOnly']
+        except:
+            pass
 
     context['core'] = solr_core
     context['time'] = '%8.3f' % (time.time() - elapsedtime)
