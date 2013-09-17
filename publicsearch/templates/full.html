@@ -10,12 +10,12 @@
             </td>
         <tr>
             <td colspan="6">
-                {% if item.blob_ss %}
-                    {% for t in item.blob_ss %}
+                {% if item.blobs %}
+                    {% for t in item.blobs %}
                         <a target="image"
-                           href="http://ucjeps.cspace.berkeley.edu:8180/cspace-services/blobs/{{ t }}/derivatives/OriginalJpeg/content">
+                           href="{{ imageserver }}/blobs/{{ t }}/derivatives/OriginalJpeg/content">
                             <img height="100px"
-                                 src="http://ucjeps.cspace.berkeley.edu:8180/cspace-services/blobs/{{ t }}/derivatives/Thumbnail/content"/>
+                                 src="{{ imageserver }}/blobs/{{ t }}/derivatives/Thumbnail/content"/>
                         </a>
                     {% endfor %}
                 {% endif %}
