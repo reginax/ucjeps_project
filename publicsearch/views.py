@@ -52,6 +52,7 @@ config = cspace_django_site.getConfig()
 
 MAXMARKERS = 65
 MAXRESULTS = 1000
+MAXFACETS = 50
 MAXLONGRESULTS = 50
 #IMAGESERVER = 'http://ucjeps.cspace.berkeley.edu:8180/cspace-services' # no final slash
 IMAGESERVER = 'http://localhost:8000/imageserver'
@@ -63,8 +64,7 @@ BMAPPERCONFIGFILE = 'ucjeps.xml'
 SOLRSERVER = 'http://localhost:8983/solr'
 #SOLRCORE = 'ucjeps-metadata'
 SOLRCORE = 'ucjeps-metadata'
-#LOCALDIR = "/var/www/html/bmapper"  # no final slash
-LOCALDIR = '.'
+LOCALDIR = "/var/www/html/bmapper"  # no final slash
 
 PARMS = {
     # this first one is special
@@ -98,7 +98,6 @@ PARMS = {
     'coordinateuncertaintyunit': ['Coordinate uncertainty unit', 'true', '', 'coordinateuncertaintyunit_txt', ''],
     'blobs': ['blob_ss', 'true', '', 'blob_ss', ''],
 }
-
 
 def deURN(urn):
     #find identifier in URN
@@ -195,7 +194,7 @@ def writeCsv(filehandle,items,writeheader):
 
 
 
-def doSearch(solr_server, solr_core, context):
+def doSearch(solr_server, solr_core, context, maxResults, maxFacets):
     requestObject = context['searchValues']
     elapsedtime = time.time()
     if 'reset' in requestObject:
@@ -238,7 +237,7 @@ def doSearch(solr_server, solr_core, context):
         except:
             pixonly = None
         fields = getfields('facetfields')
-        response = s.query(querystring, facet='true', facet_field=fields, fq=fqs, rows=MAXRESULTS, facet_limit=50,
+        response = s.query(querystring, facet='true', facet_field=fields, fq=fqs, rows=maxResults, facet_limit=maxFacets,
                            facet_mincount=1)
 
         facetflds = getfacets(response)
@@ -298,6 +297,14 @@ def doSearch(solr_server, solr_core, context):
     context['time'] = '%8.3f' % (time.time() - elapsedtime)
     return context
 
+# on startup, do a query to get options values for forms...
+context = {'searchValues': {'csv':'true', 'querystring':'*:*', 'displayType': 'short'}}
+context = doSearch(SOLRSERVER, SOLRCORE, context, 0, 1000)
+FACETS = {}
+for facet in context['facetflds']:
+    print 'facet',facet[0]
+    FACETS[facet[0]] = facet[1]
+
 #@login_required()
 def publicsearch(request):
 
@@ -314,7 +321,7 @@ def publicsearch(request):
         form = forms.Form(requestObject)
 
         if form.is_valid() or request.method == 'GET':
-            context = doSearch(SOLRSERVER, SOLRCORE, context)
+            context = doSearch(SOLRSERVER, SOLRCORE, context, MAXRESULTS, MAXFACETS)
             if 'search' in requestObject:
                 pass
             elif 'csv' in requestObject:
@@ -378,6 +385,7 @@ def publicsearch(request):
                 pass
 
     context['imageserver'] = IMAGESERVER
+    context['dropdowns'] = FACETS
     if 'displayType' in requestObject:
         context['displayType'] = requestObject['displayType']
     else:

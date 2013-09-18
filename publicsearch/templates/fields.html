@@ -32,8 +32,8 @@
             <label>Major Group</label></td>
         <td>
             <select id="majorgroup" name="majorgroup">
-                {% for option in majorgroup.options %}
-                    <option value="{{option}}"{% if option == searchValues.majorgroup %} selected{% endif %}>{{option}}</option>
+                {% for option in dropdowns.majorgroup %}
+                    <option value="{{option.0}}"{% if option.0 == searchValues.majorgroup %} selected{% endif %}>{{option.0}}</option>
                 {% endfor %}
             </select>
             <!-- <input type="text" id="majorgroup" name="majorgroup"
@@ -65,8 +65,8 @@
         </td>
         <td>
             <select id="county" name="county">
-                {% for option in county.options %}
-                    <option value="{{option}}"{% if option == searchValues.county %} selected{% endif %}>{{option}}</option>
+                {% for option in dropdowns.county %}
+                    <option value="{{option.0}}"{% if option.0 == searchValues.county %} selected{% endif %}>{{option.0}}</option>
                 {% endfor %}
             </select>
             <!-- <input type="text" id="county" name="county" value="{{ searchValues.county }}"/> -->
@@ -76,8 +76,8 @@
         </td>
         <td>
             <select id="state" name="state">
-                {% for option in state.options %}
-                    <option value="{{option}}"{% if option == searchValues.state %} selected{% endif %}>{{option}}</option>
+                {% for option in dropdowns.state %}
+                    <option value="{{option.0}}"{% if option.0 == searchValues.state %} selected{% endif %}>{{option.0}}</option>
                 {% endfor %}
             </select>
             <!-- <input type="text" id="state" name="state" value="{{ searchValues.state }}"/> -->
@@ -87,8 +87,8 @@
         </td>
         <td>
             <select id="country" name="country">
-                {% for option in country.options %}
-                    <option value="{{option}}"{% if option == searchValues.country %} selected{% endif %}>{{option}}</option>
+                {% for option in dropdowns.country %}
+                    <option value="{{option.0}}"{% if option.0 == searchValues.country %} selected{% endif %}>{{option.0}}</option>
                 {% endfor %}
             </select>
             <!-- <input type="text" id="country" name="country" value="{{ searchValues.country }}"/> -->
