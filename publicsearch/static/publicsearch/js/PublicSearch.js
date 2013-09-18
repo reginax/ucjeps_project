@@ -20,29 +20,16 @@ $(document).ready(function () {
             9: {width: '180px' }
         }
     });
-
-    // $('#map-google').click(function () {
-    //     $('#pane').val(2);
-    // });
-    // $('#map-bmapper').click(function () {
-    //     $('#pane').val(2);
-    // });
     
-    var activePane = $('#pane').val();
-    $( "#tabs" ).tabs({ active: activePane,
-        beforeActivate: function(activePane) {
+    // $( "#tabs" ).tabs( "option", "active", $('#pane').val() );
+    $( "#tabs" ).tabs({ active: $('#pane').val(),
+        beforeActivate: function() {
             return function( e, ui ) {
-                activePane = ui.newPanel.index() - 1;
-                $('#pane').val(activePane);
-                console.log(activePane);
+                $('#pane').val(ui.newPanel.index()-1);
             }
-        }(activePane) 
+        }()
     });
     
-    
-    //console.log('pane is:', $('#pane').val());
-    // $( "#tabs" ).tabs( "option", "active", $('#pane').val() );
-
     // we copy the input values from the search form and add them to selectedItems form
     // as hidden values to preserve those values after each selection is made.
     $('#selectedItems').submit(function () {
@@ -85,13 +72,11 @@ function textToggle(divName) {
 }
 
 
-function submitForm(pane, key, value) {
+function submitForm(key, value) {
     //console.log(key, value);
     if (key != '') {
         document.getElementById(key).value = value;
     }
-    document.getElementById('pane').value = pane;
-    //console.log('pane',pane);
     document.forms['search'].submit();
     return false;
 }

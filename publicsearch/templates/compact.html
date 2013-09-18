@@ -15,12 +15,12 @@
             <input type="checkbox" name="item-{{ item.counter }}" value="{{ item.csid }}" checked>
             <b><a href="?displayType=v1&accession={{ item.accession }}">{{ item.accession }}</a></b>
         </div>
-        <div><h2><a href="#" onclick="submitForm(0,'determination','{{ item.determination }}')">{{ item.determination }}</a></h2>
-            (<a href="#" onclick="submitForm(0,'majorgroup','{{ item.majorgroup }}')">{{ item.majorgroup }}</a>)</div>
+        <div><h2><a href="#" onclick="submitForm('determination','{{ item.determination }}')">{{ item.determination }}</a></h2>
+            (<a href="#" onclick="submitForm('majorgroup','{{ item.majorgroup }}')">{{ item.majorgroup }}</a>)</div>
         <div>
-            <a href="#" onclick="submitForm(0,'county','{{ item.county }}')">{{ item.county }}</a> /
-            <a href="#" onclick="submitForm(0,'state','{{ item.state }}')">{{ item.state }}</a> /
-            <a href="#" onclick="submitForm(0,'country','{{ item.country }}')">{{ item.country }}</a>
+            <a href="#" onclick="submitForm('county','{{ item.county }}')">{{ item.county }}</a> /
+            <a href="#" onclick="submitForm('state','{{ item.state }}')">{{ item.state }}</a> /
+            <a href="#" onclick="submitForm('country','{{ item.country }}')">{{ item.country }}</a>
         </div>
         {% if item.L1 and item.L2 %}
             <div>LatLong: {{ item.L1 }} {{ item.L2 }}
@@ -42,23 +42,23 @@
         {% endif %}
         {% if item.collector %}
         <div>Collector: <a href="#"
-                           onclick="submitForm(0,'collector','{{ item.collector }}')">{{ item.collector }}</a>
+                           onclick="submitForm('collector','{{ item.collector }}')">{{ item.collector }}</a>
         </div>{% endif %}
         {% if item.collectionnumber %}
         <div>Collection Number: <a href="#"
-                                   onclick="submitForm(0,'collectionnumber','{{ item.collectionnumber }}')">{{ item.collectionnumber }}</a>
+                                   onclick="submitForm('collectionnumber','{{ item.collectionnumber }}')">{{ item.collectionnumber }}</a>
         </div>{% endif %}
         {% if item.locality %}
         <div>Locality: <a href="#"
-                          onclick="submitForm(0,'locality','{{ item.locality }}')">{{ item.locality }}</a>
+                          onclick="submitForm('locality','{{ item.locality }}')">{{ item.locality }}</a>
         </div>{% endif %}
         {% if item.earlycollectiondate %}
             <div>Collection date: <a href="#"
-                                     onclick="submitForm(0,'collectiondate','{{ item.collectiondate }}')">{{ item.collectiondate }}</a>
+                                     onclick="submitForm('collectiondate','{{ item.collectiondate }}')">{{ item.collectiondate }}</a>
             </div>{% endif %}
         {% if item.habitat %}
             <div>Habitat: <a href="#"
-                             onclick="submitForm(0,'habitat','{{ item.habitat }}')">{{ item.habitat }}</a>
+                             onclick="submitForm('habitat','{{ item.habitat }}')">{{ item.habitat }}</a>
             </div>{% endif %}
         {% if item.elevation %}
             <div>Elevation: {{ item.elevation }} {{ item.elevationunit }}</div>{% endif %}

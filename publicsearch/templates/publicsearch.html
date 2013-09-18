@@ -28,7 +28,7 @@
                         {% include "fields.html" %}
                         {% include "buttons.html" %}
                     </div>
-                    <input type="hidden" value="{{ pane }}" name="pane" id="pane"/>
+                    <input type="hidden" value="{% if pane %}{{ pane }}{% else %}0{% endif %}" name="pane" id="pane"/>
                 </form>
             {% endif %}
             {% include "searchstats.html" %}
@@ -44,8 +44,8 @@
                             <li><a href="#maps">Maps</a></li>
                         </ul>
                         {% include "results.html" %}
-                        {% include "maps.html" %}
                         {% include "facets.html" %}
+                        {% include "maps.html" %}
                         </div>
                     {% endif %}
                 </form>
