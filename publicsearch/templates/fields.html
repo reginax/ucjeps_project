@@ -32,6 +32,7 @@
             <label>Major Group</label></td>
         <td>
             <select id="majorgroup" name="majorgroup">
+                <option value="">Please select</option>
                 {% for option in dropdowns.majorgroup %}
                     <option value="{{option.0}}"{% if option.0 == searchValues.majorgroup %} selected{% endif %}>{{option.0}}</option>
                 {% endfor %}
@@ -65,6 +66,7 @@
         </td>
         <td>
             <select id="county" name="county">
+                <option value="">Please select</option>
                 {% for option in dropdowns.county %}
                     <option value="{{option.0}}"{% if option.0 == searchValues.county %} selected{% endif %}>{{option.0}}</option>
                 {% endfor %}
@@ -76,6 +78,7 @@
         </td>
         <td>
             <select id="state" name="state">
+                <option value="">Please select</option>
                 {% for option in dropdowns.state %}
                     <option value="{{option.0}}"{% if option.0 == searchValues.state %} selected{% endif %}>{{option.0}}</option>
                 {% endfor %}
@@ -87,6 +90,7 @@
         </td>
         <td>
             <select id="country" name="country">
+                <option value="">Please select</option>
                 {% for option in dropdowns.country %}
                     <option value="{{option.0}}"{% if option.0 == searchValues.country %} selected{% endif %}>{{option.0}}</option>
                 {% endfor %}
