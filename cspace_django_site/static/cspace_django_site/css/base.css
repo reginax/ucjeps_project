@@ -74,7 +74,8 @@ a:hover { color: #036; }
 
 .float{
     margin: 7px;
-	float: left;
+    /* chrome & firefox only */
+	display: inline-block;
 	width: 210px;
 	height: 250px;
 }

@@ -4,13 +4,13 @@
             <input type="checkbox" name="item-{{ item.counter }}" value="{{ item.csid }}" checked>
             <a href="?accession={{ item.accession }}&displayType=v2">{{ item.accession }}</a>
         </div>
-        {% if item.blob_ss %}
+        {% if item.blobs %}
             <div>
-                {% for t in item.blob_ss %}
+                {% for t in item.blobs %}
                     <a target="image"
-                       href="http://ucjeps.cspace.berkeley.edu:8180/cspace-services/blobs/{{ t }}/derivatives/OriginalJpeg/content">
+                       href="{{ imageserver }}/blobs/{{ t }}/derivatives/OriginalJpeg/content">
                         <img height="100px"
-                             src="http://ucjeps.cspace.berkeley.edu:8180/cspace-services/blobs/{{ t }}/derivatives/Thumbnail/content"/>
+                             src="{{ imageserver }}/blobs/{{ t }}/derivatives/Thumbnail/content"/>
                     </a>
                 {% endfor %}
             </div>
@@ -27,8 +27,6 @@
         <p class="tiny">Collector: {{ item.collector }}</p>{% endif %}
         {% if item.collectionnumber %}
         <p class="tiny">Collection Number: {{ item.collectionnumber }}</p>{% endif %}
-        {% if item.locality %}
-        <p class="tiny">Locality: {{ item.locality }}</p>{% endif %}
         {% if item.earlycollectiondate %}
             <p class="tiny">Collection date: {{ item.collectiondate }}</p>{% endif %}
         {% if item.habitat %}

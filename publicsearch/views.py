@@ -6,10 +6,13 @@ import time, datetime
 import csv
 import solr
 import cgi
+from os import path
 
 from django.contrib.auth.decorators import login_required
+from cspace_django_site.settings import STATIC_URL
+from cspace_django_site.settings import MEDIA_URL
 from django.shortcuts import render, render_to_response
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django import forms
 from django.utils.encoding import smart_unicode
 
@@ -50,14 +53,26 @@ config = cspace_django_site.getConfig()
 MAXMARKERS = 65
 MAXRESULTS = 1000
 MAXLONGRESULTS = 50
+#IMAGESERVER = 'http://ucjeps.cspace.berkeley.edu:8180/cspace-services' # no final slash
+IMAGESERVER = 'http://localhost:8000/imageserver'
+BMAPPERSERVER = 'http://havrc.cspace.berkeley.edu' # no final slash
+BMAPPERDIR = 'bmapper'
+#BMAPPERTABFILEDIR = '%s/%s/%s' % (BMAPPERSERVER, MEDIA_URL, 'publicsearch/bmapper')
+BMAPPERCONFIGFILE = 'ucjeps.xml'
+#BMAPPERCONFIGFILEDIR = '%s/%s/%s' % (BMAPPERSERVER, STATIC_URL, 'publicsearch/bmapper-config')
+SOLRSERVER = 'http://localhost:8983/solr'
+#SOLRCORE = 'ucjeps-metadata'
+SOLRCORE = 'ucjeps-metadata'
+#LOCALDIR = "/var/www/html/bmapper"  # no final slash
+LOCALDIR = '.'
 
 PARMS = {
     # this first one is special
-    'keyword': ['orchid', 'true', 'a keyword search value, please', 'text', ''],
+    'keyword': ['Keyword', 'true', 'a keyword search value, please', 'text', ''],
 
     # the rest are mapping the solr field names to django form labels and fields
     'csid': ['id', 'true', '', 'id', ''],
-    'accession': ['Accession number', 'true', '', 'accessionnumber_txt', ''],
+    'accession': ['Specimen ID', 'true', '', 'accessionnumber_txt', ''],
     'determination': ['Determination', 'true', '', 'determination_txt', ''],
     'majorgroup': ['Major Group', 'true', '', 'majorgroup_txt', ''],
     'collector': ['Collector', 'true', '', 'collector_txt', ''],
@@ -81,7 +96,7 @@ PARMS = {
     'coordinatesource': ['Coordinate source', 'true', '', 'coordinatesource_txt', ''],
     'coordinateuncertainty': ['Coordinate uncertainty', 'true', '', 'coordinateuncertainty_f', ''],
     'coordinateuncertaintyunit': ['Coordinate uncertainty unit', 'true', '', 'coordinateuncertaintyunit_txt', ''],
-    'blob_ss': ['blob_ss', 'true', '', 'blob_ss', ''],
+    'blobs': ['blob_ss', 'true', '', 'blob_ss', ''],
 }
 
 
@@ -180,14 +195,14 @@ def writeCsv(filehandle,items,writeheader):
 
 
 
-def doSearch(solr_core, context):
+def doSearch(solr_server, solr_core, context):
     requestObject = context['searchValues']
     elapsedtime = time.time()
     if 'reset' in requestObject:
         context = {}
     else:
         # create a connection to a solr server
-        s = solr.SolrConnection(url='http://localhost:8983/solr/%s' % solr_core)
+        s = solr.SolrConnection(url='%s/%s' % (solr_server, solr_core))
         queryterms = []
         urlterms = []
         if 'map-google' in requestObject or 'csv' in requestObject:
@@ -219,7 +234,7 @@ def doSearch(solr_core, context):
         fqs = {}
         try:
             pixonly = requestObject['pixonly']
-            querystring += " AND blob_ss:[* TO *]"
+            querystring += " AND %s:[* TO *]" % PARMS['blobs'][0]
         except:
             pixonly = None
         fields = getfields('facetfields')
@@ -248,8 +263,8 @@ def doSearch(solr_core, context):
                     pass
             # the list of blob csids need to remain an array, so restore it from psql result
             #item['blob_ss'] = listItem.get('blob_ss')
-            if 'blob_ss' in item.keys():
-                item['blob_ss'] = item['blob_ss'].split(',')
+            if 'blobs' in item.keys():
+                item['blobs'] = item['blobs'].split(',')
             item['marker'] = makeMarker(item)
             context['items'].append(item)
 
@@ -285,7 +300,6 @@ def doSearch(solr_core, context):
 
 #@login_required()
 def publicsearch(request):
-    solr_core = 'ucjeps-metadata'
 
     if request.method == 'GET':
         requestObject = request.GET
@@ -300,7 +314,7 @@ def publicsearch(request):
         form = forms.Form(requestObject)
 
         if form.is_valid() or request.method == 'GET':
-            context = doSearch(solr_core, context)
+            context = doSearch(SOLRSERVER, SOLRCORE, context)
             if 'search' in requestObject:
                 pass
             elif 'csv' in requestObject:
@@ -314,10 +328,6 @@ def publicsearch(request):
                 return response
 
             elif 'map-bmapper' in requestObject:
-                # the following should be moved to a config file:
-                localdir = "/var/www/html/bmapper"  # no final slash
-                publicurl = "http://pahma-dev.cspace.berkeley.edu/bmapper" # no final slash
-                localdir = '.'
                 context['berkeleymapper'] = 'set'
                 context['url'] = requestObject['url']
                 mappableitems = []
@@ -328,15 +338,16 @@ def publicsearch(request):
                 context['mapmsg'] = []
                 filename = 'bmapper%s.csv' % datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S")
                 #filehandle = open(filename, 'wb')
-                filehandle = open('%s/%s' % (localdir,filename), 'wb')
+                filehandle = open(path.join(LOCALDIR,filename), 'wb')
                 writeCsv(filehandle,mappableitems,writeheader=False)
                 filehandle.close()
                 context['mapmsg'].append('%s points of the %s selected objects examined had latlongs (%s in result set).' % (len(mappableitems), len(context['items']),context['count']))
                 #context['mapmsg'].append('if our connection to berkeley mapper were working, you be able see them plotted there.')
                 context['items'] = mappableitems
-                bmapperconfigfile = "http%3A%2F%2Fucjeps.berkeley.edu%2Fucjeps.xml"
-                datafile = '%s/%s' % (publicurl,filename)
-                context['bmapperurl'] = "http://berkeleymapper.berkeley.edu/run.php?ViewResults=tab&tabfile=%s&configfile=%s&sourcename=Consortium+of+California+Herbaria+result+set&maptype=Terrain" % (datafile,bmapperconfigfile)
+                bmapperconfigfile = '%s/%s/%s' % (BMAPPERSERVER,BMAPPERDIR,BMAPPERCONFIGFILE)
+                tabfile = '%s/%s/%s' % (BMAPPERSERVER,BMAPPERDIR,filename)
+                context['bmapperurl'] = "http://berkeleymapper.berkeley.edu/run.php?ViewResults=tab&tabfile=%s&configfile=%s&sourcename=Consortium+of+California+Herbaria+result+set&maptype=Terrain" % (tabfile,bmapperconfigfile)
+                return HttpResponseRedirect(context['bmapperurl'])
 
             elif 'map-google' in requestObject:
                 context['url'] = requestObject['url']
@@ -366,6 +377,7 @@ def publicsearch(request):
             elif 'email' in requestObject:
                 pass
 
+    context['imageserver'] = IMAGESERVER
     if 'displayType' in requestObject:
         context['displayType'] = requestObject['displayType']
     else:

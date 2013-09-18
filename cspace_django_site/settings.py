@@ -135,6 +135,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'hello',
     'service',
+    'imageserver',
     'publicsearch'
 )
 
