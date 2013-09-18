@@ -302,7 +302,7 @@ context = {'searchValues': {'csv':'true', 'querystring':'*:*', 'displayType': 's
 context = doSearch(SOLRSERVER, SOLRCORE, context, 0, 1000)
 FACETS = {}
 for facet in context['facetflds']:
-    print 'facet',facet[0]
+    #print 'facet',facet[0]
     FACETS[facet[0]] = facet[1]
 
 #@login_required()
