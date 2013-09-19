@@ -72,12 +72,15 @@ a:hover { color: #036; }
 .size1of10{width:10%;}
 .size2of10{width:20%;}
 
-.float{
-    margin: 7px;
+.grid{
+    margin: 10px;
     /* chrome & firefox only */
 	display: inline-block;
-	width: 210px;
-	height: 250px;
+    width: 210px;
+    vertical-align: top;
+    position: relative;
+    height: 300px;
+    overflow: hidden;
 }
 
 p.tiny{

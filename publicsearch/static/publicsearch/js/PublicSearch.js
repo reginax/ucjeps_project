@@ -45,32 +45,25 @@ $(document).ready(function () {
                     $('<input type="hidden" name="' + el.attr('name') + '" />')
                 }
             }
+            else if (el.attr('type') == 'checkbox') {
+                //console.log('check', el.checked);
+                if ($('input[name="' + name + '"]:checked').length != 0) {
+                    //if (el.checked) {
+                    console.log('checkbox', el.attr('name'), el.val());
+                    $('<input type="hidden" name="' + el.attr('name') + '" />')
+                }
+            }
             else {
                 //console.log(el.attr('name'), el.val());
                 $('<input type="hidden" name="' + el.attr('name') + '" />')
                     .val(el.val())
                     .appendTo('#selectedItems');
+                console.log('zzz', el.attr('name'), el.val());
             }
         });
     });
 
 });
-
-
-function textToggle(divName) {
-    var ele = document.getElementById(divName);
-    var ele_toggle = document.getElementById(divName + '_toggle');
-    if (ele.style.display == 'none') {
-        ele.style.display = 'block';
-        ele_toggle.innerHTML = "hide";
-    }
-    else {
-        ele.style.display = 'none';
-        ele_toggle.innerHTML = "show";
-    }
-    return false;
-}
-
 
 function submitForm(key, value) {
     //console.log(key, value);

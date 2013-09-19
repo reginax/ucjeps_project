@@ -65,6 +65,7 @@ SOLRSERVER = 'http://localhost:8983/solr'
 #SOLRCORE = 'ucjeps-metadata'
 SOLRCORE = 'ucjeps-metadata'
 LOCALDIR = "/var/www/html/bmapper"  # no final slash
+DROPDOWNS = ['majorgroup','county','state','country']
 
 PARMS = {
     # this first one is special
@@ -164,7 +165,7 @@ def makeMarker(result):
     else:
         return None
 
-def writeCsv(filehandle,items,writeheader):
+def writeCsv(filehandle, items, writeheader):
 
     fieldset = getfields('csvdata')
     writer = csv.writer(filehandle,delimiter='\t')
@@ -204,31 +205,52 @@ def doSearch(solr_server, solr_core, context, maxResults, maxFacets):
         s = solr.SolrConnection(url='%s/%s' % (solr_server, solr_core))
         queryterms = []
         urlterms = []
+        facetfields = getfields('facetfields')
         if 'map-google' in requestObject or 'csv' in requestObject or 'map-bmapper' in requestObject:
             querystring = requestObject['querystring']
         else:
             for p in requestObject:
-                if p in ['csrfmiddlewaretoken', 'displayType', 'resultsOnly', 'url', 'querystring', 'pane', 'pixonly']: continue
+                if p in ['csrfmiddlewaretoken', 'displayType', 'resultsOnly', 'url', 'querystring', 'pane', 'pixonly', 'acceptterms']: continue
                 if 'select-' in p: continue # select control for map markers
                 if not p in requestObject: continue
                 if not requestObject[p]: continue
                 if 'item-' in p:
                     continue
                 searchTerm = requestObject[p]
-                terms = searchTerm.split('|')
+                terms = searchTerm.split('&')
                 ANDs = []
                 for t in terms:
+                    t = t.strip()
+                    if t == 'Null':
+                        t = '[* TO *]'
+                        index = '-' + PARMS[p][3]
+                    else:
+                        if p in DROPDOWNS:
+                            #print p,'in dropdowns'
+                            t = '"' + t + '"'
+                            index = PARMS[p][3].replace('_txt','_s')
+                        else:
+                            # have to check for _s version of fieldname in facet fields!
+                            if PARMS[p][3].replace('_txt','_s') in facetfields:
+                                #print p,'in facets'
+                                index = PARMS[p][3].replace('_txt','_s')
+                                t = '"' + t + '"'
+                            else:
+                                #print p,'not in facets'
+                                #print facetfields
+                                t = '' + t + ''
+                                index = PARMS[p][3]
                     if t == 'OR': t = '"OR"'
                     if t == 'AND': t = '"AND"'
-                    ANDs.append('%s:%s' % (PARMS[p][3], t))
+                    ANDs.append('%s:%s' % (index, t))
                 searchTerm = ' AND '.join(ANDs)
                 searchTerm = ' (' + searchTerm + ') '
                 queryterms.append(searchTerm)
                 urlterms.append('%s=%s' % (p, cgi.escape(requestObject[p])))
             querystring = ' AND '.join(queryterms)
-            #print querystring
+            print querystring
 
-        if urlterms != []: urlterms.append('displayType=%s' % requestObject['displayType'])
+        if urlterms != []: urlterms.append('displayType=%s' % context['displayType'])
         url = '&'.join(urlterms)
         fqs = {}
         try:
@@ -236,15 +258,11 @@ def doSearch(solr_server, solr_core, context, maxResults, maxFacets):
             querystring += " AND %s:[* TO *]" % PARMS['blobs'][0]
         except:
             pixonly = None
-        fields = getfields('facetfields')
-        response = s.query(querystring, facet='true', facet_field=fields, fq=fqs, rows=maxResults, facet_limit=maxFacets,
+
+        response = s.query(querystring, facet='true', facet_field=facetfields, fq=fqs, rows=maxResults, facet_limit=maxFacets,
                            facet_mincount=1)
 
         facetflds = getfacets(response)
-        #if pixonly:
-        #    results = [r for r in response.results if 'blob_ss' in r.keys()]
-        #else:
-        #    results = response.results
         results = response.results
 
         for i,listItem in enumerate(results):
@@ -267,18 +285,19 @@ def doSearch(solr_server, solr_core, context, maxResults, maxFacets):
             item['marker'] = makeMarker(item)
             context['items'].append(item)
 
-        if requestObject['displayType'] in ['v1','v2', 'grid'] and response._numFound > MAXLONGRESULTS:
-            context['recordlimit'] = 'items. (limited to %s for long display)' % MAXLONGRESULTS
+        if context['displayType'] in ['full', 'grid'] and response._numFound > MAXLONGRESULTS:
+            context['recordlimit'] = '(limited to %s for long display)' % MAXLONGRESULTS
             context['items'] = context['items'][:MAXLONGRESULTS]
-        if requestObject['displayType'] in ['short'] and response._numFound > MAXRESULTS:
-            context['recordlimit'] = 'items. (display limited to %s)' % MAXRESULTS
+        if context['displayType'] == 'list' and response._numFound > MAXRESULTS:
+            context['recordlimit'] = '(display limited to %s)' % MAXRESULTS
 
+        #print 'items',len(context['items'])
         context['count'] = response._numFound
         m = {}
         for p in PARMS: m[PARMS[p][3].replace('_txt','_s')] = p
-        context['fields'] = [m[f] for f in fields]
-        context['facetflds'] = [[m[f],facetflds[f]] for f in fields]
-        context['range'] = range(len(fields))
+        context['fields'] = [m[f] for f in facetfields]
+        context['facetflds'] = [[m[f],facetflds[f]] for f in facetfields]
+        context['range'] = range(len(facetfields))
         context['fq'] = fqs
         context['url'] = url
         context['pixonly'] = pixonly
@@ -298,12 +317,13 @@ def doSearch(solr_server, solr_core, context, maxResults, maxFacets):
     return context
 
 # on startup, do a query to get options values for forms...
-context = {'searchValues': {'csv':'true', 'querystring':'*:*', 'displayType': 'short'}}
+context = {'displayType': 'list', 'searchValues': {'csv':'true', 'querystring':'*:*'}}
 context = doSearch(SOLRSERVER, SOLRCORE, context, 0, 1000)
 FACETS = {}
 for facet in context['facetflds']:
     #print 'facet',facet[0]
-    FACETS[facet[0]] = sorted(facet[1])
+    if facet[0] in DROPDOWNS:
+        FACETS[facet[0]] = sorted(facet[1])
 
 #@login_required()
 def publicsearch(request):
@@ -316,15 +336,24 @@ def publicsearch(request):
         pass
         #error!
 
+    displayType = 'list' # will be reset later
     context = {'items': [], 'searchValues': requestObject}
     if requestObject != {}:
         form = forms.Form(requestObject)
 
         if form.is_valid() or request.method == 'GET':
+
+            if 'search-list' in requestObject:
+                displayType = 'list'
+            elif 'search-full' in requestObject:
+                displayType = 'full'
+            elif 'search-grid' in requestObject:
+                displayType = 'grid'
+
+            context['displayType'] = displayType
             context = doSearch(SOLRSERVER, SOLRCORE, context, MAXRESULTS, MAXFACETS)
-            if 'search' in requestObject:
-                pass
-            elif 'csv' in requestObject:
+
+            if 'csv' in requestObject:
 
                 # Create the HttpResponse object with the appropriate CSV header.
                 response = HttpResponse(content_type='text/csv')
@@ -386,15 +415,15 @@ def publicsearch(request):
 
     context['imageserver'] = IMAGESERVER
     context['dropdowns'] = FACETS
-    if 'displayType' in requestObject:
-        context['displayType'] = requestObject['displayType']
-    else:
-        context['displayType'] = 'short'
+    context['displayType'] = displayType
+    #if 'displayType' in requestObject:
+    #    context['displayType'] = requestObject['displayType']
+    #else:
+    #    context['displayType'] = 'list'
 
     context['displayTypes'] = (
-        ('short', 'Short'),
-        ('v1', 'v1'),
-        ('v2', 'v2'),
+        ('list', 'List'),
+        ('full', 'Full'),
         ('grid', 'Grid'),
     )
 

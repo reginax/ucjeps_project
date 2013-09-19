@@ -7,13 +7,10 @@
            value="{{ querystring }}"/>
     <input type="hidden" name="url" id="url" value="{{ url }}"/>
     </div>
-    <!-- button type="submit" id="search-email" name="email" class="prettyBtn">email selected</button -->
-    {% if displayType == 'short' %}
+    {% if displayType == 'list' %}
         {% include "short.html" %}
-    {% elif displayType == 'v1' %}
+    {% elif displayType == 'full' %}
         {% include "compact.html" %}
-    {% elif displayType == 'v2' %}
-        {% include "full.html" %}
     {% elif displayType == 'grid' %}
         {% include "grid.html" %}
     {% endif %}

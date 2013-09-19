@@ -1,5 +1,6 @@
-{% for item in items %}
-    <div class="float ui-tabs">
+<div class="grid-wrapper">
+    {% for item in items %}
+    <div class="grid">
         <div class="tiny" style="padding-bottom: 4px;">
             <input type="checkbox" name="item-{{ item.counter }}" value="{{ item.csid }}" checked>
             <a href="?accession={{ item.accession }}&displayType=v2">{{ item.accession }}</a>
@@ -15,10 +16,7 @@
                 {% endfor %}
             </div>
         {% else %}
-            <div>
-                <a target="image" href="#">
-                    <img height="100px" src="#"/>
-                </a>
+            <div style="height: 100px; width: 100px; background-color: lightgray">
             </div>
         {% endif %}
         <p><h4>{{ item.determination }}</h4></p>
@@ -35,3 +33,4 @@
             <p class="tiny">Elevation: {{ item.elevation }} {{ item.elevationunit }}</p>{% endif %}
     </div>
 {% endfor %}
+</div>

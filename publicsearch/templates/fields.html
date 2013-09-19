@@ -1,28 +1,7 @@
 <table width="100%">
     <tr>
         <td>
-            <label>Keyword</label></td>
-        <td>
-            <input type="text" id="keyword" name="keyword" value="{{ searchValues.keyword }}"/>
-        </td>
-        <td>
-            <label>Specimen ID</label>
-        </td>
-        <td>
-            <input type="text" id="accession" name="accession"
-                   value="{{ searchValues.accession }}"/>
-        </td>
-        <td>
-            <label>Collection Number</label>
-        </td>
-        <td>
-            <input type="text" id="collectionnumber" name="collectionnumber"
-                   value="{{ searchValues.collectionnumber }}"/>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <label>Determination</label>
+            <label>Scientific Name</label>
         </td>
         <td>
             <input type="text" id="determination" name="determination"
@@ -41,17 +20,38 @@
                    value="{{ searchValues.majorgroup }}"/> -->
         </td>
         <td>
-            <label>Year Collected</label></td>
+            <label>Keyword</label></td>
         <td>
-            <input type="text" id="collectiondate" name="collectiondate"
-                   value="{{ searchValues.collectiondate }}"/>
+            <input type="text" id="keyword" name="keyword" value="{{ searchValues.keyword }}"/>
         </td>
+    </tr>
+    <tr>
         <td>
             <label>Collector</label>
         </td>
         <td>
             <input type="text" id="collector" name="collector"
                    value="{{ searchValues.collector }}"/>
+        </td>
+        <td>
+            <label>Date Collected</label></td>
+        <td>
+            <input type="text" id="collectiondate" name="collectiondate"
+                   value="{{ searchValues.collectiondate }}"/>
+        </td>
+        <td>
+            <label>Collection Number</label>
+        </td>
+        <td>
+            <input type="text" id="collectionnumber" name="collectionnumber"
+                   value="{{ searchValues.collectionnumber }}"/>
+        </td>
+        <td>
+            <label>Specimen ID</label>
+        </td>
+        <td>
+            <input type="text" id="accession" name="accession"
+                   value="{{ searchValues.accession }}"/>
         </td>
     </tr>
     <tr>

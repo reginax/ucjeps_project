@@ -1,14 +1,13 @@
 <div style="height: 30px; padding-top: 15px;">
-    <button type="submit" id="search-submit" name="search" class="prettyBtn">search</button>
-    <button type="submit" id="search-reset" name="reset" class="prettyBtn">reset</button>
-    <label for="">Display format: </label>
-    {% for displayTypeItem in displayTypes %}
-        <input type="radio" name="displayType" value="{{ displayTypeItem.0 }}"
-                {% ifequal displayTypeItem.0 displayType %}
-               checked="checked"
-                {% endifequal %}/>
-        <label for="">{{ displayTypeItem.1 }}</label>
-    {% endfor %}
+    <span class="big">Display:</span>
+    <button type="submit" id="search-list" name="search-list" class="prettyBtn">List</button>
+    <button type="submit" id="search-full" name="search-full" class="prettyBtn">Full</button>
+    <button type="submit" id="search-grid" name="search-grid" class="prettyBtn">Grid</button>
+    &nbsp;  &nbsp; &nbsp;
+    <button type="submit" id="search-reset" name="reset" class="prettyBtn">Reset</button>
     &nbsp;  &nbsp; &nbsp;
     <input type="checkbox" {% if pixonly %}checked {% endif %} name='pixonly' value="pixonly"> only show objects with images
+    <span style="float: right;">
+        <input type="checkbox" {% if acceptterms %}checked {% endif %} name='acceptterms' value="acceptterms">
+        I accept the <a href="http://ucjeps.berkeley.edu/consortium/data_use_terms.html">data-use terms</a></span>
 </div>
