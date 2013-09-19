@@ -52,7 +52,7 @@ config = cspace_django_site.getConfig()
 
 MAXMARKERS = 65
 MAXRESULTS = 1000
-MAXFACETS = 50
+MAXFACETS = 500
 MAXLONGRESULTS = 50
 #IMAGESERVER = 'http://ucjeps.cspace.berkeley.edu:8180/cspace-services' # no final slash
 IMAGESERVER = 'http://localhost:8000/imageserver'
