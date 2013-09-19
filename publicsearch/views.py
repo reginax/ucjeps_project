@@ -56,7 +56,7 @@ MAXFACETS = 50
 MAXLONGRESULTS = 50
 #IMAGESERVER = 'http://ucjeps.cspace.berkeley.edu:8180/cspace-services' # no final slash
 IMAGESERVER = 'http://localhost:8000/imageserver'
-BMAPPERSERVER = 'https://havrc.cspace.berkeley.edu' # no final slash
+BMAPPERSERVER = 'https://pahma-dev.cspace.berkeley.edu' # no final slash
 BMAPPERDIR = 'bmapper'
 #BMAPPERTABFILEDIR = '%s/%s/%s' % (BMAPPERSERVER, MEDIA_URL, 'publicsearch/bmapper')
 BMAPPERCONFIGFILE = 'ucjeps.xml'
@@ -204,7 +204,7 @@ def doSearch(solr_server, solr_core, context, maxResults, maxFacets):
         s = solr.SolrConnection(url='%s/%s' % (solr_server, solr_core))
         queryterms = []
         urlterms = []
-        if 'map-google' in requestObject or 'csv' in requestObject:
+        if 'map-google' in requestObject or 'csv' in requestObject or 'map-bmapper' in requestObject:
             querystring = requestObject['querystring']
         else:
             for p in requestObject:
@@ -303,7 +303,7 @@ context = doSearch(SOLRSERVER, SOLRCORE, context, 0, 1000)
 FACETS = {}
 for facet in context['facetflds']:
     #print 'facet',facet[0]
-    FACETS[facet[0]] = facet[1]
+    FACETS[facet[0]] = sorted(facet[1])
 
 #@login_required()
 def publicsearch(request):
