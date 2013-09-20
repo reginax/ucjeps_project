@@ -321,9 +321,12 @@ context = {'displayType': 'list', 'searchValues': {'csv':'true', 'querystring':'
 context = doSearch(SOLRSERVER, SOLRCORE, context, 0, 1000)
 FACETS = {}
 for facet in context['facetflds']:
-    #print 'facet',facet[0]
+    #print 'facet',facet[0],len(facet[1])
     if facet[0] in DROPDOWNS:
         FACETS[facet[0]] = sorted(facet[1])
+    # if the facet is not in a dropdown, save the memory for something better
+    else:
+        FACETS[facet[0]] = []
 
 #@login_required()
 def publicsearch(request):

@@ -49,7 +49,6 @@ $(document).ready(function () {
                 //console.log('check', el.checked);
                 if ($('input[name="' + name + '"]:checked').length != 0) {
                     //if (el.checked) {
-                    console.log('checkbox', el.attr('name'), el.val());
                     $('<input type="hidden" name="' + el.attr('name') + '" />')
                 }
             }
@@ -58,7 +57,6 @@ $(document).ready(function () {
                 $('<input type="hidden" name="' + el.attr('name') + '" />')
                     .val(el.val())
                     .appendTo('#selectedItems');
-                console.log('zzz', el.attr('name'), el.val());
             }
         });
     });

@@ -13,7 +13,7 @@
     <div>
         <div class="result-title">
             <input type="checkbox" name="item-{{ item.counter }}" value="{{ item.csid }}" checked>
-            <b><a href="?displayType=v1&accession={{ item.accession }}">{{ item.accession }}</a></b>
+            <b><a href="?displayType=full&accession={{ item.accession }}">{{ item.accession }}</a></b>
         </div>
         <div><h2><a href="#" onclick="submitForm('determination','{{ item.determination }}')">{{ item.determination }}</a></h2>
             (<a href="#" onclick="submitForm('majorgroup','{{ item.majorgroup }}')">{{ item.majorgroup }}</a>)</div>
