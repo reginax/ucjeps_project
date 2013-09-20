@@ -328,7 +328,7 @@ for facet in context['facetflds']:
     else:
         FACETS[facet[0]] = []
 
-#@login_required()
+@login_required()
 def publicsearch(request):
 
     if request.method == 'GET':
