@@ -2,9 +2,20 @@
 {% load i18n admin_static %}
 {% load staticfiles %}
 
+{% block branding %}
+    <h1 class="bannerTitle" id="site-name">{% trans 'UCJEPS Search Portal' %}</h1>
+    <div style="float:right; height: 30px;">
+        <a href="#">About</a>
+        <a href="#">Help</a>
+        <a href="#">Credits</a>
+    </div>
+{% endblock %}
+
 {% block extrastyle %}
     <link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/tablesorter.css" %}"/>
-    <link rel="stylesheet" type="text/css" href="{% static "cspace_django_site/css/smoothness/jquery-ui-1.10.3.custom.min.css" %}"/>
+    <link rel="stylesheet" type="text/css"
+          href="{% static "cspace_django_site/css/smoothness/jquery-ui-1.10.3.custom.min.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/ucjeps.css" %}"/>
 {% endblock %}
 
 {% block scripts %}
@@ -17,10 +28,9 @@
 
 {% block content %}
     <div id="content-main">
-        <div class="unit size1of4">
-            <div class="xxx">
+        <div class="xxx">
             {% if resultsOnly %}
-                 {% include "showfields.html" %}
+                {% include "showfields.html" %}
             {% else %}
                 <form method="post" class="searchForm" id="search" action=".">
                     {% csrf_token %}
@@ -32,12 +42,12 @@
                 </form>
             {% endif %}
             {% include "searchstats.html" %}
-            </div>
-            <div class="xxx">
-                <form method="post" class="searchForm" id="selectedItems" action=".">
-                    {% csrf_token %}
-                    {% if count > 0 %}
-                        <div id="tabs">
+        </div>
+        <div class="xxx">
+            <form method="post" class="searchForm" id="selectedItems" action=".">
+                {% csrf_token %}
+                {% if count > 0 %}
+                    <div id="tabs">
                         <ul>
                             <li><a href="#results">Results</a></li>
                             <li><a href="#facets">Facets</a></li>
@@ -46,10 +56,9 @@
                         {% include "results.html" %}
                         {% include "facets.html" %}
                         {% include "maps.html" %}
-                        </div>
-                    {% endif %}
-                </form>
-            </div>
+                    </div>
+                {% endif %}
+            </form>
         </div>
     </div>
     {% block footer %}

@@ -6,8 +6,14 @@
     &nbsp;  &nbsp; &nbsp;
     <button type="submit" id="search-reset" name="reset" class="prettyBtn">Reset</button>
     &nbsp;  &nbsp; &nbsp;
-    <input type="checkbox" {% if pixonly %}checked {% endif %} name='pixonly' value="pixonly"> only show objects with images
-    <span style="float: right;">
+    <input type="checkbox" {% if pixonly %}checked {% endif %} name='pixonly' value="pixonly"> Include only items with images.
+    &nbsp; &nbsp; &nbsp;
+    Display <select id="maxresults" name="maxresults">
+        {% for option in resultoptions %}
+            <option value="{{option}}"{% if option ==  maxresults %} selected{% endif %}>{{option}}</option>
+        {% endfor %}
+    </select> items per page.
+    <span class="tiny" style="float: right;">
         <input type="checkbox" {% if acceptterms %}checked {% endif %} name='acceptterms' value="acceptterms">
         I accept the <a href="http://ucjeps.berkeley.edu/consortium/data_use_terms.html">data-use terms</a></span>
 </div>

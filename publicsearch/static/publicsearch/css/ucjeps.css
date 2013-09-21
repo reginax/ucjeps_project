@@ -1,0 +1,25 @@
+#branding {
+    background-color: #3366CC;
+    margin: 10px 4px 4px 4px;
+}
+
+#branding h1 {
+    text-indent: 120px;
+    height: 60px; /* The height of the tallest image referenced above in background-image */
+    margin-bottom: 8px;
+    background: url(../images/logo_uc_80.png) no-repeat left top, url(../images/logo_jeps_80.png) no-repeat right top;
+}
+
+.bannerTitle {
+    font-family: "Times New Roman", Times, serif;
+    padding-top: 25px;
+    color: #FFFF00;
+    font-weight: bold;
+    font-style: italic;
+    font-size: 28px;
+    letter-spacing: 0.3em;
+}
+
+#branding hr { margin: 4px 0px 10px 0px;}
+
+#branding a { margin-left: 30px; }

@@ -66,10 +66,17 @@ $(document).ready(function () {
 function submitForm(key, value) {
     //console.log(key, value);
     if (key != '') {
-        document.getElementById(key).value = value;
-    }
+        var keyElement = document.getElementById(key);
+        var keyElQual = document.getElementById(key + '_qualifier');
+        if (keyElement != null) {
+            keyElement.value = value;
+            if (keyElQual != null) {
+                keyElQual.value = 'exact';
+            }
+        }
     document.forms['search'].submit();
     return false;
+    }
 }
 
 $(function () {

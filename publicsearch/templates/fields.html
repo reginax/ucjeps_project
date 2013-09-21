@@ -4,6 +4,13 @@
             <label>Scientific Name</label>
         </td>
         <td>
+        <select id="determination_qualifier" name="determination_qualifier">
+                {% for option in qualifiers %}
+                    <option value="{{option}}"{% if option == searchValues.determination_qualifier %} selected{% endif %}>{{option}}</option>
+                {% endfor %}
+        </select>
+        </td>
+        <td>
             <input type="text" id="determination" name="determination"
                    value="{{ searchValues.determination }}"/>
         </td>
@@ -30,6 +37,13 @@
             <label>Collector</label>
         </td>
         <td>
+        <select id="collector_qualifier" name="collector_qualifier">
+                {% for option in qualifiers %}
+                    <option value="{{option}}"{% if option == searchValues.collector_qualifier %} selected{% endif %}>{{option}}</option>
+                {% endfor %}
+        </select>
+        </td>
+        <td>
             <input type="text" id="collector" name="collector"
                    value="{{ searchValues.collector }}"/>
         </td>
@@ -46,6 +60,23 @@
             <input type="text" id="collectionnumber" name="collectionnumber"
                    value="{{ searchValues.collectionnumber }}"/>
         </td>
+    </tr>
+    <tr>
+        <td>
+            <label>Locality</label>
+        </td>
+        <td>
+        <select id="locality_qualifier" name="locality_qualifier">
+                {% for option in qualifiers %}
+                    <option value="{{option}}"{% if option == searchValues.locality_qualifier %} selected{% endif %}>{{option}}</option>
+                {% endfor %}
+        </select>
+        </td>
+        <td>
+            <input type="text" id="locality" name="locality" value="{{ searchValues.locality }}"/>
+        </td>
+        <td/>
+        <td/>
         <td>
             <label>Specimen ID</label>
         </td>
@@ -56,15 +87,9 @@
     </tr>
     <tr>
         <td>
-            <label>Locality</label>
-        </td>
-        <td>
-            <input type="text" id="locality" name="locality" value="{{ searchValues.locality }}"/>
-        </td>
-        <td>
             <label>County</label>
         </td>
-        <td>
+        <td colspan="2">
             <select id="county" name="county">
                 <option value="">Please select</option>
                 {% for option in dropdowns.county %}

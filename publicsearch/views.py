@@ -51,8 +51,8 @@ from cspace_django_site.main import cspace_django_site
 config = cspace_django_site.getConfig()
 
 MAXMARKERS = 65
-MAXRESULTS = 1000
-MAXFACETS = 500
+MAXRESULTS = 100
+MAXFACETS = 1000
 MAXLONGRESULTS = 50
 #IMAGESERVER = 'http://ucjeps.cspace.berkeley.edu:8180/cspace-services' # no final slash
 IMAGESERVER = 'http://localhost:8000/imageserver'
@@ -66,6 +66,7 @@ SOLRSERVER = 'http://localhost:8983/solr'
 SOLRCORE = 'ucjeps-metadata'
 LOCALDIR = "/var/www/html/bmapper"  # no final slash
 DROPDOWNS = ['majorgroup','county','state','country']
+search_qualifiers = ['keyword','phrase','exact']
 
 PARMS = {
     # this first one is special
@@ -210,15 +211,16 @@ def doSearch(solr_server, solr_core, context, maxResults, maxFacets):
             querystring = requestObject['querystring']
         else:
             for p in requestObject:
-                if p in ['csrfmiddlewaretoken', 'displayType', 'resultsOnly', 'url', 'querystring', 'pane', 'pixonly', 'acceptterms']: continue
+                if p in ['csrfmiddlewaretoken', 'displayType', 'resultsOnly', 'maxresults', 'url', 'querystring', 'pane', 'pixonly', 'acceptterms']: continue
+                if '_qualifier' in p: continue
                 if 'select-' in p: continue # select control for map markers
                 if not p in requestObject: continue
                 if not requestObject[p]: continue
                 if 'item-' in p:
                     continue
                 searchTerm = requestObject[p]
-                terms = searchTerm.split('&')
-                ANDs = []
+                terms = searchTerm.split(' OR ')
+                ORs = []
                 for t in terms:
                     t = t.strip()
                     if t == 'Null':
@@ -226,24 +228,32 @@ def doSearch(solr_server, solr_core, context, maxResults, maxFacets):
                         index = '-' + PARMS[p][3]
                     else:
                         if p in DROPDOWNS:
-                            #print p,'in dropdowns'
+                            # if it's a value in a dropdown, it must always be an "exact search"
                             t = '"' + t + '"'
                             index = PARMS[p][3].replace('_txt','_s')
-                        else:
-                            # have to check for _s version of fieldname in facet fields!
-                            if PARMS[p][3].replace('_txt','_s') in facetfields:
-                                #print p,'in facets'
+                        elif p+'_qualifier' in requestObject:
+                            print 'qualifier:',requestObject[p+'_qualifier']
+                            qualifier = requestObject[p+'_qualifier']
+                            if qualifier == 'exact':
                                 index = PARMS[p][3].replace('_txt','_s')
                                 t = '"' + t + '"'
-                            else:
-                                #print p,'not in facets'
-                                #print facetfields
-                                t = '' + t + ''
+                            elif qualifier == 'phrase':
                                 index = PARMS[p][3]
+                                t = '"' + t + '"'
+                            elif qualifier == 'keyword':
+                                t = t.split(' ')
+                                t = ' +'.join(t)
+                                t = '(+' + t + ')'
+                                index = PARMS[p][3]
+                        else:
+                            t = t.split(' ')
+                            t = ' +'.join(t)
+                            t = '(+' + t + ')'
+                            index = PARMS[p][3]
                     if t == 'OR': t = '"OR"'
                     if t == 'AND': t = '"AND"'
-                    ANDs.append('%s:%s' % (index, t))
-                searchTerm = ' AND '.join(ANDs)
+                    ORs.append('%s:%s' % (index, t))
+                searchTerm = ' OR '.join(ORs)
                 searchTerm = ' (' + searchTerm + ') '
                 queryterms.append(searchTerm)
                 urlterms.append('%s=%s' % (p, cgi.escape(requestObject[p])))
@@ -288,8 +298,8 @@ def doSearch(solr_server, solr_core, context, maxResults, maxFacets):
         if context['displayType'] in ['full', 'grid'] and response._numFound > MAXLONGRESULTS:
             context['recordlimit'] = '(limited to %s for long display)' % MAXLONGRESULTS
             context['items'] = context['items'][:MAXLONGRESULTS]
-        if context['displayType'] == 'list' and response._numFound > MAXRESULTS:
-            context['recordlimit'] = '(display limited to %s)' % MAXRESULTS
+        if context['displayType'] == 'list' and response._numFound > maxResults:
+            context['recordlimit'] = '(display limited to %s)' % maxResults
 
         #print 'items',len(context['items'])
         context['count'] = response._numFound
@@ -328,7 +338,8 @@ for facet in context['facetflds']:
     else:
         FACETS[facet[0]] = []
 
-@login_required()
+
+#@login_required()
 def publicsearch(request):
 
     if request.method == 'GET':
@@ -340,21 +351,27 @@ def publicsearch(request):
         #error!
 
     displayType = 'list' # will be reset later
+    maxResults = 100     # will be reset later
     context = {'items': [], 'searchValues': requestObject}
     if requestObject != {}:
         form = forms.Form(requestObject)
 
         if form.is_valid() or request.method == 'GET':
 
-            if 'search-list' in requestObject:
+            if 'displayType' in requestObject:
+                displayType = requestObject['displayType']
+            elif 'search-list' in requestObject:
                 displayType = 'list'
             elif 'search-full' in requestObject:
                 displayType = 'full'
             elif 'search-grid' in requestObject:
                 displayType = 'grid'
 
+            if 'maxresults' in requestObject:
+                maxResults = int(requestObject['maxresults'])
+
             context['displayType'] = displayType
-            context = doSearch(SOLRSERVER, SOLRCORE, context, MAXRESULTS, MAXFACETS)
+            context = doSearch(SOLRSERVER, SOLRCORE, context, maxResults, MAXFACETS)
 
             if 'csv' in requestObject:
 
@@ -419,10 +436,9 @@ def publicsearch(request):
     context['imageserver'] = IMAGESERVER
     context['dropdowns'] = FACETS
     context['displayType'] = displayType
-    #if 'displayType' in requestObject:
-    #    context['displayType'] = requestObject['displayType']
-    #else:
-    #    context['displayType'] = 'list'
+    context['maxresults'] = maxResults
+    context['qualifiers'] = search_qualifiers
+    context['resultoptions'] = [100,500,1000,2000]
 
     context['displayTypes'] = (
         ('list', 'List'),
