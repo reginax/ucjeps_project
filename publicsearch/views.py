@@ -232,7 +232,7 @@ def doSearch(solr_server, solr_core, context, maxResults, maxFacets):
                             t = '"' + t + '"'
                             index = PARMS[p][3].replace('_txt','_s')
                         elif p+'_qualifier' in requestObject:
-                            print 'qualifier:',requestObject[p+'_qualifier']
+                            # print 'qualifier:',requestObject[p+'_qualifier']
                             qualifier = requestObject[p+'_qualifier']
                             if qualifier == 'exact':
                                 index = PARMS[p][3].replace('_txt','_s')
@@ -437,6 +437,7 @@ def publicsearch(request):
     context['dropdowns'] = FACETS
     context['displayType'] = displayType
     context['maxresults'] = maxResults
+    context['timestamp'] = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
     context['qualifiers'] = search_qualifiers
     context['resultoptions'] = [100,500,1000,2000]
 
