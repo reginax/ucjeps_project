@@ -51,7 +51,7 @@ from cspace_django_site.main import cspace_django_site
 config = cspace_django_site.getConfig()
 
 MAXMARKERS = 65
-MAXRESULTS = 100
+MAXRESULTS = 2000
 MAXFACETS = 1000
 MAXLONGRESULTS = 50
 #IMAGESERVER = 'http://ucjeps.cspace.berkeley.edu:8180/cspace-services' # no final slash
@@ -351,7 +351,7 @@ def publicsearch(request):
         #error!
 
     displayType = 'list' # will be reset later
-    maxResults = 100     # will be reset later
+    maxResults = MAXRESULTS # will be reset later
     context = {'items': [], 'searchValues': requestObject}
     if requestObject != {}:
         form = forms.Form(requestObject)
