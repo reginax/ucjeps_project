@@ -1,16 +1,4 @@
 $(document).ready(function () {
-    $('.drillDown').click(function () {
-        $(this).hide();
-        $(this).parent().children('.drilled').show();
-        $(this).parent().children('.drillUp').show();
-    });
-
-    $('.drillUp').click(function () {
-        $(this).hide();
-        $(this).parent().children('.drilled').hide();
-        $(this).parent().children('.drillDown').show();
-    });
-
     $('#resultsListing').tablesorter({
         headers: {
             0: {sorter: false},
@@ -22,6 +10,11 @@ $(document).ready(function () {
     });
     
     // $( "#tabs" ).tabs( "option", "active", $('#pane').val() );
+    
+    // instantiate '#tabs' as an instance of tabs, with an active panel of the value of the hidden form element
+    // each time a different panel is activated (beforeActivate event triggered) 
+    // the hidden input value of '#pane' is set with the new panels's index-1 
+    // if we make the results bit AJAX-y, we can probably get rid of this input element and just keep track of it in the JS
     $( "#tabs" ).tabs({ active: $('#pane').val(),
         beforeActivate: function() {
             return function( e, ui ) {
