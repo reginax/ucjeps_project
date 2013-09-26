@@ -11,6 +11,12 @@
     </div>
 {% endblock %}
 
+{% block loginBtn %}
+<div id="user-tools">
+    <a href="{% url 'login' %}?next=/public/publicsearch/" id="login" class="prettyBtn">{% trans 'Sign in' %}</a>
+</div>
+{% endblock %}
+
 {% block extrastyle %}
     <link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/tablesorter.css" %}"/>
     <link rel="stylesheet" type="text/css"
