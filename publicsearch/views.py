@@ -18,7 +18,6 @@ config = cspace_django_site.getConfig()
 SOLRSERVER = 'http://localhost:8983/solr'
 SOLRCORE = 'ucjeps-metadata'
 
-
 #@login_required()
 def publicsearch(request):
 
@@ -30,13 +29,17 @@ def publicsearch(request):
         pass
         #error!
 
-    context = {'items': [], 'searchValues': requestObject, 'displayType': setDisplayType(requestObject)}
-    if requestObject != {}:
+    if requestObject == {}:
+        context = {}
+    else:
         form = forms.Form(requestObject)
 
         if form.is_valid() or request.method == 'GET':
-
-            context = doSearch(SOLRSERVER, SOLRCORE, context)
+            context = {'searchValues': requestObject}
+            if 'reset' in requestObject:
+                context = {}
+            else:
+                context = doSearch(SOLRSERVER, SOLRCORE, context)
 
             if 'csv' in requestObject:
                 # Create the HttpResponse object with the appropriate CSV header.
@@ -52,6 +55,6 @@ def publicsearch(request):
             elif 'email' in requestObject:
                 pass
 
-    context = setConstants(requestObject, context)
+    context = setConstants(context)
 
     return render(request, 'publicsearch.html', context)

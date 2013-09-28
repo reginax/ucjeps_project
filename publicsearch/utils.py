@@ -1,5 +1,4 @@
 
-import os
 import re
 import time, datetime
 import csv
@@ -7,47 +6,10 @@ import solr
 import cgi
 from os import path
 
-from django.contrib.auth.decorators import login_required
-from cspace_django_site.settings import STATIC_URL
-from cspace_django_site.settings import MEDIA_URL
-from django.shortcuts import render, render_to_response
 from django.http import HttpResponse, HttpResponseRedirect
-from django import forms
-from django.utils.encoding import smart_unicode
-
-from operator import itemgetter
-from urllib import urlencode, quote, unquote
-
-# alas, there are many ways the XML parsing functionality might be installed.
-# the following code attempts to find and import the best...
-try:
-    from xml.etree.ElementTree import tostring, parse, Element, fromstring
-
-    print("running with xml.etree.ElementTree")
-except ImportError:
-    try:
-        from lxml import etree
-
-        print("running with lxml.etree")
-    except ImportError:
-        try:
-            # normal cElementTree install
-            import cElementTree as etree
-
-            print("running with cElementTree")
-        except ImportError:
-            try:
-                # normal ElementTree install
-                import elementtree.ElementTree as etree
-
-                print("running with ElementTree")
-            except ImportError:
-                print("Failed to import ElementTree from any known place")
-
 from cspace_django_site.main import cspace_django_site
 
 # global variables (at least to this module...)
-config = cspace_django_site.getConfig()
 
 MAXMARKERS = 65
 MAXRESULTS = 2000
@@ -66,6 +28,8 @@ SOLRCORE = 'ucjeps-metadata'
 LOCALDIR = "/var/www/html/bmapper"  # no final slash
 DROPDOWNS = ['majorgroup','county','state','country']
 search_qualifiers = ['keyword','phrase','exact']
+
+FACETS = {}
 
 PARMS = {
     # this first one is special
@@ -195,7 +159,6 @@ def writeCsv(filehandle, items, writeheader):
 
 def setupGoogleMap(requestObject, context):
 
-    context['url'] = requestObject['url']
     selected = []
     for p in requestObject:
         if 'item-' in p:
@@ -224,7 +187,6 @@ def setupGoogleMap(requestObject, context):
 def setupBMapper(requestObject, context):
 
     context['berkeleymapper'] = 'set'
-    context['url'] = requestObject['url']
     mappableitems = []
     for item in context['items']:
         m = makeMarker(item)
@@ -259,167 +221,171 @@ def setDisplayType(requestObject):
 
     return displayType
 
-def setConstants(requestObject, context):
+def setConstants(context):
 
     context['imageserver'] = IMAGESERVER
     context['dropdowns'] = FACETS
-    context['displayType'] = setDisplayType(requestObject)
     context['timestamp'] = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
     context['qualifiers'] = search_qualifiers
     context['resultoptions'] = [100,500,1000,2000]
-    if 'maxresults' in requestObject:
-        context['maxresults'] = int(requestObject['maxresults'])
-    else:
-        context['maxresults'] = MAXRESULTS
-
-    if 'maxfacets' in requestObject:
-        context['maxfacets'] = int(requestObject['maxfacets'])
-    else:
-        context['maxfacets'] = MAXFACETS
 
     context['displayTypes'] = (
         ('list', 'List'),
         ('full', 'Full'),
         ('grid', 'Grid'),
     )
+
+    # copy over form values to context if they exist
+    try:
+        requestObject = context['searchValues']
+
+        context['displayType'] = setDisplayType(requestObject)
+        if 'url' in requestObject: context['url'] = requestObject['url']
+        if 'querystring' in requestObject: context['querystring'] = requestObject['querystring']
+        if 'core' in requestObject: context['core'] = requestObject['core']
+        if 'maxresults' in requestObject: context['maxresults'] = int(requestObject['maxresults'])
+
+        if 'maxfacets' in requestObject:
+            context['maxfacets'] = int(requestObject['maxfacets'])
+        else:
+            context['maxfacets'] = MAXFACETS
+
+    except:
+        print "no searchValues set"
+        context['displayType'] = setDisplayType({})
+        context['url'] = ''
+        context['querystring'] = ''
+        context['core'] = SOLRCORE
+        context['maxresults'] = MAXRESULTS
+
     return context
 
 def doSearch(solr_server, solr_core, context):
 
-
-    requestObject = context['searchValues']
     elapsedtime = time.time()
+    context = setConstants(context)
+    requestObject = context['searchValues']
 
-    if 'reset' in requestObject:
-        context = {}
+    # create a connection to a solr server
+    s = solr.SolrConnection(url='%s/%s' % (solr_server, solr_core))
+    queryterms = []
+    urlterms = []
+    facetfields = getfields('facetfields')
+    if 'map-google' in requestObject or 'csv' in requestObject or 'map-bmapper' in requestObject:
+        querystring = requestObject['querystring']
+        url = requestObject['url']
+        context['maxresults'] = MAXRESULTS
     else:
-        try:
-            maxResults = int(requestObject['maxresults'])
-        except:
-            maxResults = 1
-
-        try:
-            maxFacets = int(requestObject['maxfacets'])
-        except:
-            maxFacets = MAXFACETS
-
-        # create a connection to a solr server
-        s = solr.SolrConnection(url='%s/%s' % (solr_server, solr_core))
-        queryterms = []
-        urlterms = []
-        facetfields = getfields('facetfields')
-        if 'map-google' in requestObject or 'csv' in requestObject or 'map-bmapper' in requestObject:
-            querystring = requestObject['querystring']
-        else:
-            for p in requestObject:
-                if p in ['csrfmiddlewaretoken', 'displayType', 'resultsOnly', 'maxresults', 'url', 'querystring', 'pane', 'pixonly', 'acceptterms']: continue
-                if '_qualifier' in p: continue
-                if 'select-' in p: continue # skip select control for map markers
-                if not p in requestObject: continue
-                if not requestObject[p]: continue
-                if 'item-' in p: continue
-                searchTerm = requestObject[p]
-                terms = searchTerm.split(' OR ')
-                ORs = []
-                for t in terms:
-                    t = t.strip()
-                    if t == 'Null':
-                        t = '[* TO *]'
-                        index = '-' + PARMS[p][3]
-                    else:
-                        if p in DROPDOWNS:
-                            # if it's a value in a dropdown, it must always be an "exact search"
-                            t = '"' + t + '"'
+        for p in requestObject:
+            if p in ['csrfmiddlewaretoken', 'displayType', 'resultsOnly', 'maxresults', 'url', 'querystring', 'pane', 'pixonly', 'acceptterms']: continue
+            if '_qualifier' in p: continue
+            if 'select-' in p: continue # skip select control for map markers
+            if not p in requestObject: continue
+            if not requestObject[p]: continue
+            if 'item-' in p: continue
+            searchTerm = requestObject[p]
+            terms = searchTerm.split(' OR ')
+            ORs = []
+            for t in terms:
+                t = t.strip()
+                if t == 'Null':
+                    t = '[* TO *]'
+                    index = '-' + PARMS[p][3]
+                else:
+                    if p in DROPDOWNS:
+                        # if it's a value in a dropdown, it must always be an "exact search"
+                        t = '"' + t + '"'
+                        index = PARMS[p][3].replace('_txt','_s')
+                    elif p+'_qualifier' in requestObject:
+                        # print 'qualifier:',requestObject[p+'_qualifier']
+                        qualifier = requestObject[p+'_qualifier']
+                        if qualifier == 'exact':
                             index = PARMS[p][3].replace('_txt','_s')
-                        elif p+'_qualifier' in requestObject:
-                            # print 'qualifier:',requestObject[p+'_qualifier']
-                            qualifier = requestObject[p+'_qualifier']
-                            if qualifier == 'exact':
-                                index = PARMS[p][3].replace('_txt','_s')
-                                t = '"' + t + '"'
-                            elif qualifier == 'phrase':
-                                index = PARMS[p][3]
-                                t = '"' + t + '"'
-                            elif qualifier == 'keyword':
-                                t = t.split(' ')
-                                t = ' +'.join(t)
-                                t = '(+' + t + ')'
-                                index = PARMS[p][3]
-                        else:
+                            t = '"' + t + '"'
+                        elif qualifier == 'phrase':
+                            index = PARMS[p][3]
+                            t = '"' + t + '"'
+                        elif qualifier == 'keyword':
                             t = t.split(' ')
                             t = ' +'.join(t)
                             t = '(+' + t + ')'
                             index = PARMS[p][3]
-                    if t == 'OR': t = '"OR"'
-                    if t == 'AND': t = '"AND"'
-                    ORs.append('%s:%s' % (index, t))
-                searchTerm = ' OR '.join(ORs)
-                searchTerm = ' (' + searchTerm + ') '
-                queryterms.append(searchTerm)
-                urlterms.append('%s=%s' % (p, cgi.escape(requestObject[p])))
-            querystring = ' AND '.join(queryterms)
-            print querystring
+                    else:
+                        t = t.split(' ')
+                        t = ' +'.join(t)
+                        t = '(+' + t + ')'
+                        index = PARMS[p][3]
+                if t == 'OR': t = '"OR"'
+                if t == 'AND': t = '"AND"'
+                ORs.append('%s:%s' % (index, t))
+            searchTerm = ' OR '.join(ORs)
+            searchTerm = ' (' + searchTerm + ') '
+            queryterms.append(searchTerm)
+            urlterms.append('%s=%s' % (p, cgi.escape(requestObject[p])))
+        querystring = ' AND '.join(queryterms)
+        print querystring
 
         if urlterms != []:
             urlterms.append('displayType=%s' % context['displayType'])
-            urlterms.append('maxresults=%s' % maxResults)
+            urlterms.append('maxresults=%s' % requestObject['maxresults'])
         url = '&'.join(urlterms)
-        fqs = {}
-        try:
-            pixonly = requestObject['pixonly']
-            querystring += " AND %s:[* TO *]" % PARMS['blobs'][0]
-        except:
-            pixonly = None
 
-        response = s.query(querystring, facet='true', facet_field=facetfields, fq=fqs, rows=maxResults, facet_limit=maxFacets,
-                           facet_mincount=1)
+    try:
+        pixonly = requestObject['pixonly']
+        querystring += " AND %s:[* TO *]" % PARMS['blobs'][0]
+    except:
+        pixonly = None
 
-        facetflds = getfacets(response)
-        results = response.results
+    response = s.query(querystring, facet='true', facet_field=facetfields, fq={},
+                       rows=context['maxresults'], facet_limit=MAXFACETS,
+                       facet_mincount=1)
 
-        for i,listItem in enumerate(results):
-            item = {}
-            item['counter'] = i
-            for p in PARMS:
-                try:
-                    # make all arrays into strings for display
-                    if type(listItem[PARMS[p][3]]) == type([]):
-                        item[p] = ', '.join(listItem[PARMS[p][3]])
-                    else:
-                        item[p] = listItem[PARMS[p][3]]
-                except:
-                    #raise
-                    pass
-            # the list of blob csids need to remain an array, so restore it from psql result
-            #item['blob_ss'] = listItem.get('blob_ss')
-            if 'blobs' in item.keys():
-                item['blobs'] = item['blobs'].split(',')
-            item['marker'] = makeMarker(item)
-            context['items'].append(item)
+    facetflds = getfacets(response)
+    results = response.results
 
-        if context['displayType'] in ['full', 'grid'] and response._numFound > MAXLONGRESULTS:
-            context['recordlimit'] = '(limited to %s for long display)' % MAXLONGRESULTS
-            context['items'] = context['items'][:MAXLONGRESULTS]
-        if context['displayType'] == 'list' and response._numFound > maxResults:
-            context['recordlimit'] = '(display limited to %s)' % maxResults
+    context['items'] = []
+    for i,listItem in enumerate(results):
+        item = {}
+        item['counter'] = i
+        for p in PARMS:
+            try:
+                # make all arrays into strings for display
+                if type(listItem[PARMS[p][3]]) == type([]):
+                    item[p] = ', '.join(listItem[PARMS[p][3]])
+                else:
+                    item[p] = listItem[PARMS[p][3]]
+            except:
+                #raise
+                pass
+        # the list of blob csids need to remain an array, so restore it from psql result
+        #item['blob_ss'] = listItem.get('blob_ss')
+        if 'blobs' in item.keys():
+            item['blobs'] = item['blobs'].split(',')
+        item['marker'] = makeMarker(item)
+        context['items'].append(item)
 
-        #print 'items',len(context['items'])
-        context['count'] = response._numFound
-        m = {}
-        for p in PARMS: m[PARMS[p][3].replace('_txt','_s')] = p
-        context['fields'] = [m[f] for f in facetfields]
-        context['facetflds'] = [[m[f],facetflds[f]] for f in facetfields]
-        context['range'] = range(len(facetfields))
-        context['fq'] = fqs
-        context['pixonly'] = pixonly
-        try:
-            context['pane'] = requestObject['pane']
-        except:
-            context['pane'] = '0'
-        try:
-            context['resultsOnly'] = requestObject['resultsOnly']
-        except:
-            pass
+    if context['displayType'] in ['full', 'grid'] and response._numFound > MAXLONGRESULTS:
+        context['recordlimit'] = '(limited to %s for long display)' % MAXLONGRESULTS
+        context['items'] = context['items'][:MAXLONGRESULTS]
+    if context['displayType'] == 'list' and response._numFound > context['maxresults']:
+        context['recordlimit'] = '(display limited to %s)' % context['maxresults']
+
+    #print 'items',len(context['items'])
+    context['count'] = response._numFound
+    m = {}
+    for p in PARMS: m[PARMS[p][3].replace('_txt','_s')] = p
+    context['fields'] = [m[f] for f in facetfields]
+    context['facetflds'] = [[m[f],facetflds[f]] for f in facetfields]
+    context['range'] = range(len(facetfields))
+    context['pixonly'] = pixonly
+    try:
+        context['pane'] = requestObject['pane']
+    except:
+        context['pane'] = '0'
+    try:
+        context['resultsOnly'] = requestObject['resultsOnly']
+    except:
+        pass
 
     context['url'] = url
     context['querystring'] = querystring
@@ -428,9 +394,9 @@ def doSearch(solr_server, solr_core, context):
     return context
 
 # on startup, do a query to get options values for forms...
-context = {'displayType': 'list', 'searchValues': {'csv':'true', 'querystring':'*:*', 'maxresults': 0, 'maxfacets':1000}}
+context = {'displayType': 'list', 'searchValues': {'csv':'true', 'querystring':'*:*', 'url': '', 'maxresults': 0, 'maxfacets':1000}}
 context = doSearch(SOLRSERVER, SOLRCORE, context)
-FACETS = {}
+
 for facet in context['facetflds']:
     #print 'facet',facet[0],len(facet[1])
     if facet[0] in DROPDOWNS:

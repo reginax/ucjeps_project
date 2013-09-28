@@ -86,3 +86,17 @@ $(function () {
     return false;
 });
 
+
+function textToggle(divName) {
+    var ele = document.getElementById(divName);
+    var ele_toggle = document.getElementById(divName + '_toggle');
+    if (ele.style.display == 'none') {
+        ele.style.display = 'block';
+        ele_toggle.innerHTML = "hide";
+    }
+    else {
+        ele.style.display = 'none';
+        ele_toggle.innerHTML = "show";
+    }
+    return false;
+}
