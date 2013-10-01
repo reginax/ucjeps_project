@@ -12,7 +12,6 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django import forms
 from cspace_django_site.main import cspace_django_site
 from utils import writeCsv, doSearch, setupGoogleMap, setupBMapper, setDisplayType, setConstants
-from snippits import render_block_to_string
 
 # global variables (at least to this module...)
 config = cspace_django_site.getConfig()
