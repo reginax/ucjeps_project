@@ -1,0 +1,16 @@
+{% include "searchstats.html" %}
+<form method="post" class="searchForm" id="selectedItems" action="/public/csv/">
+    {% csrf_token %}
+    {% if count > 0 %}
+        <div id="tabs">
+            <ul>
+                <li><a href="#results">Results</a></li>
+                <li><a href="#facets">Facets</a></li>
+                <li><a href="#maps">Maps</a></li>
+            </ul>
+            {% include "results.html" %}
+            {% include "facets.html" %}
+            {% include "maps.html" %}
+        </div>
+    {% endif %}
+</form>

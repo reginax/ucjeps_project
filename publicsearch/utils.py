@@ -25,7 +25,8 @@ BMAPPERCONFIGFILE = 'ucjeps.xml'
 SOLRSERVER = 'http://localhost:8983/solr'
 #SOLRCORE = 'ucjeps-metadata'
 SOLRCORE = 'ucjeps-metadata'
-LOCALDIR = "/var/www/html/bmapper"  # no final slash
+# LOCALDIR = "/var/www/html/bmapper"  # no final slash
+LOCALDIR = "."
 DROPDOWNS = ['majorgroup','county','state','country']
 search_qualifiers = ['keyword','phrase','exact']
 
@@ -204,7 +205,8 @@ def setupBMapper(requestObject, context):
     bmapperconfigfile = '%s/%s/%s' % (BMAPPERSERVER,BMAPPERDIR,BMAPPERCONFIGFILE)
     tabfile = '%s/%s/%s' % (BMAPPERSERVER,BMAPPERDIR,filename)
     context['bmapperurl'] = "http://berkeleymapper.berkeley.edu/run.php?ViewResults=tab&tabfile=%s&configfile=%s&sourcename=Consortium+of+California+Herbaria+result+set&maptype=Terrain" % (tabfile,bmapperconfigfile)
-    return HttpResponseRedirect(context['bmapperurl'])
+    return context
+    # return HttpResponseRedirect(context['bmapperurl'])
 
 def setDisplayType(requestObject):
 

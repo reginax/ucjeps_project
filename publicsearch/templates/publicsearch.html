@@ -2,21 +2,6 @@
 {% load i18n admin_static %}
 {% load staticfiles %}
 
-{% block branding %}
-    <h1 class="bannerTitle" id="site-name">{% trans 'UCJEPS Search Portal' %}</h1>
-    <div style="float:right; height: 30px;">
-        <a href="#">About</a>
-        <a href="#">Help</a>
-        <a href="#">Credits</a>
-    </div>
-{% endblock %}
-
-{% block loginBtn %}
-<div id="user-tools">
-    <a href="{% url 'login' %}?next=/public/publicsearch/" id="login" class="prettyBtn">{% trans 'Sign in' %}</a>
-</div>
-{% endblock %}
-
 {% block extrastyle %}
     <link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/tablesorter.css" %}"/>
     <link rel="stylesheet" type="text/css"
@@ -31,43 +16,43 @@
     <script type="text/javascript" src="{% static "publicsearch/js/jquery.tablesorter.js" %}"></script>
 {% endblock %}
 
+{% block loginBtn %}
+<div id="user-tools">
+    <a href="{% url 'login' %}?next=/public/publicsearch/" id="login" class="prettyBtn">{% trans 'Sign in' %}</a>
+</div>
+{% endblock %}
+
+{% block branding %}
+    <h1 class="bannerTitle" id="site-name">{% trans 'UCJEPS Search Portal' %}</h1>
+    <div style="float:right; height: 30px;">
+        <a href="#">About</a>
+        <a href="#">Help</a>
+        <a href="#">Credits</a>
+    </div>
+{% endblock %}
 
 {% block content %}
     <div id="content-main">
-        <div class="xxx">
+        <div class="searchPanel">
             {% if resultsOnly %}
                 {% include "showfields.html" %}
             {% else %}
-                <form method="post" class="searchForm" id="search" action=".">
+                <form class="searchForm" id="search">
                     {% csrf_token %}
                     <div>
                         {% include "fields.html" %}
-                        {% include "buttons.html" %}
                     </div>
-                    <input type="hidden" value="{% if pane %}{{ pane }}{% else %}0{% endif %}" name="pane" id="pane"/>
                 </form>
             {% endif %}
-            {% include "searchstats.html" %}
         </div>
-        <div class="xxx">
-            <form method="post" class="searchForm" id="selectedItems" action=".">
-                {% csrf_token %}
-                {% if count > 0 %}
-                    <div id="tabs">
-                        <ul>
-                            <li><a href="#results">Results</a></li>
-                            <li><a href="#facets">Facets</a></li>
-                            <li><a href="#maps">Maps</a></li>
-                        </ul>
-                        {% include "results.html" %}
-                        {% include "facets.html" %}
-                        {% include "maps.html" %}
-                    </div>
-                {% endif %}
-            </form>
+        <div id="resultsPanel">
+            {% if items %}
+            {% include "searchResults.html" %}
+            {% endif %}
         </div>
     </div>
 {% endblock %}
+
 {% block footer %}
   <table width="100%">
     <tbody>

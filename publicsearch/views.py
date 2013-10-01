@@ -7,54 +7,86 @@ from django.contrib.auth.decorators import login_required
 from cspace_django_site.settings import STATIC_URL
 from cspace_django_site.settings import MEDIA_URL
 from django.shortcuts import render, render_to_response
+from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
 from django import forms
 from cspace_django_site.main import cspace_django_site
 from utils import writeCsv, doSearch, setupGoogleMap, setupBMapper, setDisplayType, setConstants
+from snippits import render_block_to_string
 
 # global variables (at least to this module...)
 config = cspace_django_site.getConfig()
 
 SOLRSERVER = 'http://localhost:8983/solr'
 SOLRCORE = 'ucjeps-metadata'
+SEARCHRESULTS = {}
 
-#@login_required()
+# This just prints the search form
 def publicsearch(request):
-
-    if request.method == 'GET':
-        requestObject = request.GET
-    elif request.method == 'POST':
-        requestObject = request.POST
+    if request.method == 'GET' and request.GET != {}:
+        context = {'searchValues': request.GET}
+        context = doSearch(SOLRSERVER, SOLRCORE, context)
+        
+        global SEARCHRESULTS
+        SEARCHRESULTS = context
     else:
-        pass
-        #error!
-
-    if requestObject == {}:
         context = {}
-    else:
-        form = forms.Form(requestObject)
-
-        if form.is_valid() or request.method == 'GET':
-            context = {'searchValues': requestObject}
-            if 'reset' in requestObject:
-                context = {}
-            else:
-                context = doSearch(SOLRSERVER, SOLRCORE, context)
-
-            if 'csv' in requestObject:
-                # Create the HttpResponse object with the appropriate CSV header.
-                response = HttpResponse(content_type='text/csv')
-                response['Content-Disposition'] = 'attachment; filename="ucjeps.csv"'
-                #response.write(u'\ufeff'.encode('utf8'))
-                writeCsv(response,context['items'],writeheader=True)
-                return response
-            elif 'map-bmapper' in requestObject:
-                context = setupBMapper(requestObject, context)
-            elif 'map-google' in requestObject:
-                context = setupGoogleMap(requestObject, context)
-            elif 'email' in requestObject:
-                pass
-
+    
     context = setConstants(context)
-
     return render(request, 'publicsearch.html', context)
+
+def retrieveResults(request):
+    if request.method == 'POST' and request.POST != {}:
+        requestObject = request.POST
+        form = forms.Form(requestObject)
+        
+        if form.is_valid():
+            context = {'searchValues': requestObject}
+            context = doSearch(SOLRSERVER, SOLRCORE, context)
+            
+            global SEARCHRESULTS
+            SEARCHRESULTS = context
+            
+            context = setConstants(context)
+        
+        return render(request, 'searchResults.html', context)
+
+def bmapper(request):
+    if request.method == 'POST' and request.POST != {}:
+        requestObject = request.POST
+        form = forms.Form(requestObject)
+        
+        if form.is_valid():
+            context = SEARCHRESULTS
+            context = setupBMapper(requestObject, context)
+            
+            return HttpResponse(context['bmapperurl'])
+
+def gmapper(request):
+    if request.method == 'POST' and request.POST != {}:
+        requestObject = request.POST
+        form = forms.Form(requestObject)
+        
+        if form.is_valid():
+            context = SEARCHRESULTS
+            context = setupGoogleMap(requestObject, context)
+            
+            return render(request, 'maps.html', context)
+
+def csv(request):
+    if request.method == 'POST' and request.POST != {}:
+        requestObject = request.POST
+        form = forms.Form(requestObject)
+        
+        if form.is_valid():
+            # context = {'searchValues': requestObject}
+            # context = doSearch(SOLRSERVER, SOLRCORE, context)
+            context = SEARCHRESULTS
+            
+            # Create the HttpResponse object with the appropriate CSV header.
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="ucjeps.csv"'
+            #response.write(u'\ufeff'.encode('utf8'))
+            writeCsv(response,context['items'],writeheader=True)
+            
+            return response
