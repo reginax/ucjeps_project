@@ -58,7 +58,7 @@ $(document).ready(function () {
         var formData = getFormData('#search');
         formData[$(this).attr('name')] = '';
 
-        $.post("/public/results/", formData).done(function (data) {
+        $.post("../results/", formData).done(function (data) {
             if (!formData['acceptterms']) {
                 $("#acceptterms")
                     .css({
@@ -112,7 +112,7 @@ $(document).ready(function () {
         // TODO: CURRENTLY DEFAULT TO SEARCH-LIST BUT SHOULD HAVE A PERSISTENT DISPLAY TYPE? CURRENTLY DOESN'T ON DEV
         formData['search-list'] = '';
 
-        $.post("/public/results/", formData).done(function (data) {
+        $.post("../results/", formData).done(function (data) {
             $('#resultsPanel').html(data);
             $('#resultsListing').tablesorter({
                 headers: {
@@ -132,11 +132,11 @@ $(document).ready(function () {
         // formData[$(this).attr('name')] = '';
 
         if ($(this).attr('id') == 'map-bmapper') {
-            $.post("/public/bmapper/", formData).done(function (data) {
+            $.post("../bmapper/", formData).done(function (data) {
                 window.open(data, '_blank');
             });
         } else if ($(this).attr('id') == 'map-google') {
-            $.post("/public/gmapper/", formData).done(function (data) {
+            $.post("../gmapper/", formData).done(function (data) {
                 $('#maps').html(data);
             });
         }
