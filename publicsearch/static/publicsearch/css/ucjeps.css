@@ -54,5 +54,5 @@ a:link, a:visited { color: #5b80b2; text-decoration: none; }
 a:hover { color: #036; }
 a { color: #5b80b2; text-decoration: none; }
 
-.info { margin: 10px ; background-color: cornsilk;}
+.info { padding: 10px ; margin-bottom: 10px; margin-top: -4px; background-color: #ffffcf; font-size: 14px; line-height: 1.4em}
 

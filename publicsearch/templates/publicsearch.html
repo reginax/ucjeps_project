@@ -26,23 +26,23 @@
     <h4 class="bannerLeft">UC Herbarium</h4>
     <h4 class="bannerRight">Jepson Herbarium</h4>
     <h1 class="bannerTitle" id="site-name">{% trans 'UCJEPS Search Portal' %}</h1>
-    <div style="float:right; height: 30px;" class="togglers">
-        <a href="#">About</a>
-        <a href="#">Help</a>
-        <a href="#">Credits</a>
+    <div style="float:right; height: 30px;">
+        <a href="#" id="about">About</a>
+        <a href="#" id="help">Help</a>
+        <a href="#" id="credits">Credits</a>
     </div>
 {% endblock %}
 
 {% block content %}
     <div id="content-main">
         <div class="toggled">
-            <div class="About" style="display:none">
+            <div id="aboutTarget" style="display:none">
                 {% include "about.html" %}
              </div>
-            <div class="Help" style="display:none">
+            <div id="helpTarget" style="display:none">
                 {% include "help.html" %}
             </div>
-            <div class="Credits" style="display:none">
+            <div id="creditsTarget" style="display:none">
                 {% include "credits.html" %}
             </div>
         </div>
