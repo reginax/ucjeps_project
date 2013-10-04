@@ -82,6 +82,13 @@ $(document).ready(function () {
         });
     });
 
+    $(document).on('click', '#select-items', function() {
+        if ($('#select-items').is(':checked')) {
+            $('#selectedItems input:checkbox').prop('checked', true);
+        } else {
+            $('#selectedItems input:checkbox').prop('checked', false);
+        }
+    });
 
     $(document).on('click', '.map-item', function () {
         var Elem = $(this).siblings('.small-map');
