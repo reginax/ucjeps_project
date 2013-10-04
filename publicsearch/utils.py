@@ -178,9 +178,9 @@ def setupGoogleMap(requestObject, context):
                 mappableitems.append(item)
     context['mapmsg'] = []
     if len(context['items']) < context['count']:
-        context['mapmsg'].append('%s points plotted. %s selected objects examined (of %s in result set).' % (len(markerlist), len(context['items']), context['count']))
+        context['mapmsg'].append('%s points plotted. %s selected objects examined (of %s in result set).' % (len(markerlist), len(selected), context['count']))
     else:
-        context['mapmsg'].append('%s points plotted. all %s selected objects in result set examined.' % (len(markerlist), context['count']))
+        context['mapmsg'].append('%s points plotted. all %s selected objects in result set examined.' % (len(markerlist), len(selected)))
     context['items'] = mappableitems
     context['markerlist'] = '&markers='.join(markerlist[:MAXMARKERS])
     if len(markerlist) >= MAXMARKERS:
@@ -190,18 +190,23 @@ def setupGoogleMap(requestObject, context):
 
 def setupBMapper(requestObject, context):
     context['berkeleymapper'] = 'set'
+    selected = []
+    for p in requestObject:
+        if 'item-' in p:
+            selected.append(requestObject[p])
     mappableitems = []
     for item in context['items']:
-        m = makeMarker(item)
-        if m is not None:
-            mappableitems.append(item)
+        if item['csid'] in selected:
+            m = makeMarker(item)
+            if m is not None:
+                mappableitems.append(item)
     context['mapmsg'] = []
     filename = 'bmapper%s.csv' % datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S")
     #filehandle = open(filename, 'wb')
     filehandle = open(path.join(LOCALDIR, filename), 'wb')
     writeCsv(filehandle, mappableitems, writeheader=False)
     filehandle.close()
-    context['mapmsg'].append('%s points of the %s selected objects examined had latlongs (%s in result set).' % (len(mappableitems), len(context['items']), context['count']))
+    context['mapmsg'].append('%s points of the %s selected objects examined had latlongs (%s in result set).' % (len(mappableitems), len(selected), context['count']))
     #context['mapmsg'].append('if our connection to berkeley mapper were working, you be able see them plotted there.')
     context['items'] = mappableitems
     bmapperconfigfile = '%s/%s/%s' % (BMAPPERSERVER, BMAPPERDIR, BMAPPERCONFIGFILE)
