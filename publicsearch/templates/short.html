@@ -16,36 +16,16 @@
     <tbody>
     {% for item in items %}
         <tr>
-            <td>
-                <input type="checkbox" name="item-{{ item.counter }}" value="{{ item.csid }}" checked>
-            </td>
-            <td>
-                <a href="?maxresults=1&accession={{ item.accession }}&displayType=full">{{ item.accession }}</a>
-            </td>
-            <td>
-                <a href="#"
-                   onclick="submitForm('determination','{{ item.determination }}')">{{ item.determination }}</a>
-            </td>
-            <td><a href="#"
-                   onclick="submitForm('collector','{{ item.collector }}')">{{ item.collector }}</a>
-            </td>
-            <td>
-                <a href="#"
-                   onclick="submitForm('collectiondate','{{ item.collectiondate }}')">{{ item.collectiondate }}</a>
-            </td>
-            <td>
-                <a href="#"
-                   onclick="submitForm('collectionnumber','{{ item.collectionnumber }}')">{{ item.collectionnumber }}</a>
-            </td>
-            <td><a href="#" onclick="submitForm('county','{{ item.county }}')">{{ item.county }}</a>
-            </td>
-            <td><a href="#" onclick="submitForm('state','{{ item.state }}')">{{ item.state }}</a>
-            </td>
-            <td><a href="#"
-                   onclick="submitForm('country','{{ item.country }}')">{{ item.country }}</a></td>
-            <td><a href="#"
-                   onclick="submitForm('locality','{{ item.locality }}')">{{ item.locality }}</a>
-            </td>
+            <td><input type="checkbox" name="item-{{ item.counter }}" value="{{ item.csid }}" checked></td>
+            <td><a href="?maxresults=1&accession={{ item.accession }}&displayType=full">{{ item.accession }}</a></td>
+            <td><a class="facet-item" data-facetType="determination">{{ item.determination }}</a></td>
+            <td><a class="facet-item" data-facetType="collector">{{ item.collector }}</a></td>
+            <td><a title="{{ item.earlycollectiondate }}" class="facet-item" data-facetType="collectiondate">{{ item.collectiondate }}</a></td>
+            <td><a class="facet-item" data-facetType="collectionnumber">{{ item.collectionnumber }}</a></td>
+            <td><a class="facet-item" data-facetType="county">{{ item.county }}</a></td>
+            <td><a class="facet-item" data-facetType="state">{{ item.state }}</a></td>
+            <td><a class="facet-item" data-facetType="country">{{ item.country }}</a></td>
+            <td><a class="facet-item" data-facetType="locality">{{ item.locality }}</a></td>
         </tr>
     {% endfor %}
     </tbody>

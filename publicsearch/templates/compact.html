@@ -20,25 +20,23 @@
                 <a href="http://ucjeps.cspace.berkeley.edu/collectionspace/ui/ucjeps/html/cataloging.html?csid={{ item.csid }}"><img src="{% static "publicsearch/images/open_cspace.png" %}" class="cspaceLink">Open in CSpace</a>
             {% endif %}
         </div>
-        <div><h2><a href="#" onclick="submitForm('determination','{{ item.determination }}')">{{ item.determination }}</a></h2>
-            (<a href="#" onclick="submitForm('majorgroup','{{ item.majorgroup }}')">{{ item.majorgroup }}</a>)</div>
         <div>
-            <a href="#" onclick="submitForm('county','{{ item.county }}')">{{ item.county }}</a> /
-            <a href="#" onclick="submitForm('state','{{ item.state }}')">{{ item.state }}</a> /
-            <a href="#" onclick="submitForm('country','{{ item.country }}')">{{ item.country }}</a>
+            <h2><a class="facet-item" data-facetType="determination">{{ item.determination }}</a></h2>
+            (<a class="facet-item" data-facetType="majorgroup">{{ item.majorgroup }}</a>)</div>
+        <div>
+            <a class="facet-item" data-facetType="county">{{ item.county }}</a> /
+            <a class="facet-item" data-facetType="state">{{ item.state }}</a> /
+            <a class="facet-item" data-facetType="country">{{ item.country }}</a>
         </div>
         {% if item.L1 and item.L2 %}
             <div>LatLong: {{ item.L1 }} {{ item.L2 }}
                 {% if item.marker %}
-                    <a href="#"
-                       onclick="textToggle('map_{{ item.L1 }}+{{ item.L2 }}')">
-                        <span id="map_{{ item.L1 }}+{{ item.L2 }}_toggle">show</span> map</a>
-                    <div id="map_{{ item.L1 }}+{{ item.L2 }}" style="display:none;">
+                    <a class="map-item">[click for map]</a>
+                    <div class="small-map" style="display:none;">
                         <img src="http://maps.google.com/maps/api/staticmap?&zoom=10&size=400x200&maptype=roadmap&markers={{ item.marker }}&sensor=false"/>
-                        <div>
+                        <div style="height: 40px;">
                             <small><a target="_map"
-                                      href="http://maps.google.com/?q=loc:{{ item.marker }}&amp;source=embed">Larger
-                                Map</a>
+                                      href="http://maps.google.com/?q=loc:{{ item.marker }}&amp;source=embed">Larger Map</a>
                             </small>
                         </div>
                     </div>
@@ -46,27 +44,20 @@
             </div>
         {% endif %}
         {% if item.collector %}
-        <div>Collector: <a href="#"
-                           onclick="submitForm('collector','{{ item.collector }}')">{{ item.collector }}</a>
-        </div>{% endif %}
+        <div>Collector: <a class="facet-item" data-facetType="collector">{{ item.collector }}</a></div>{% endif %}
         {% if item.collectionnumber %}
-        <div>Collection Number: <a href="#"
-                                   onclick="submitForm('collectionnumber','{{ item.collectionnumber }}')">{{ item.collectionnumber }}</a>
-        </div>{% endif %}
+        <div>Collection Number: <a class="facet-item" data-facetType="collectionnumber">{{ item.collectionnumber }}</a></div>{% endif %}
         {% if item.locality %}
-        <div>Locality: <a href="#"
-                          onclick="submitForm('locality','{{ item.locality }}')">{{ item.locality }}</a>
-        </div>{% endif %}
+        <div>Locality: <a class="facet-item" data-facetType="locality">{{ item.locality }}</a></div>{% endif %}
         {% if item.earlycollectiondate %}
-            <div>Collection date: <a href="#"
-                                     onclick="submitForm('collectiondate','{{ item.collectiondate }}')">{{ item.collectiondate }}</a>
-            </div>{% endif %}
+	    <div>Collection date: <a class="facet-item" data-facetType="collectiondate">{{ item.collectiondate }}</a></div>{% endif %}
         {% if item.habitat %}
-            <div>Habitat: <a href="#"
-                             onclick="submitForm('habitat','{{ item.habitat }}')">{{ item.habitat }}</a>
-            </div>{% endif %}
+	    <div>Habitat: <a class="facet-item" data-facetType="habitat">{{ item.habitat }}</a></div>{% endif %}
         {% if item.elevation %}
-            <div>Elevation: {{ item.elevation }} {{ item.elevationunit }}</div>{% endif %}
+	    <div>Elevation: {{ item.elevation }} {{ item.elevationunit }}</div>{% endif %}
+        {% if item.updatedat %}
+        <div>Last updated: {{ item.updatedat }}</div>{% endif %}
+
     </div>
     <hr/>
 {% endfor %}

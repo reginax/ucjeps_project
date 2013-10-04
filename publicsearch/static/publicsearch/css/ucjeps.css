@@ -5,7 +5,7 @@
 
 #branding h1 {
     text-indent: 120px;
-    height: 60px; /* The height of the tallest image referenced above in background-image */
+    height: 75px; /* The height of the tallest image referenced above in background-image */
     margin-bottom: 8px;
     background: url(../images/logo_uc_80.png) no-repeat left top, url(../images/logo_jeps_80.png) no-repeat right top;
 }
@@ -20,6 +20,24 @@
     letter-spacing: 0.3em;
 }
 
+.bannerLeft {
+    font-family: "Times New Roman", Times, serif;
+    padding-top: 80px;
+    color: #FFFF00;
+    font-weight: bold;
+    font-size: 12px;
+    float:left;
+}
+
+.bannerRight {
+    font-family: "Times New Roman", Times, serif;
+    padding-top: 80px;
+    color: #FFFF00;
+    font-weight: bold;
+    font-size: 12px;
+    float:right;
+}
+
 #branding hr { margin: 4px 0px 10px 0px;}
 
 #branding a { margin-left: 30px; }
@@ -31,3 +49,10 @@
     position: relative; 
     bottom: -2px;
 }
+
+a:link, a:visited { color: #5b80b2; text-decoration: none; }
+a:hover { color: #036; }
+a { color: #5b80b2; text-decoration: none; }
+
+.info { margin: 10px ; background-color: cornsilk;}
+
