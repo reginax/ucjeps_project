@@ -14,8 +14,8 @@ MAXMARKERS = 65
 MAXRESULTS = 2000
 MAXFACETS = 1000
 MAXLONGRESULTS = 50
-#IMAGESERVER = 'http://ucjeps.cspace.berkeley.edu:8180/cspace-services' # no final slash
-IMAGESERVER = 'http://localhost:8000/imageserver'
+IMAGESERVER = 'http://ucjeps.cspace.berkeley.edu:8180/cspace-services' # no final slash
+#IMAGESERVER = 'http://localhost:8000/imageserver'
 BMAPPERSERVER = 'https://pahma-dev.cspace.berkeley.edu' # no final slash
 BMAPPERDIR = 'bmapper'
 #BMAPPERTABFILEDIR = '%s/%s/%s' % (BMAPPERSERVER, MEDIA_URL, 'publicsearch/bmapper')
@@ -60,6 +60,7 @@ PARMS = {
     'coordinatesource': ['Coordinate source', 'true', '', 'coordinatesource_txt', ''],
     'coordinateuncertainty': ['Coordinate uncertainty', 'true', '', 'coordinateuncertainty_f', ''],
     'coordinateuncertaintyunit': ['Coordinate uncertainty unit', 'true', '', 'coordinateuncertaintyunit_txt', ''],
+    'updatedat': ['Last updated at', 'true', '', 'updatedat_dt', ''],
     'blobs': ['blob_ss', 'true', '', 'blob_ss', ''],
 }
 
