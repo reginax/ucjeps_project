@@ -331,7 +331,7 @@ def doSearch(solr_server, solr_core, context):
                 if t == 'AND': t = '"AND"'
                 ORs.append('%s:%s' % (index, t))
             searchTerm = ' OR '.join(ORs)
-            searchTerm = ' (' + searchTerm + ') '
+            if ' ' in searchTerm and not '[* TO *]' in searchTerm: searchTerm = ' (' + searchTerm + ') '
             queryterms.append(searchTerm)
             urlterms.append('%s=%s' % (p, cgi.escape(requestObject[p])))
         querystring = ' AND '.join(queryterms)
