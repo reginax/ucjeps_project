@@ -3,6 +3,7 @@ import time, datetime
 import csv
 import solr
 import cgi
+import logging
 from os import path
 
 from django.http import HttpResponse, HttpResponseRedirect
@@ -14,8 +15,8 @@ MAXMARKERS = 65
 MAXRESULTS = 2000
 MAXFACETS = 1000
 MAXLONGRESULTS = 50
-IMAGESERVER = 'http://ucjeps.cspace.berkeley.edu:8180/cspace-services' # no final slash
-#IMAGESERVER = 'http://localhost:8000/imageserver'
+#IMAGESERVER = 'http://ucjeps.cspace.berkeley.edu:8180/cspace-services' # no final slash
+IMAGESERVER = '../../imageserver'
 BMAPPERSERVER = 'https://pahma-dev.cspace.berkeley.edu' # no final slash
 BMAPPERDIR = 'bmapper'
 #BMAPPERTABFILEDIR = '%s/%s/%s' % (BMAPPERSERVER, MEDIA_URL, 'publicsearch/bmapper')
@@ -63,6 +64,28 @@ PARMS = {
     'updatedat': ['Last updated at', 'true', '', 'updatedat_dt', ''],
     'blobs': ['blob_ss', 'true', '', 'blob_ss', ''],
 }
+
+
+# Get an instance of a logger, log some startup info
+logger = logging.getLogger(__name__)
+logger.info('%s :: %s :: %s' % ('startup', '-', '%s | %s | %s' % (SOLRSERVER, IMAGESERVER, BMAPPERSERVER)))
+
+def loginfo(infotype, context, request):
+    logdata = ''
+    #user = getattr(request, 'user', None)
+    if request.user and not request.user.is_anonymous():
+        username = request.user.username
+    else:
+        username = '-'
+    if 'count' in context:
+        count = context['count']
+    else:
+        count = '-'
+    if 'querystring' in context:
+        logdata = context['querystring']
+    if 'url' in context:
+        logdata += ' :: %s' % context['url']
+    logger.info('%s :: %s :: %s :: %s' % (infotype, count, username, logdata))
 
 
 def deURN(urn):
@@ -147,7 +170,7 @@ def writeCsv(filehandle, items, writeheader):
                 cell = item[x]
             else:
                 cell = ''
-            # the following few lines are a hack to handle non-unicode data which appears to be present in the solr datasource
+                # the following few lines are a hack to handle non-unicode data which appears to be present in the solr datasource
             if isinstance(cell, unicode):
                 try:
                     cell = cell.translate({0xd7: u"x"})
@@ -178,13 +201,16 @@ def setupGoogleMap(requestObject, context):
                 mappableitems.append(item)
     context['mapmsg'] = []
     if len(context['items']) < context['count']:
-        context['mapmsg'].append('%s points plotted. %s selected objects examined (of %s in result set).' % (len(markerlist), len(selected), context['count']))
+        context['mapmsg'].append('%s points plotted. %s selected objects examined (of %s in result set).' % (
+            len(markerlist), len(selected), context['count']))
     else:
-        context['mapmsg'].append('%s points plotted. all %s selected objects in result set examined.' % (len(markerlist), len(selected)))
+        context['mapmsg'].append(
+            '%s points plotted. all %s selected objects in result set examined.' % (len(markerlist), len(selected)))
     context['items'] = mappableitems
     context['markerlist'] = '&markers='.join(markerlist[:MAXMARKERS])
     if len(markerlist) >= MAXMARKERS:
-        context['mapmsg'].append('%s points is the limit. Only first %s accessions (with latlongs) plotted!' % (MAXMARKERS, len(markerlist)))
+        context['mapmsg'].append(
+            '%s points is the limit. Only first %s accessions (with latlongs) plotted!' % (MAXMARKERS, len(markerlist)))
     return context
 
 
@@ -206,13 +232,15 @@ def setupBMapper(requestObject, context):
     filehandle = open(path.join(LOCALDIR, filename), 'wb')
     writeCsv(filehandle, mappableitems, writeheader=False)
     filehandle.close()
-    context['mapmsg'].append('%s points of the %s selected objects examined had latlongs (%s in result set).' % (len(mappableitems), len(selected), context['count']))
+    context['mapmsg'].append('%s points of the %s selected objects examined had latlongs (%s in result set).' % (
+        len(mappableitems), len(selected), context['count']))
     #context['mapmsg'].append('if our connection to berkeley mapper were working, you be able see them plotted there.')
     context['items'] = mappableitems
     bmapperconfigfile = '%s/%s/%s' % (BMAPPERSERVER, BMAPPERDIR, BMAPPERCONFIGFILE)
     tabfile = '%s/%s/%s' % (BMAPPERSERVER, BMAPPERDIR, filename)
-    context['bmapperurl'] = "http://berkeleymapper.berkeley.edu/run.php?ViewResults=tab&tabfile=%s&configfile=%s&sourcename=Consortium+of+California+Herbaria+result+set&maptype=Terrain" % (
-    tabfile, bmapperconfigfile)
+    context[
+        'bmapperurl'] = "http://berkeleymapper.berkeley.edu/run.php?ViewResults=tab&tabfile=%s&configfile=%s&sourcename=Consortium+of+California+Herbaria+result+set&maptype=Terrain" % (
+        tabfile, bmapperconfigfile)
     return context
     # return HttpResponseRedirect(context['bmapperurl'])
 
@@ -287,7 +315,8 @@ def doSearch(solr_server, solr_core, context):
         context['maxresults'] = MAXRESULTS
     else:
         for p in requestObject:
-            if p in ['csrfmiddlewaretoken', 'displayType', 'resultsOnly', 'maxresults', 'url', 'querystring', 'pane', 'pixonly', 'acceptterms']: continue
+            if p in ['csrfmiddlewaretoken', 'displayType', 'resultsOnly', 'maxresults', 'url', 'querystring', 'pane',
+                     'pixonly', 'acceptterms']: continue
             if '_qualifier' in p: continue
             if 'select-' in p: continue # skip select control for map markers
             if not p in requestObject: continue
@@ -378,8 +407,8 @@ def doSearch(solr_server, solr_core, context):
             except:
                 #raise
                 pass
-        # the list of blob csids need to remain an array, so restore it from psql result
-        #item['blob_ss'] = listItem.get('blob_ss')
+                # the list of blob csids need to remain an array, so restore it from psql result
+            #item['blob_ss'] = listItem.get('blob_ss')
         if 'blobs' in item.keys():
             item['blobs'] = item['blobs'].split(',')
         item['marker'] = makeMarker(item)
@@ -415,7 +444,8 @@ def doSearch(solr_server, solr_core, context):
     return context
 
 # on startup, do a query to get options values for forms...
-context = {'displayType': 'list', 'maxresults': 0, 'searchValues': {'csv': 'true', 'querystring': '*:*', 'url': '', 'maxfacets': 1000}}
+context = {'displayType': 'list', 'maxresults': 0,
+           'searchValues': {'csv': 'true', 'querystring': '*:*', 'url': '', 'maxfacets': 1000}}
 context = doSearch(SOLRSERVER, SOLRCORE, context)
 
 for facet in context['facetflds']:

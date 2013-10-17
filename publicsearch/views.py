@@ -11,7 +11,8 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
 from django import forms
 from cspace_django_site.main import cspace_django_site
-from utils import writeCsv, doSearch, setupGoogleMap, setupBMapper, setDisplayType, setConstants
+from utils import writeCsv, doSearch, setupGoogleMap, setupBMapper, setDisplayType, setConstants, loginfo
+
 
 # global variables (at least to this module...)
 config = cspace_django_site.getConfig()
@@ -32,6 +33,7 @@ def publicsearch(request):
         context = {}
 
     context = setConstants(context)
+    loginfo('start', context, request)
     return render(request, 'publicsearch.html', context)
 
 
@@ -49,6 +51,7 @@ def retrieveResults(request):
 
             context = setConstants(context)
 
+        loginfo('results.%s' % context['displayType'], context, request)
         return render(request, 'searchResults.html', context)
 
 
@@ -61,6 +64,7 @@ def bmapper(request):
             context = SEARCHRESULTS
             context = setupBMapper(requestObject, context)
 
+            loginfo('bmapper', context, request)
             return HttpResponse(context['bmapperurl'])
 
 
@@ -73,6 +77,7 @@ def gmapper(request):
             context = SEARCHRESULTS
             context = setupGoogleMap(requestObject, context)
 
+            loginfo('gmapper', context, request)
             return render(request, 'maps.html', context)
 
 
@@ -92,4 +97,5 @@ def csv(request):
             #response.write(u'\ufeff'.encode('utf8'))
             writeCsv(response, context['items'], writeheader=True)
 
+            loginfo('csv', context, request)
             return response

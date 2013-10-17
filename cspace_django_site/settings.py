@@ -10,7 +10,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    # ('Your Name', 'your_email@intakes.com'),
+    # ('Your Name', 'your_email@berkeley.edu'),
 )
 
 MANAGERS = ADMINS
@@ -154,7 +154,7 @@ LOGGING = {
     },
     'formatters': {
         'standard': {
-            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'format': "[%(asctime)s] %(levelname)s :: %(message)s",
             'datefmt': "%d/%b/%Y %H:%M:%S"
         },
         'verbose': {
@@ -206,8 +206,8 @@ LOGGING = {
 #
 # Log things from this file only to a separate "settings.log" file.
 #
-logging.basicConfig(filename=LOGS_DIR + os.sep + 'settings.log', level=logging.DEBUG)
-logging.debug('Settings log file started.')
+logging.basicConfig(filename=LOGS_DIR + os.sep + 'settings.log', level=logging.INFO)
+logging.info('Settings log file started.')
 
 #
 # If the application's WSGI setup script added an environment variable to tell us
