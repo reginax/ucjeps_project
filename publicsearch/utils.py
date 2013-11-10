@@ -88,6 +88,13 @@ def loginfo(infotype, context, request):
     logger.info('%s :: %s :: %s :: %s' % (infotype, count, username, logdata))
 
 
+def getfromXML(element,xpath):
+    result = element.find(xpath)
+    result = '' if result.text is None else result.text
+    result = re.sub(r"^.*\)'(.*)'$", "\\1", result)
+    return result
+
+
 def deURN(urn):
     #find identifier in URN
     m = re.search("\'(.*)\'$", urn)

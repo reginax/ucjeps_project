@@ -1,0 +1,21 @@
+<div style="height: 55px; padding-top: 5px; margin-bottom: 15px;">
+    {% if time %}
+        {{ time }} seconds;
+        {% if count > 0 %}
+            {{ count }} items found.
+            {% if recordlimit %}{{ recordlimit }}{% endif %}
+        {% else %}no items found.
+        {% endif %}
+        <div id="full-search-link" style="padding-top: 10px; padding-bottom: 10px;">
+            {% if url %}
+                <b>Click to see full search results: </b>
+                <i><a href="../publicsearch?{{ url }} " target="_blank">{{ url }}</a></i>
+                <input type="hidden" name="url" value="{{ url }}"/>
+            {% endif %}
+        </div>
+{#        <br/>#}
+{#        <br/>#}
+{#        {% if querystring %}#}
+{#        solr query: <i>{{ querystring }}{% endif %}</i>#}
+    {% endif %}
+</div>

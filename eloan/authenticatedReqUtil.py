@@ -1,4 +1,4 @@
-__author__ = 'jblowe'
+__author__ = 'rjaffe (after jblowe\'s "imageserver")'
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -14,7 +14,7 @@ import time
 
 
 #@login_required()
-def get_image(request, image):
+def get_entity(request, entitytype, responsemimetype):
     #config = cspace_django_site.getConfig()
     #connection = cspace.connection.create_connection(config, request.user)
     #(url, data, statusCode) = connection.make_get_request('cspace-services/%s' % image)
@@ -25,13 +25,10 @@ def get_image(request, image):
     protocol = 'http'
     port = '8180'
 
-    hostname = 'ucjeps.cspace.berkeley.edu'
+    hostname = 'ucjeps-dev.cspace.berkeley.edu'
     username = 'admin@ucjeps.cspace.berkeley.edu'
-    password = '1ulnaria'
-
-    #hostname = 'pahma.cspace.berkeley.edu'
-    #username = 'import@pahma.cspace.berkeley.edu'
-    #password = xxxxxxxx
+    # TODO xxxxx password value out before committing to github
+    password = 'ucjeps-dev'
 
     server = protocol + "://" + hostname + ":" + port
     passman = urllib2.HTTPPasswordMgr()
@@ -39,7 +36,7 @@ def get_image(request, image):
     authhandler = urllib2.HTTPBasicAuthHandler(passman)
     opener = urllib2.build_opener(authhandler)
     urllib2.install_opener(opener)
-    url = "%s/cspace-services/%s" % (server, image)
+    url = "%s/cspace-services/%s" % (server, entitytype)
     #print "<p>%s</p>" % url
     elapsedtime = 0
 
@@ -58,4 +55,4 @@ def get_image(request, image):
         raise
     else:
         #return (url,data,elapsedtime)
-        return HttpResponse(data, mimetype='image/jpeg')
+        return HttpResponse(data, mimetype=responsemimetype)
