@@ -27,7 +27,7 @@ def get_image(request, image):
 
     hostname = 'ucjeps.cspace.berkeley.edu'
     username = 'admin@ucjeps.cspace.berkeley.edu'
-    password = '1ulnaria'
+    password = xxxxxx
 
     #hostname = 'pahma.cspace.berkeley.edu'
     #username = 'import@pahma.cspace.berkeley.edu'
