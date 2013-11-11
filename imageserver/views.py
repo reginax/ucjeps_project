@@ -31,7 +31,7 @@ def get_image(request, image):
 
     #hostname = 'pahma.cspace.berkeley.edu'
     #username = 'import@pahma.cspace.berkeley.edu'
-    #password = 'lash428!puck'
+    #password = 'xxxpasswordxxx'
 
     server = protocol + "://" + hostname + ":" + port
     passman = urllib2.HTTPPasswordMgr()
