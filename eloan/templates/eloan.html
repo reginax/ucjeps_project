@@ -27,42 +27,48 @@
             </div>
         </div>
 
-        <h2>{{ report }}</h2>
-        {% if error %}
-            <p style="color: red;">Please submit a search term.</p>
-        {% endif %}
+{#        Inherited from publicsearch template html but not useful here?#}
+{#        <h2>{{ report }}</h2>#}
+{#        {% if error %}#}
+{#            <p style="color: red;">Please submit a search term.</p>#}
+{#        {% endif %}#}
         <form action="" method="get">
             <input type="text" name="kw" value="{{ kw }}">
             <input type="hidden" name="recType" value="{{ 'loansout' }}">
             <input type="submit" value="Search">
+
+{#            If we want to add an instruction. I think it clutters the screen and is unnecessary #}
+{#            {% if message  %}#}
+{#                <span style="color: green; padding-left: 15px; vertical-align: bottom">{{ message }}</span>#}
+{#            {%  endif %}#}
         </form>
         {% for field in form.hidden_fields %}
             <div style="display:none;">{{ field }}</div>
         {% endfor %}
         <hr>
 
-            <div class="loaninfo">
-                <table>
-                        <!-- TODO Implement headerlabel class in css; remove style after css is in place -->
-                        <tr>
-                                <td class="headerlabel" style="font-weight: bold;">eLoan No.:  </td>
-                                <td>{{ loaninfo.0 }}</td>
-                        </tr>
-                        <tr>
-                                <td class="headerlabel" style="font-weight: bold;">Borrower's Contact:  </td>
-                                <td>{{ loaninfo.1 }}</td>
-                        </tr>
-                        <tr>
-                                <td class="headerlabel" style="font-weight: bold;">eLoan Date:  </td>
-                                <td>{{ loaninfo.2 }}</td>
-                        </tr>
-                </table>
-                <hr/>
-            </div>
+        <div class="loaninfo">
+            <table>
+                    <!-- TODO Implement headerlabel class in css; remove style after css is in place -->
+                    <tr>
+                            <td class="headerlabel" style="font-weight: bold;">eLoan No.:  </td>
+                            <td>{{ loaninfo.0 }}</td>
+                    </tr>
+                    <tr>
+                            <td class="headerlabel" style="font-weight: bold;">Borrower's Contact:  </td>
+                            <td>{{ loaninfo.1 }}</td>
+                    </tr>
+                    <tr>
+                            <td class="headerlabel" style="font-weight: bold;">eLoan Date:  </td>
+                            <td>{{ loaninfo.2 }}</td>
+                    </tr>
+            </table>
+            <hr/>
+        </div>
 
-            <div id="resultsPanel">
-                <!-- Results from publicsearch -->
-                {% include "eloan_searchResults.html" %}
+        <div id="resultsPanel">
+            <!-- Results from publicsearch -->
+            {% include "eloan_searchResults.html" %}
 
         </div>
     </div>

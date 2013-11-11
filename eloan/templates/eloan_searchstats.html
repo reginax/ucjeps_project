@@ -8,8 +8,7 @@
         {% endif %}
         <div id="full-search-link" style="padding-top: 10px; padding-bottom: 10px;">
             {% if url %}
-                <b>Click to see full search results: </b>
-                <i><a href="../publicsearch?{{ url }} " target="_blank">{{ url }}</a></i>
+                <a href="../publicsearch?{{ url }} " target="_blank"><b>Click to see full search results </b></a>
                 <input type="hidden" name="url" value="{{ url }}"/>
             {% endif %}
         </div>

@@ -9,5 +9,9 @@
             </ul>
             {% include "eloan_results.html" %}
         </div>
-    {% endif %}
+    {% elif displayType == 'error' %}
+        <div id="results" style="margin-bottom: 50px;">
+            <span id="errorMsg" style="font-weight: bold; color: red;">{{ results }}</span>
+        </div>
+    {%  endif %}
 </form>
