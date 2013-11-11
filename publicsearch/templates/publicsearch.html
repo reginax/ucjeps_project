@@ -58,6 +58,9 @@
                 </form>
             {% endif %}
         </div>
+        <span  id="waitingImage" style="display: none">
+            <img src="{% static "cspace_django_site/images/timer-animated.gif" %}" alt="Searching..."/>
+       </span>
         <div id="resultsPanel">
             {% if items %}
             {% include "searchResults.html" %}
@@ -70,7 +73,7 @@
   <table width="100%">
     <tbody>
     <tr>
-      <td style="vertical-align: middle">Current time: {{ timestamp }}. This is rev7.</td>
+      <td style="vertical-align: middle">Current time: {{ timestamp }}. This is rev8.</td>
       <td style="vertical-align: middle;width: 70px;">powered by </td>
       <td style="text-align: right; width: 160px;"><img src="{% static "cspace_django_site/images/header-logo-cspace.png" %}" height="30px"></td>
     </tr>
