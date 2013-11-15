@@ -55,18 +55,36 @@ $(document).ready(function () {
     });
 
     $('#search-list, #search-full, #search-grid').click(function () {
-        var formData = getFormData('#search');
-        formData[$(this).attr('name')] = '';
+        submitForm($(this).attr('name'));
+    });
 
-        $.post("../results/", formData).done(function (data) {
-            if (!formData['acceptterms']) {
-                $("#acceptterms")
-                    .css({
-                        background: "yellow",
-                        border: "3px red solid"
-                    });
-            }
-            else {
+    $('#search input[type=text]').keypress(function(event) {
+        if (event.which == 13) {
+            submitForm('search-list');
+        }
+    });
+
+    var submitForm = function(displaytype) {
+        var formData = getFormData('#search');
+        formData[displaytype] = '';
+
+        if (!formData['acceptterms']) {
+            $("#acceptterms")
+                .css({
+                    background: "yellow",
+                    border: "3px red solid"
+                });
+        }
+        else {
+            $('#resultsPanel').css({
+                display: "none"
+            });
+
+            $('#waitingImage').css({
+                display: "block"
+            });
+
+            $.post("../results/", formData).done(function (data) {
                 $('#resultsPanel').html(data);
                 $('#resultsListing').tablesorter({
                     headers: {
@@ -78,9 +96,17 @@ $(document).ready(function () {
                     }
                 });
                 $('#tabs').tabs({ active: 0 });
-            }
-        });
-    });
+
+                $('#resultsPanel').css({
+                    display: "block"
+                });
+
+                $('#waitingImage').css({
+                    display: "none"
+                });
+            });
+        }
+    };
 
     $(document).on('click', '#select-items', function() {
         if ($('#select-items').is(':checked')) {

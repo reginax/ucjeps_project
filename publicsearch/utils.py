@@ -28,6 +28,7 @@ SOLRCORE = 'ucjeps-metadata'
 LOCALDIR = "/var/www/html/bmapper"  # no final slash
 DROPDOWNS = ['majorgroup', 'county', 'state', 'country']
 search_qualifiers = ['keyword', 'phrase', 'exact']
+SolrIsUp = True
 
 FACETS = {}
 
@@ -268,6 +269,7 @@ def setDisplayType(requestObject):
 
 
 def setConstants(context):
+    if not SolrIsUp: context['errormsg'] = 'Solr is down!'
     context['imageserver'] = IMAGESERVER
     context['dropdowns'] = FACETS
     context['timestamp'] = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
@@ -381,12 +383,17 @@ def doSearch(solr_server, solr_core, context):
     try:
         pixonly = requestObject['pixonly']
         querystring += " AND %s:[* TO *]" % PARMS['blobs'][0]
+        url += '&pixonly=True'
     except:
         pixonly = None
 
-    response = s.query(querystring, facet='true', facet_field=facetfields, fq={},
-                       rows=context['maxresults'], facet_limit=MAXFACETS,
-                       facet_mincount=1)
+    try:
+        response = s.query(querystring, facet='true', facet_field=facetfields, fq={},
+                           rows=context['maxresults'], facet_limit=MAXFACETS,
+                           facet_mincount=1)
+    except:
+        context['errormsg'] = 'Solr4 query failed'
+        return context
 
     facetflds = getfacets(response)
     results = response.results
@@ -455,10 +462,13 @@ context = {'displayType': 'list', 'maxresults': 0,
            'searchValues': {'csv': 'true', 'querystring': '*:*', 'url': '', 'maxfacets': 1000}}
 context = doSearch(SOLRSERVER, SOLRCORE, context)
 
-for facet in context['facetflds']:
-    #print 'facet',facet[0],len(facet[1])
-    if facet[0] in DROPDOWNS:
-        FACETS[facet[0]] = sorted(facet[1])
-    # if the facet is not in a dropdown, save the memory for something better
-    else:
-        FACETS[facet[0]] = []
+if 'errormsg' in context:
+    solrIsUp = False
+else:
+    for facet in context['facetflds']:
+        #print 'facet',facet[0],len(facet[1])
+        if facet[0] in DROPDOWNS:
+            FACETS[facet[0]] = sorted(facet[1])
+        # if the facet is not in a dropdown, save the memory for something better
+        else:
+            FACETS[facet[0]] = []
