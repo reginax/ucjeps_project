@@ -28,6 +28,7 @@
     <div style="float:right; height: 30px;">
         <a href="#" id="about">About</a>
         <a href="#" id="help">Help</a>
+        <a href="http://ucjeps.berkeley.edu/useterms.html">Terms</a>
         <a href="#" id="credits">Credits</a>
     </div>
 {% endblock %}
@@ -58,9 +59,9 @@
                 </form>
             {% endif %}
         </div>
-        <span  id="waitingImage" style="display: none">
+        <div  id="waitingImage" style="display: none">
             <img src="{% static "cspace_django_site/images/timer-animated.gif" %}" alt="Searching..."/>
-       </span>
+       </div>
         <div id="resultsPanel">
             {% if items %}
                 {% include "searchResults.html" %}

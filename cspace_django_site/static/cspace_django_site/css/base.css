@@ -73,10 +73,10 @@ a:hover { color: #036; }
 .size2of10{width:20%;}
 
 .grid{
-    margin: 10px;
+    margin: 5px;
     /* chrome & firefox only */
 	display: inline-block;
-    width: 210px;
+    width: 180px;
     vertical-align: top;
     position: relative;
     height: 300px;
