@@ -375,13 +375,14 @@ def doSearch(solr_server, solr_core, context):
 
     try:
         pixonly = requestObject['pixonly']
-        querystring += " AND %s:[* TO *]" % PARMS['blobs'][0]
+        querystring += " AND %s:[* TO *]" % PARMS['blobs'][3]
         url += '&pixonly=True'
     except:
         pixonly = None
 
     try:
         locsonly = requestObject['locsonly']
+        querystring += " AND %s:[* TO *]" % PARMS['L1'][3]
         url += '&locsonly=True'
     except:
         locsonly = None
