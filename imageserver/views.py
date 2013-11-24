@@ -15,22 +15,14 @@ import time
 
 #@login_required()
 def get_image(request, image):
-    #config = cspace_django_site.getConfig()
-    #connection = cspace.connection.create_connection(config, request.user)
-    #(url, data, statusCode) = connection.make_get_request('cspace-services/%s' % image)
-    #return HttpResponse(data, mimetype='image/jpeg')
 
     realm = 'org.collectionspace.services'
-    # uri = 'cspace-services/accounts/0/accountperms'
     protocol = 'http'
     port = '8180'
 
     hostname = 'ucjeps.cspace.berkeley.edu'
-    username = 'admin@ucjeps.cspace.berkeley.edu'
-    password = xxxxxx
-
-    #hostname = 'pahma.cspace.berkeley.edu'
-    #username = 'import@pahma.cspace.berkeley.edu'
+    username = 'search@ucjeps.cspace.berkeley.edu'
+    password = 'xxxpasswordxxx'
     #password = 'xxxpasswordxxx'
 
     server = protocol + "://" + hostname + ":" + port
@@ -40,7 +32,6 @@ def get_image(request, image):
     opener = urllib2.build_opener(authhandler)
     urllib2.install_opener(opener)
     url = "%s/cspace-services/%s" % (server, image)
-    #print "<p>%s</p>" % url
     elapsedtime = 0
 
     try:
@@ -57,5 +48,4 @@ def get_image(request, image):
         print 'Reason: ', e.reason
         raise
     else:
-        #return (url,data,elapsedtime)
         return HttpResponse(data, mimetype='image/jpeg')
