@@ -2,6 +2,13 @@
 {% load i18n admin_static %}
 {% load staticfiles  %}
 
+{% block extrastyle %}
+    <link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/tablesorter.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "cspace_django_site/css/smoothness/jquery-ui-1.10.3.custom.min.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/ucjeps.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "eloan/css/eloan.css" %}"/>
+{% endblock %}
+
 {% block branding %}
     <h4 class="bannerLeft">UC Herbarium</h4>
     <h4 class="bannerRight">Jepson Herbarium</h4>
@@ -47,19 +54,18 @@
         {% endfor %}
         <hr>
 
-        <div class="loaninfo">
+        <div id="recordInfo" class="loanInfo">
             <table>
-                    <!-- TODO Implement headerlabel class in css; remove style after css is in place -->
                     <tr>
-                            <td class="headerlabel" style="font-weight: bold;">eLoan No.:  </td>
+                            <td class="headerLabel">eLoan No.:  </td>
                             <td>{{ loaninfo.0 }}</td>
                     </tr>
                     <tr>
-                            <td class="headerlabel" style="font-weight: bold;">Borrower's Contact:  </td>
+                            <td class="headerLabel">Borrower's Contact:  </td>
                             <td>{{ loaninfo.1 }}</td>
                     </tr>
                     <tr>
-                            <td class="headerlabel" style="font-weight: bold;">eLoan Date:  </td>
+                            <td class="headerLabel">eLoan Date:  </td>
                             <td>{{ loaninfo.2 }}</td>
                     </tr>
             </table>
@@ -78,7 +84,7 @@
   <table width="100%">
       <tbody>
           <tr>
-              <td style="vertical-align: middle">Current time: {{ timestamp }}. This is rev7.</td>
+              <td style="vertical-align: middle">Current time: {{ timestamp }}. This is rev1.</td>
               <td style="vertical-align: middle;width: 70px;">powered by </td>
               <td style="text-align: right; width: 160px;"><img src="{% static "cspace_django_site/images/header-logo-cspace.png" %}" height="30px"></td>
           </tr>
