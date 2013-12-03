@@ -16,6 +16,16 @@ import time
 
 #@login_required()
 def get_entity(request, entitytype, responsemimetype):
+    """ Connects to CollectionSpace server, makes request to cspace-services RESTful API.
+
+
+    Returns xml payload or images.
+
+    :param request:
+    :param entitytype:
+    :param responsemimetype:
+    :return:
+    """
     #config = cspace_django_site.getConfig()
     #connection = cspace.connection.create_connection(config, request.user)
     #(url, data, statusCode) = connection.make_get_request('cspace-services/%s' % image)
@@ -29,7 +39,7 @@ def get_entity(request, entitytype, responsemimetype):
     hostname = 'ucjeps-dev.cspace.berkeley.edu'
     username = 'admin@ucjeps.cspace.berkeley.edu'
     # TODO xxxxx password value out before committing to github
-    password = 'ucjeps-dev'
+    password = 'xxxxxx'
 
     server = protocol + "://" + hostname + ":" + port
     passman = urllib2.HTTPPasswordMgr()
@@ -59,7 +69,20 @@ def get_entity(request, entitytype, responsemimetype):
         return HttpResponse(data, mimetype=responsemimetype)
 
 def build_solr_query(solr_server, solr_core, solr_queryparam_key, solr_queryparam_value):
+    """
+    Takes solr query information, searches against ucjeps_project publicsearch portal.
+
+
+    Returns search results.
+
+    :param solr_server:
+    :param solr_core:
+    :param solr_queryparam_key:
+    :param solr_queryparam_value:
+    :return: results:
+    """
     query_dictionary = {solr_queryparam_key: solr_queryparam_value, 'displayType': 'full', 'maxresults': '2000'}
     solr_context = {'searchValues': query_dictionary}
+    # from publicsearch/utils.py
     results = doSearch(solr_server, solr_core, solr_context)
     return results

@@ -42,7 +42,6 @@ config = cspace_django_site.getConfig()
 SOLRSERVER = 'http://localhost:8983/solr'
 SOLRCORE = 'ucjeps-metadata'
 SOLRQUERYPARAM = 'accession'
-# SOLRQUERYPARAM2 = 'csid'
 
 
 # CONSTANTS
@@ -122,16 +121,10 @@ def eloan(request):
         relatedObjListXML = fromstring(rolistdata)
         relatedObjXML = relatedObjListXML.findall('./relation-list-item')
 
-        # loanItemInfo = []
-        objectCsids = []
         objectNumbers = []
+        #objectCsids = []
+        #objectNames = []
         for i in relatedObjXML:
-
-            objCsid = getfromXML(i, './object/csid')
-            objectCsids.append(objCsid)
-
-            # Other options ...
-            # if we ever need objectNumber and objectName
 
             # Note: ObjectNumber not a required field in UCJEPS instance, so using it for search is problematic
             objNum = getfromXML(i, './object/number')
@@ -145,17 +138,20 @@ def eloan(request):
             #     continue
             objectNumbers.append(objNum)
 
+            # Other options ... if we ever need to search by CSID or objectName
+            # Note: CSIDs are passed in URL but do not appear on public search form
+            #objCsid = getfromXML(i, './object/csid')
+            #objectCsids.append(objCsid)
+
             # Note: ObjectName not necessarily unique, so using it for search is problematic
-            # objName = getfromXML(i,'./object/name')
-            # objectNames.append(objName)
+            #objName = getfromXML(i,'./object/name')
+            #objectNames.append(objName)
 
 
-        ##################
-        # AT THIS POINT, SWITCH TO SOLR SEARCH
-        # Use objCsid values to search publicsearch webapp via doSearch method of publicsearch.utils
-        # Write search results to a div below the loan out info.
+        #################################################
+        # CALL PUBLICSEARCH WEBAPP, DISPLAY SEARCH RESULTS IN A DIV BELOW LOAN OUT INFO
         # TODO: Need to incorporate typeSpecimenBasionym field into solr data source and template.
-        ##################
+        #################################################
 
         # Args to pass to solr - REQUIRED
         solr_server = SOLRSERVER
@@ -164,6 +160,7 @@ def eloan(request):
         # Pull individual objectNumbers from list and insert ' OR ' between each
         solr_queryparam_value = " OR ".join(objectNumbers)
 
+        # Search public search (solr) portal
         results = build_solr_query(solr_server, solr_core, solr_queryparam_key, solr_queryparam_value)
 
         # Either break values out of results array as we do here, or use results[value] notation in HTML templates
@@ -176,7 +173,7 @@ def eloan(request):
         )
 
     else:
-        # In case we want to include a bit of instruction to the user.
+        # Include a bit of instruction to the user
         emptyMsg = 'Please enter a loan number'
         return render(request, 'eloan.html', {'title': TITLE, 'timestamp': TIMESTAMP, 'results': emptyMsg, 'displayType': 'empty'}
         )
