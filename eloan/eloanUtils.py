@@ -5,6 +5,7 @@ from django.http import HttpResponse
 
 from common import cspace
 from cspace_django_site.main import cspace_django_site
+from publicsearch.utils import doSearch
 
 from os import path
 from ConfigParser import NoOptionError
@@ -56,3 +57,9 @@ def get_entity(request, entitytype, responsemimetype):
     else:
         #return (url,data,elapsedtime)
         return HttpResponse(data, mimetype=responsemimetype)
+
+def build_solr_query(solr_server, solr_core, solr_queryparam_key, solr_queryparam_value):
+    query_dictionary = {solr_queryparam_key: solr_queryparam_value, 'displayType': 'full', 'maxresults': '2000'}
+    solr_context = {'searchValues': query_dictionary}
+    results = doSearch(solr_server, solr_core, solr_context)
+    return results

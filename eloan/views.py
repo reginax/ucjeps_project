@@ -6,7 +6,7 @@ import time
 from django.shortcuts import render
 import urllib
 from cspace_django_site.main import cspace_django_site
-from authenticatedReqUtil import get_entity
+from eloanUtils import get_entity, build_solr_query
 from publicsearch.utils import writeCsv, doSearch, setupGoogleMap, setupBMapper, getfromXML
 
 # alas, there are many ways the XML parsing functionality might be installed.
@@ -40,9 +40,10 @@ config = cspace_django_site.getConfig()
 
 # Static string parts for publicsearch (Solr) query
 SOLRSERVER = 'http://localhost:8983/solr'
-# SOLRQUERYPARAMCSID = 'csid'
-SOLRQUERYPARAMACCESSION = 'accession'
 SOLRCORE = 'ucjeps-metadata'
+SOLRQUERYPARAM = 'accession'
+# SOLRQUERYPARAM2 = 'csid'
+
 
 # CONSTANTS
 TIMESTAMP = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
@@ -156,22 +157,14 @@ def eloan(request):
         # TODO: Need to incorporate typeSpecimenBasionym field into solr data source and template.
         ##################
 
-        # Build args to pass to solr
-        # Static string parts of the URL
+        # Args to pass to solr - REQUIRED
         solr_server = SOLRSERVER
-        # solr_queryparamcsid = SOLRQUERYPARAMCSID
-        solr_queryparamacc = SOLRQUERYPARAMACCESSION
         solr_core = SOLRCORE
-
+        solr_queryparam_key = SOLRQUERYPARAM
         # Pull individual objectNumbers from list and insert ' OR ' between each
-        objectNumbersToSearch = " OR ".join(objectNumbers)
-        # Perhaps do the same for CSIDs.
-        # csidsToSearch = " OR ".join(objectCsids)
-        query_dictionary = {solr_queryparamacc: objectNumbersToSearch, 'displayType': 'full', 'maxresults': '2000'}
-        #query_dictionary = {solr_queryparamcsid:csidsToSearch, solr_queryparamacc:objectNumbersToSearch, 'displayType':'full', 'maxresults':'2000'}
+        solr_queryparam_value = " OR ".join(objectNumbers)
 
-        solr_context = {'searchValues': query_dictionary}
-        results = doSearch(solr_server, solr_core, solr_context)
+        results = build_solr_query(solr_server, solr_core, solr_queryparam_key, solr_queryparam_value)
 
         # Either break values out of results array as we do here, or use results[value] notation in HTML templates
         return render(request, 'eloan.html',
@@ -184,7 +177,7 @@ def eloan(request):
 
     else:
         # In case we want to include a bit of instruction to the user.
-        msg = 'Please enter a loan number'
-        return render(request, 'eloan.html', {'title': TITLE, 'timestamp': TIMESTAMP, 'message': msg}
+        emptyMsg = 'Please enter a loan number'
+        return render(request, 'eloan.html', {'title': TITLE, 'timestamp': TIMESTAMP, 'results': emptyMsg, 'displayType': 'empty'}
         )
 
