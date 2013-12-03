@@ -29,7 +29,7 @@ def get_entity(request, entitytype, responsemimetype):
     hostname = 'ucjeps-dev.cspace.berkeley.edu'
     username = 'admin@ucjeps.cspace.berkeley.edu'
     # TODO xxxxx password value out before committing to github
-    password = 'ucjeps-dev'
+    password = 'xxxxxx'
 
     server = protocol + "://" + hostname + ":" + port
     passman = urllib2.HTTPPasswordMgr()
