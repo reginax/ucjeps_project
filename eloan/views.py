@@ -6,7 +6,7 @@ import time
 from django.shortcuts import render
 import urllib
 from cspace_django_site.main import cspace_django_site
-from eloanUtils import get_entity, build_solr_query
+from eloanutils import get_entity, build_solr_query
 from publicsearch.utils import writeCsv, doSearch, setupGoogleMap, setupBMapper, getfromXML
 
 # alas, there are many ways the XML parsing functionality might be installed.
