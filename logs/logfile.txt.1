@@ -1,0 +1,556 @@
+[21/Oct/2013 22:44:13] ERROR [django.request:212] Internal Server Error: /public/eloan/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/views.py", line 232, in eloan
+    {'loaninfo': loaninfo, 'results': results, 'items': results['items'], 'kw': eloanNum})
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/shortcuts/__init__.py", line 53, in render
+    return HttpResponse(loader.render_to_string(*args, **kwargs),
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 170, in render_to_string
+    t = get_template(template_name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 146, in get_template
+    template, origin = find_template(template_name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 135, in find_template
+    source, display_name = loader(name, dirs)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 43, in __call__
+    return self.load_template(template_name, template_dirs)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 49, in load_template
+    template = get_template_from_string(source, origin, template_name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 157, in get_template_from_string
+    return Template(source, origin, name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 125, in __init__
+    self.nodelist = compile_string(template_string, origin)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 153, in compile_string
+    return parser.parse()
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 274, in parse
+    compiled_result = compile_func(self, token)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader_tags.py", line 215, in do_extends
+    nodelist = parser.parse()
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 274, in parse
+    compiled_result = compile_func(self, token)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader_tags.py", line 190, in do_block
+    nodelist = parser.parse(('endblock',))
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 272, in parse
+    self.invalid_block_tag(token, command, parse_until)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 327, in invalid_block_tag
+    (command, get_text_list(["'%s'" % p for p in parse_until])))
+TemplateSyntaxError: Invalid block tag: 'static', expected 'endblock'
+[21/Oct/2013 22:47:18] ERROR [django.request:212] Internal Server Error: /public/eloan/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/views.py", line 232, in eloan
+    {'loaninfo': loaninfo, 'results': results, 'items': results['items'], 'kw': eloanNum})
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/shortcuts/__init__.py", line 53, in render
+    return HttpResponse(loader.render_to_string(*args, **kwargs),
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 170, in render_to_string
+    t = get_template(template_name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 146, in get_template
+    template, origin = find_template(template_name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 135, in find_template
+    source, display_name = loader(name, dirs)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 43, in __call__
+    return self.load_template(template_name, template_dirs)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 49, in load_template
+    template = get_template_from_string(source, origin, template_name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 157, in get_template_from_string
+    return Template(source, origin, name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 125, in __init__
+    self.nodelist = compile_string(template_string, origin)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 153, in compile_string
+    return parser.parse()
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 274, in parse
+    compiled_result = compile_func(self, token)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader_tags.py", line 215, in do_extends
+    nodelist = parser.parse()
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 274, in parse
+    compiled_result = compile_func(self, token)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader_tags.py", line 190, in do_block
+    nodelist = parser.parse(('endblock',))
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 272, in parse
+    self.invalid_block_tag(token, command, parse_until)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 327, in invalid_block_tag
+    (command, get_text_list(["'%s'" % p for p in parse_until])))
+TemplateSyntaxError: Invalid block tag: '"cspace_django_site/images/header-logo-cspace.png"', expected 'endblock'
+[21/Oct/2013 22:50:58] ERROR [django.request:212] Internal Server Error: /public/eloan/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/views.py", line 232, in eloan
+    {'loaninfo': loaninfo, 'results': results, 'items': results['items'], 'kw': eloanNum})
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/shortcuts/__init__.py", line 53, in render
+    return HttpResponse(loader.render_to_string(*args, **kwargs),
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 170, in render_to_string
+    t = get_template(template_name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 146, in get_template
+    template, origin = find_template(template_name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 135, in find_template
+    source, display_name = loader(name, dirs)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 43, in __call__
+    return self.load_template(template_name, template_dirs)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 49, in load_template
+    template = get_template_from_string(source, origin, template_name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 157, in get_template_from_string
+    return Template(source, origin, name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 125, in __init__
+    self.nodelist = compile_string(template_string, origin)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 153, in compile_string
+    return parser.parse()
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 274, in parse
+    compiled_result = compile_func(self, token)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader_tags.py", line 215, in do_extends
+    nodelist = parser.parse()
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 274, in parse
+    compiled_result = compile_func(self, token)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader_tags.py", line 190, in do_block
+    nodelist = parser.parse(('endblock',))
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 272, in parse
+    self.invalid_block_tag(token, command, parse_until)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 327, in invalid_block_tag
+    (command, get_text_list(["'%s'" % p for p in parse_until])))
+TemplateSyntaxError: Invalid block tag: 'static', expected 'endblock'
+[22/Oct/2013 12:35:36] ERROR [django.request:212] Internal Server Error: /public/eloan/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/views.py", line 232, in eloan
+    {'loaninfo': loaninfo, 'results': results, 'items': results['items'], 'kw': eloanNum})
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/shortcuts/__init__.py", line 53, in render
+    return HttpResponse(loader.render_to_string(*args, **kwargs),
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 170, in render_to_string
+    t = get_template(template_name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 146, in get_template
+    template, origin = find_template(template_name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 135, in find_template
+    source, display_name = loader(name, dirs)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 43, in __call__
+    return self.load_template(template_name, template_dirs)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 49, in load_template
+    template = get_template_from_string(source, origin, template_name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 157, in get_template_from_string
+    return Template(source, origin, name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 125, in __init__
+    self.nodelist = compile_string(template_string, origin)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 153, in compile_string
+    return parser.parse()
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 274, in parse
+    compiled_result = compile_func(self, token)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader_tags.py", line 215, in do_extends
+    nodelist = parser.parse()
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 274, in parse
+    compiled_result = compile_func(self, token)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader_tags.py", line 190, in do_block
+    nodelist = parser.parse(('endblock',))
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 272, in parse
+    self.invalid_block_tag(token, command, parse_until)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 327, in invalid_block_tag
+    (command, get_text_list(["'%s'" % p for p in parse_until])))
+TemplateSyntaxError: Invalid block tag: 'static', expected 'endblock'
+[22/Oct/2013 12:36:03] WARNING [django.request:146] Not Found: /favicon.ico
+[22/Oct/2013 12:42:52] WARNING [django.request:146] Not Found: /blobs/101e9e0b-b73b-40b9-9026/derivatives/Thumbnail/content
+[22/Oct/2013 12:42:52] WARNING [django.request:146] Not Found: /blobs/af2d1e35-58e8-4bc1-b6d4/derivatives/Thumbnail/content
+[22/Oct/2013 12:42:52] WARNING [django.request:146] Not Found: /blobs/4497efbb-0781-433c-a11a/derivatives/Thumbnail/content
+[22/Oct/2013 12:42:53] WARNING [django.request:146] Not Found: /blobs/af2d1e35-58e8-4bc1-b6d4/derivatives/Thumbnail/content
+[22/Oct/2013 12:42:53] WARNING [django.request:146] Not Found: /blobs/4497efbb-0781-433c-a11a/derivatives/Thumbnail/content
+[22/Oct/2013 12:42:53] WARNING [django.request:146] Not Found: /blobs/101e9e0b-b73b-40b9-9026/derivatives/Thumbnail/content
+[22/Oct/2013 12:43:19] WARNING [django.request:146] Not Found: /blobs/101e9e0b-b73b-40b9-9026/derivatives/OriginalJpeg/content
+[22/Oct/2013 12:43:53] WARNING [django.request:146] Not Found: /blobs/101e9e0b-b73b-40b9-9026/derivatives/OriginalJpeg/content
+[22/Oct/2013 12:49:08] ERROR [django.request:212] Internal Server Error: /public/bmapper/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/publicsearch/views.py", line 62, in bmapper
+    context = setupBMapper(requestObject, context)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/publicsearch/utils.py", line 198, in setupBMapper
+    for item in context['items']:
+KeyError: 'items'
+[28/Oct/2013 21:08:15] WARNING [django.request:146] Not Found: /favicon.ico
+[28/Oct/2013 21:37:44] ERROR [django.request:212] Internal Server Error: /public/csv/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/publicsearch/views.py", line 93, in csv
+    writeCsv(response, context['items'], writeheader=True)
+KeyError: 'items'
+[28/Oct/2013 21:38:01] ERROR [django.request:212] Internal Server Error: /public/csv/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/publicsearch/views.py", line 93, in csv
+    writeCsv(response, context['items'], writeheader=True)
+KeyError: 'items'
+[28/Oct/2013 21:46:16] ERROR [django.request:212] Internal Server Error: /public/eloan/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/views.py", line 112, in eloan
+    raise Exception(errMsg)
+Exception: Could not find the loan e123. Please try another.
+[28/Oct/2013 21:46:25] WARNING [django.request:186] Forbidden (CSRF token missing or incorrect.): /public/results/
+[28/Oct/2013 21:55:12] ERROR [django.request:212] Internal Server Error: /public/csv/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/publicsearch/views.py", line 93, in csv
+    writeCsv(response, context['items'], writeheader=True)
+KeyError: 'items'
+[28/Oct/2013 22:19:23] ERROR [django.request:212] Internal Server Error: /public/eloan/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/views.py", line 232, in eloan
+    {'loaninfo': loaninfo, 'results': results, 'items': results['items'], 'displayType': results['displayType'], 'count': results['count'], 'imageserver': results['imageserver'], 'url': results['url'], 'querystring': results['querystring'], 'timestamp': results['timestamp'],  'kw': eloanNum})
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/shortcuts/__init__.py", line 53, in render
+    return HttpResponse(loader.render_to_string(*args, **kwargs),
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 170, in render_to_string
+    t = get_template(template_name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 149, in get_template
+    template = get_template_from_string(template, origin, template_name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 157, in get_template_from_string
+    return Template(source, origin, name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 125, in __init__
+    self.nodelist = compile_string(template_string, origin)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 153, in compile_string
+    return parser.parse()
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 274, in parse
+    compiled_result = compile_func(self, token)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader_tags.py", line 215, in do_extends
+    nodelist = parser.parse()
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 274, in parse
+    compiled_result = compile_func(self, token)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader_tags.py", line 190, in do_block
+    nodelist = parser.parse(('endblock',))
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 274, in parse
+    compiled_result = compile_func(self, token)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader_tags.py", line 263, in do_include
+    isolated_context=isolated_context)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader_tags.py", line 146, in __init__
+    t = get_template(template_path)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 149, in get_template
+    template = get_template_from_string(template, origin, template_name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 157, in get_template_from_string
+    return Template(source, origin, name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 125, in __init__
+    self.nodelist = compile_string(template_string, origin)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 153, in compile_string
+    return parser.parse()
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 274, in parse
+    compiled_result = compile_func(self, token)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader_tags.py", line 263, in do_include
+    isolated_context=isolated_context)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader_tags.py", line 146, in __init__
+    t = get_template(template_path)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 146, in get_template
+    template, origin = find_template(template_name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 139, in find_template
+    raise TemplateDoesNotExist(name)
+TemplateDoesNotExist: ../publicsearch/searchstats.html
+[28/Oct/2013 22:33:33] ERROR [django.request:212] Internal Server Error: /public/bmapper/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/publicsearch/views.py", line 62, in bmapper
+    context = setupBMapper(requestObject, context)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/publicsearch/utils.py", line 206, in setupBMapper
+    filehandle = open(path.join(LOCALDIR, filename), 'wb')
+IOError: [Errno 2] No such file or directory: '/var/www/html/bmapper/bmapper20131029053333.csv'
+[28/Oct/2013 22:42:42] ERROR [django.request:212] Internal Server Error: /public/eloan/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/views.py", line 98, in eloan
+    lolistdata = get_record(request, asquery).content
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/authenticatedReqUtil.py", line 44, in get_record
+    f = urllib2.urlopen(url)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/urllib2.py", line 127, in urlopen
+    return _opener.open(url, data, timeout)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/urllib2.py", line 410, in open
+    response = meth(req, response)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/urllib2.py", line 523, in http_response
+    'http', request, response, code, msg, hdrs)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/urllib2.py", line 448, in error
+    return self._call_chain(*args)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/urllib2.py", line 382, in _call_chain
+    result = func(*args)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/urllib2.py", line 531, in http_error_default
+    raise HTTPError(req.get_full_url(), code, msg, hdrs, fp)
+HTTPError: HTTP Error 505: HTTP Version Not Supported
+[28/Oct/2013 22:42:54] ERROR [django.request:212] Internal Server Error: /public/eloan/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/views.py", line 112, in eloan
+    raise Exception(errMsg)
+Exception: Could not find the loan loan2. Please try another.
+[28/Oct/2013 22:43:18] ERROR [django.request:212] Internal Server Error: /public/eloan/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/views.py", line 98, in eloan
+    lolistdata = get_record(request, asquery).content
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/authenticatedReqUtil.py", line 44, in get_record
+    f = urllib2.urlopen(url)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/urllib2.py", line 127, in urlopen
+    return _opener.open(url, data, timeout)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/urllib2.py", line 410, in open
+    response = meth(req, response)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/urllib2.py", line 523, in http_response
+    'http', request, response, code, msg, hdrs)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/urllib2.py", line 448, in error
+    return self._call_chain(*args)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/urllib2.py", line 382, in _call_chain
+    result = func(*args)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/urllib2.py", line 531, in http_error_default
+    raise HTTPError(req.get_full_url(), code, msg, hdrs, fp)
+HTTPError: HTTP Error 505: HTTP Version Not Supported
+[28/Oct/2013 22:44:50] INFO [cspace_django_site.main:59] AuthN initialized
+[28/Oct/2013 22:44:51] INFO [authn.authn:163] Request to http://ucjeps-dev.cspace.berkeley.edu:8180/cspace-services/accounts/0/accountperms: 401
+[28/Oct/2013 22:44:51] DEBUG [authn.authn:170] User: admin@ucjeps.cspace.berkeley.edu could not authenticate with Host: ucjeps-dev.cspace.berkeley.edu
+[28/Oct/2013 22:44:59] INFO [cspace_django_site.main:59] AuthN initialized
+[28/Oct/2013 22:44:59] INFO [authn.authn:163] Request to http://ucjeps-dev.cspace.berkeley.edu:8180/cspace-services/accounts/0/accountperms: 401
+[28/Oct/2013 22:44:59] DEBUG [authn.authn:170] User: admin@ucjeps.cspace.berkeley.edu could not authenticate with Host: ucjeps-dev.cspace.berkeley.edu
+[28/Oct/2013 22:45:46] INFO [cspace_django_site.main:59] AuthN initialized
+[28/Oct/2013 22:45:47] INFO [authn.authn:163] Request to http://ucjeps-dev.cspace.berkeley.edu:8180/cspace-services/accounts/0/accountperms: 401
+[28/Oct/2013 22:45:47] DEBUG [authn.authn:170] User: admin@ucjeps.cspace.berkeley.edu could not authenticate with Host: ucjeps-dev.cspace.berkeley.edu
+[28/Oct/2013 22:46:01] INFO [cspace_django_site.main:59] AuthN initialized
+[28/Oct/2013 22:46:01] INFO [authn.authn:163] Request to http://ucjeps-dev.cspace.berkeley.edu:8180/cspace-services/accounts/0/accountperms: 200
+[28/Oct/2013 22:46:01] DEBUG [authn.authn:168] User: admin@ucjeps.cspace.berkeley.edu authenticated with Host: ucjeps-dev.cspace.berkeley.edu
+[28/Oct/2013 22:57:30] WARNING [django.request:146] Not Found: /favicon.ico
+[01/Nov/2013 16:15:22] WARNING [django.request:146] Not Found: /favicon.ico
+[03/Nov/2013 11:58:10] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 11:58:21] WARNING :: Not Found: /public/eloan/
+[03/Nov/2013 11:58:22] WARNING :: Not Found: /favicon.ico
+[03/Nov/2013 11:59:11] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 11:59:57] INFO :: start :: 1 :: - ::  (id:(+24ae175b-1dd9-4c7d-8c6a-d817c6100218) OR id:(+e09500ee-519f-4976-95d0) OR id:(+2f3df47e-cc19-4858-8e15))  :: csid=24ae175b-1dd9-4c7d-8c6a-d817c6100218 OR e09500ee-519f-4976-95d0 OR 2f3df47e-cc19-4858-8e15&displayType=full&maxresults=2000
+[03/Nov/2013 12:11:42] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 12:13:03] INFO :: start :: 3 :: - ::  (id:(+af6fecfb-6831-4c09-9e36-0f025a1d0295) OR id:(+24ae175b-1dd9-4c7d-8c6a-d817c6100218) OR id:(+5fb80054-415d-4dab-b239-bf0211a2ed2d))  :: csid=af6fecfb-6831-4c09-9e36-0f025a1d0295 OR 24ae175b-1dd9-4c7d-8c6a-d817c6100218 OR 5fb80054-415d-4dab-b239-bf0211a2ed2d&displayType=full&maxresults=2000
+[03/Nov/2013 12:14:39] INFO :: start :: 3 :: - ::  (id:(+af6fecfb-6831-4c09-9e36-0f025a1d0295) OR id:(+24ae175b-1dd9-4c7d-8c6a-d817c6100218) OR id:(+5fb80054-415d-4dab-b239-bf0211a2ed2d))  :: csid=af6fecfb-6831-4c09-9e36-0f025a1d0295 OR 24ae175b-1dd9-4c7d-8c6a-d817c6100218 OR 5fb80054-415d-4dab-b239-bf0211a2ed2d&displayType=full&maxresults=2000
+[03/Nov/2013 13:06:17] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 13:06:43] WARNING :: /Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/http/request.py:193: DeprecationWarning: HttpRequest.raw_post_data has been deprecated. Use HttpRequest.body instead.
+  warnings.warn('HttpRequest.raw_post_data has been deprecated. Use HttpRequest.body instead.', DeprecationWarning)
+
+[03/Nov/2013 13:08:33] ERROR :: Internal Server Error: /public/eloan/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/views.py", line 103, in eloan
+    raise Exception(errMsg)
+Exception: Could not find the loan eloanNum. Please try another.
+[03/Nov/2013 13:09:47] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 13:12:09] ERROR :: Internal Server Error: /public/eloan/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/views.py", line 102, in eloan
+    raise Exception(errMsg)
+Exception: Could not find the loan eLoan+Test. Please try another.
+[03/Nov/2013 13:13:12] ERROR :: Internal Server Error: /public/eloan/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/views.py", line 102, in eloan
+    raise Exception(errMsg)
+Exception: Could not find the loan eLoan%2520Test. Please try another.
+[03/Nov/2013 13:17:09] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 13:17:27] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 13:27:25] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 13:29:33] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 13:35:26] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 13:35:37] ERROR :: Internal Server Error: /public/eloan/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/views.py", line 95, in eloan
+    raise Exception(errMsg)
+Exception: Could not find the loan eloanTest. Please try another.
+[03/Nov/2013 13:37:02] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 13:39:06] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 13:39:40] ERROR :: Internal Server Error: /public/eloan/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/views.py", line 162, in eloan
+    results = doSearch(solr_server, solr_core, solr_context)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/publicsearch/utils.py", line 382, in doSearch
+    facet_mincount=1)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/solr/core.py", line 703, in query
+    return self.select(*args, **params)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/solr/core.py", line 798, in __call__
+    xml = self.raw(**params)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/solr/core.py", line 823, in raw
+    rsp = conn._post(self.selector, request, conn.form_headers)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/solr/core.py", line 646, in _post
+    self._reconnect()
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/solr/core.py", line 625, in _reconnect
+    self.conn.connect()
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/httplib.py", line 772, in connect
+    self.timeout, self.source_address)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/socket.py", line 571, in create_connection
+    raise err
+error: [Errno 61] Connection refused
+[03/Nov/2013 13:44:35] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 13:44:52] INFO :: start :: 1 :: - :: accessionnumber_txt:(+UC647116) :: accession=UC647116&displayType=full&maxresults=1
+[03/Nov/2013 14:05:04] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 14:09:24] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 14:09:31] INFO :: start :: 1 :: - :: accessionnumber_txt:(+UC306463) :: accession=UC306463&displayType=full&maxresults=1
+[03/Nov/2013 14:10:33] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 14:10:36] ERROR :: Internal Server Error: /public/eloan/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 103, in get_response
+    resolver_match = resolver.resolve(request.path_info)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/urlresolvers.py", line 319, in resolve
+    for pattern in self.url_patterns:
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/urlresolvers.py", line 347, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/urlresolvers.py", line 342, in urlconf_module
+    self._urlconf_module = import_module(self.urlconf_name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/utils/importlib.py", line 35, in import_module
+    __import__(name)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/cspace_django_site/urls.py", line 30, in <module>
+    url(r'^public/', include('eloan.urls', namespace='eloan')),
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/conf/urls/__init__.py", line 25, in include
+    urlconf_module = import_module(urlconf_module)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/utils/importlib.py", line 35, in import_module
+    __import__(name)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/urls.py", line 4, in <module>
+    from eloan import views
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/views.py", line 9, in <module>
+    from authenticatedReqUtil import get_record
+ImportError: cannot import name get_record
+[03/Nov/2013 14:11:12] WARNING :: Reinitializing the site.
+[03/Nov/2013 14:11:18] ERROR :: Internal Server Error: /public/eloan/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/views.py", line 77, in eloan
+    lolistdata = get_record(request, asquery).content
+NameError: global name 'get_record' is not defined
+[03/Nov/2013 14:12:10] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 14:12:13] ERROR :: Internal Server Error: /public/eloan/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/views.py", line 97, in eloan
+    lodata = get_record(request, loquery).content
+NameError: global name 'get_record' is not defined
+[03/Nov/2013 14:12:38] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 14:12:41] ERROR :: Internal Server Error: /public/eloan/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/views.py", line 118, in eloan
+    rolistdata = get_record(request, roquery).content
+NameError: global name 'get_record' is not defined
+[03/Nov/2013 14:12:58] ERROR :: Internal Server Error: /public/eloan/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/views.py", line 118, in eloan
+    rolistdata = get_entity(request, roquery).content
+NameError: global name 'get_record' is not defined
+[03/Nov/2013 14:13:03] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 14:13:10] INFO :: start :: 1 :: - :: accessionnumber_txt:(+UC647116) :: accession=UC647116&displayType=full&maxresults=1
+[03/Nov/2013 14:13:44] INFO :: start :: 1 :: - :: accessionnumber_txt:(+UC306463) :: accession=UC306463&displayType=full&maxresults=1
+[03/Nov/2013 14:16:26] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 14:16:34] ERROR :: Internal Server Error: /public/eloan/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/views.py", line 77, in eloan
+    lolistdata = get_entity(request, asquery).content
+TypeError: get_entity() takes exactly 3 arguments (2 given)
+[03/Nov/2013 14:19:43] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 14:21:46] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 14:27:00] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 14:27:03] ERROR :: Internal Server Error: /public/eloan/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/views.py", line 79, in eloan
+    lolistdata = get_entity(request, asquery, expectedmimetype).content
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/authenticatedReqUtil.py", line 33, in get_entity
+    server = protocol + "://" + hostname + ":" + port
+NameError: global name 'port' is not defined
+[03/Nov/2013 14:27:25] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 14:27:29] ERROR :: Internal Server Error: /public/eloan/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/views.py", line 79, in eloan
+    lolistdata = get_entity(request, asquery, expectedmimetype).content
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/authenticatedReqUtil.py", line 45, in get_entity
+    f = urllib2.urlopen(url)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/urllib2.py", line 127, in urlopen
+    return _opener.open(url, data, timeout)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/urllib2.py", line 404, in open
+    response = self._open(req, data)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/urllib2.py", line 422, in _open
+    '_open', req)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/urllib2.py", line 382, in _call_chain
+    result = func(*args)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/urllib2.py", line 1222, in https_open
+    return self.do_open(httplib.HTTPSConnection, req)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/urllib2.py", line 1184, in do_open
+    raise URLError(err)
+URLError: <urlopen error [Errno 1] _ssl.c:504: error:140770FC:SSL routines:SSL23_GET_SERVER_HELLO:unknown protocol>
+[03/Nov/2013 14:28:20] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 14:34:56] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[03/Nov/2013 14:37:18] INFO :: AuthN initialized
+[03/Nov/2013 14:37:19] INFO :: Request to http://ucjeps-dev.cspace.berkeley.edu:8180/cspace-services/accounts/0/accountperms: 200
+[03/Nov/2013 14:37:19] DEBUG :: User: admin@ucjeps.cspace.berkeley.edu authenticated with Host: ucjeps-dev.cspace.berkeley.edu
+[03/Nov/2013 14:37:19] INFO :: start :: - :: admin@ucjeps.cspace.berkeley.edu ::  :: 
+[03/Nov/2013 14:38:37] INFO :: start :: - :: - ::  :: 
+[03/Nov/2013 14:41:14] ERROR :: Internal Server Error: /public/eloan/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/views.py", line 169, in eloan
+    return render(request, 'eloan.html', {'title': TITLE, 'timestamp': TIMESTAMP })
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/shortcuts/__init__.py", line 53, in render
+    return HttpResponse(loader.render_to_string(*args, **kwargs),
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 170, in render_to_string
+    t = get_template(template_name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 146, in get_template
+    template, origin = find_template(template_name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 135, in find_template
+    source, display_name = loader(name, dirs)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 43, in __call__
+    return self.load_template(template_name, template_dirs)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 49, in load_template
+    template = get_template_from_string(source, origin, template_name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader.py", line 157, in get_template_from_string
+    return Template(source, origin, name)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 125, in __init__
+    self.nodelist = compile_string(template_string, origin)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 153, in compile_string
+    return parser.parse()
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 274, in parse
+    compiled_result = compile_func(self, token)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader_tags.py", line 215, in do_extends
+    nodelist = parser.parse()
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 274, in parse
+    compiled_result = compile_func(self, token)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/loader_tags.py", line 190, in do_block
+    nodelist = parser.parse(('endblock',))
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 272, in parse
+    self.invalid_block_tag(token, command, parse_until)
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/template/base.py", line 327, in invalid_block_tag
+    (command, get_text_list(["'%s'" % p for p in parse_until])))
+TemplateSyntaxError: Invalid block tag: 'trans', expected 'endblock'
+[07/Nov/2013 14:01:04] INFO :: startup :: - :: http://localhost:8983/solr | ../../imageserver | https://pahma-dev.cspace.berkeley.edu
+[07/Nov/2013 14:01:25] WARNING :: Not Found: /favicon.ico
+[07/Nov/2013 14:06:02] INFO :: start :: 2 :: - ::  (id:(+356a521a-4e91-4646-8975-909d6d4df998) OR id:(+a5996736-9651-4865-8e7d-6cbeae5cf242))  :: csid=356a521a-4e91-4646-8975-909d6d4df998 OR a5996736-9651-4865-8e7d-6cbeae5cf242&displayType=full&maxresults=2000
+[07/Nov/2013 14:06:17] INFO :: results.list :: 0 :: - ::  :: 
+[07/Nov/2013 14:06:22] INFO :: results.list :: 0 :: - ::  :: 
+[07/Nov/2013 14:09:11] INFO :: AuthN initialized
+[07/Nov/2013 14:09:11] INFO :: Request to http://ucjeps-dev.cspace.berkeley.edu:8180/cspace-services/accounts/0/accountperms: 200
+[07/Nov/2013 14:09:11] DEBUG :: User: admin@ucjeps.cspace.berkeley.edu authenticated with Host: ucjeps-dev.cspace.berkeley.edu
+[07/Nov/2013 14:09:11] INFO :: start :: - :: admin@ucjeps.cspace.berkeley.edu ::  :: 
+[07/Nov/2013 14:09:39] INFO :: start :: 1 :: admin@ucjeps.cspace.berkeley.edu :: accessionnumber_txt:(+UC956503) :: accession=UC956503&displayType=full&maxresults=1
+[07/Nov/2013 14:10:44] ERROR :: Internal Server Error: /public/eloan/
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/django/core/handlers/base.py", line 115, in get_response
+    response = callback(request, *callback_args, **callback_kwargs)
+  File "/Users/rjaffe/PycharmProjects/ucjeps_project/eloan/views.py", line 92, in eloan
+    raise Exception(errMsg)
+Exception: Could not find the loan e23456. Please try another.

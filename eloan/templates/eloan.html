@@ -1,0 +1,113 @@
+{% extends "publicsearch.html" %}
+{% load i18n admin_static %}
+{% load staticfiles  %}
+
+{% block extrastyle %}
+    <link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/tablesorter.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "cspace_django_site/css/smoothness/jquery-ui-1.10.3.custom.min.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/ucjeps.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "eloan/css/eloan.css" %}"/>
+{% endblock %}
+
+{% block branding %}
+    <h4 class="bannerLeft">UC Herbarium</h4>
+    <h4 class="bannerRight">Jepson Herbarium</h4>
+    <h1 class="bannerTitle" id="site-name">{% trans 'UCJEPS eLoan Portal' %}</h1>
+    <div style="float:right; height: 30px;">
+        <a href="#" id="about">About</a>
+        <a href="#" id="help">Help</a>
+        <a href="http://ucjeps.berkeley.edu/useterms.html">Terms</a>
+        <a href="#" id="credits">Credits</a>
+    </div>
+{% endblock %}
+
+{% block loginBtn %}
+<div id="user-tools">
+    <a href="{% url 'login' %}?next={% url 'eloan:eloan' %}" id="login" class="prettyBtn">{% trans 'Sign in' %}</a>
+</div>
+{% endblock %}
+
+
+{% block userlinks %}
+    {% url 'django-admindocs-docroot' as docsroot %}
+    {% if docsroot %}
+        <a href="{{ docsroot }}">{% trans 'Documentation' %}</a> /
+    {% endif %}
+    {# {% if user.has_usable_password %} #}
+    <!-- <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> / -->
+    {# {% endif %} #}
+    <a href="{% url 'logout' %}?next={% url 'eloan:eloan' %}" id="logout" class="prettyBtn">{% trans 'Sign out' %}</a>
+{% endblock %}
+
+{% block content %}
+    <div id="content-main">
+        <div class="toggled">
+            <div id="aboutTarget" style="display:none">
+                {% include "eloan_about.html" %}
+             </div>
+            <div id="helpTarget" style="display:none">
+                {% include "eloan_help.html" %}
+            </div>
+            <div id="creditsTarget" style="display:none">
+                {% include "eloan_credits.html" %}
+            </div>
+        </div>
+
+{#        Inherited from publicsearch template html but not useful here?#}
+{#        <h2>{{ report }}</h2>#}
+{#        {% if error %}#}
+{#            <p style="color: red;">Please submit a search term.</p>#}
+{#        {% endif %}#}
+        <form action="" method="get">
+            <input type="text" name="kw" value="{{ kw }}">
+            <input type="hidden" name="recType" value="{{ 'loansout' }}">
+            <input type="submit" value="Search">
+
+{#            If we want to add an instruction. I think it clutters the screen and is unnecessary #}
+{#            {% if message  %}#}
+{#                <span style="color: green; padding-left: 15px; vertical-align: bottom">{{ message }}</span>#}
+{#            {%  endif %}#}
+        </form>
+        {% for field in form.hidden_fields %}
+            <div style="display:none;">{{ field }}</div>
+        {% endfor %}
+        <hr>
+
+        <div id="recordInfo" class="loanInfo">
+            <table>
+                    <tr>
+                            <td class="headerLabel">eLoan No.:  </td>
+                            <td>{{ loaninfo.0 }}</td>
+                    </tr>
+                    <tr>
+                            <td class="headerLabel">Borrower's Contact:  </td>
+                            <td>{{ loaninfo.1 }}</td>
+                    </tr>
+                    <tr>
+                            <td class="headerLabel">eLoan Date:  </td>
+                            <td>{{ loaninfo.2 }}</td>
+                    </tr>
+            </table>
+            <hr/>
+        </div>
+
+        <div id="resultsPanel">
+            <!-- Results from publicsearch -->
+            {% include "eloan_searchResults.html" %}
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}
+  <table width="100%">
+      <tbody>
+          <tr>
+              <td style="vertical-align: middle">Current time: {{ timestamp }}.</td>
+              <td style="vertical-align: middle;width: 70px;">powered by </td>
+              <td style="text-align: right; width: 160px;"><img src="{% static "cspace_django_site/images/header-logo-cspace.png" %}" height="30px"></td>
+          </tr>
+      </tbody>
+  </table>
+{% endblock %}
+

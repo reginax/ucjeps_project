@@ -1,0 +1,63 @@
+{% load staticfiles %}
+
+{% for item in items %}
+    <div style="float:right;">
+       {% if item.blobs %}
+            {% for t in item.blobs %}
+                <a target="image"
+                   href="{{ imageserver }}/blobs/{{ t }}/derivatives/OriginalJpeg/content">
+                    <img height="140px"
+                         src="{{ imageserver }}/blobs/{{ t }}/derivatives/Thumbnail/content"/>
+                </a>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div>
+        <div class="result-title"> {# Remove checkbox until 'Download selected as CSV' works properly #}
+{#            <input type="checkbox" name="item-{{ item.counter }}" value="{{ item.csid }}" checked>#}
+            <b><a href="http://localhost:8000/public/publicsearch?maxresults=1&displayType=full&accession={{ item.accession }}">{{ item.accession }}</a></b>
+            {% if user.is_active and user.is_staff %}
+                <a href="http://ucjeps.cspace.berkeley.edu/collectionspace/ui/ucjeps/html/cataloging.html?csid={{ item.csid }}"><img src="{% static "publicsearch/images/open_cspace.png" %}" class="cspaceLink">Open in CSpace</a>
+            {% endif %}
+        </div>
+        <div>
+            <h2>{{ item.determination }}</h2>
+            ({{ item.majorgroup }})</div>
+        <div>
+            {{ item.county }} /
+            {{ item.state }} /
+            {{ item.country }}
+        </div>
+        {% if item.L1 and item.L2 %}
+            <div>LatLong: {{ item.L1 }} {{ item.L2 }}
+                {% if item.marker %}
+                    <a class="map-item">[click for map]</a>
+                    <div class="small-map" style="display:none;">
+                        <img src="http://maps.google.com/maps/api/staticmap?&zoom=10&size=400x200&maptype=roadmap&markers={{ item.marker }}&sensor=false"/>
+                        <div style="height: 40px;">
+                            <small><a target="_map"
+                                      href="http://maps.google.com/?q=loc:{{ item.marker }}&amp;source=embed">Larger Map</a>
+                            </small>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
+        {% if item.collector %}
+        <div>Collector: {{ item.collector }} </div>{% endif %}
+        {% if item.collectionnumber %}
+        <div>Collection Number: {{ item.collectionnumber }} </div>{% endif %}
+        {% if item.locality %}
+        <div>Locality: {{ item.locality }} </div>{% endif %}
+        {% if item.earlycollectiondate %}
+	    <div>Collection date: {{ item.collectiondate }} </div>{% endif %}
+        {% if item.habitat %}
+	    <div>Habitat: {{ item.habitat }} </div>{% endif %}
+        {% if item.elevation %}
+	    <div>Elevation: {{ item.elevation }} {{ item.elevationunit }}</div>{% endif %}
+        {% if item.updatedat %}
+        <div>Last updated: {{ item.updatedat }}</div>{% endif %}
+
+    </div>
+    <hr/>
+{% endfor %}

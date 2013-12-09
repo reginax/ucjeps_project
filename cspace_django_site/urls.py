@@ -27,5 +27,6 @@ urlpatterns = patterns('',
                        url(r'^accounts/login/$', views.login, name='login'),
                        url(r'^accounts/logout/$', views.logout_then_login, name='logout'),
                        url(r'^public/', include('publicsearch.urls', namespace='publicsearch')),
+                       url(r'^public/', include('eloan.urls', namespace='eloan')),
                        url(r'^imageserver/', include('imageserver.urls', namespace='imageserver')),
                        )

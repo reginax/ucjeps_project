@@ -147,7 +147,8 @@ INSTALLED_APPS = (
     'hello',
     'service',
     'imageserver',
-    'publicsearch'
+    'publicsearch',
+    'eloan'
 )
 
 # A sample logging configuration. The only tangible logging
