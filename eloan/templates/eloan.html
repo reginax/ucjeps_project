@@ -16,21 +16,40 @@
     <div style="float:right; height: 30px;">
         <a href="#" id="about">About</a>
         <a href="#" id="help">Help</a>
+        <a href="http://ucjeps.berkeley.edu/useterms.html">Terms</a>
         <a href="#" id="credits">Credits</a>
     </div>
+{% endblock %}
+
+{% block loginBtn %}
+<div id="user-tools">
+    <a href="{% url 'login' %}?next={% url 'eloan:eloan' %}" id="login" class="prettyBtn">{% trans 'Sign in' %}</a>
+</div>
+{% endblock %}
+
+
+{% block userlinks %}
+    {% url 'django-admindocs-docroot' as docsroot %}
+    {% if docsroot %}
+        <a href="{{ docsroot }}">{% trans 'Documentation' %}</a> /
+    {% endif %}
+    {# {% if user.has_usable_password %} #}
+    <!-- <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> / -->
+    {# {% endif %} #}
+    <a href="{% url 'logout' %}?next={% url 'eloan:eloan' %}" id="logout" class="prettyBtn">{% trans 'Sign out' %}</a>
 {% endblock %}
 
 {% block content %}
     <div id="content-main">
         <div class="toggled">
             <div id="aboutTarget" style="display:none">
-                {% include "about.html" %}
+                {% include "eloan_about.html" %}
              </div>
             <div id="helpTarget" style="display:none">
-                {% include "help.html" %}
+                {% include "eloan_help.html" %}
             </div>
             <div id="creditsTarget" style="display:none">
-                {% include "credits.html" %}
+                {% include "eloan_credits.html" %}
             </div>
         </div>
 
@@ -84,7 +103,7 @@
   <table width="100%">
       <tbody>
           <tr>
-              <td style="vertical-align: middle">Current time: {{ timestamp }}. This is rev1.</td>
+              <td style="vertical-align: middle">Current time: {{ timestamp }}.</td>
               <td style="vertical-align: middle;width: 70px;">powered by </td>
               <td style="text-align: right; width: 160px;"><img src="{% static "cspace_django_site/images/header-logo-cspace.png" %}" height="30px"></td>
           </tr>

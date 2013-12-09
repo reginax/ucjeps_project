@@ -1,5 +1,5 @@
 <div> {% include "eloan_searchstats.html" %} </div>
-<form method="post" class="searchForm" id="selectedItems" action="/public/csv/">
+<form method="post" class="searchForm" id="selectedItems" action="../csv/"> {#  Needs trailing slash #}
     {% csrf_token %}
     {% if count > 0 %}
         <div id="tabs">
@@ -11,7 +11,7 @@
         </div>
     {% elif displayType == 'empty' %}
         <div id="results">
-            <span id="errorMsg">{{ results }}</span>
+            <span id="emptyMsg">{{ results }}</span>
         </div>
     {% elif displayType == 'error' %}
         <div id="results">

@@ -2,6 +2,11 @@
     color: red;
 }
 
+#results #emptyMsg {
+    color: forestgreen;
+    font-size: 1.2em;
+}
+
 #recordInfo .headerLabel {
     font-weight: bold;
 }

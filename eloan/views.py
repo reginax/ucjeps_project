@@ -1,8 +1,9 @@
 __author__ = 'jblowe, rjaffe'
+# Calls Public Search web app. LAST TESTED AGAINST ucjeps_project commit at
+# https://github.com/cspace-deployment/ucjeps_project/commit/d988852b97337ca8f5daa3b05347a520a2e0f240
 
 import re
 import time
-
 from django.shortcuts import render
 import urllib
 from cspace_django_site.main import cspace_django_site
@@ -45,12 +46,8 @@ SOLRQUERYPARAM = 'accession'
 
 
 # CONSTANTS
-TIMESTAMP = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
-
 SEARCHRESULTS = {}
-
 TITLE = 'eLoan'
-
 
 def eloan(request):
     """
@@ -131,6 +128,7 @@ def eloan(request):
             # Search will fail for records with no object number so pass error message to screen
             if objNum == '':
                 errMsg = 'Error: You have requested a loan that contains a record with no Specimen ID. Please have the herbarium staff check the loan.'
+                TIMESTAMP = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
                 return render(request, 'eloan.html',
                               {'loaninfo': loaninfo, 'results': errMsg, 'displayType': 'error', 'title': TITLE, 'timestamp': TIMESTAMP }
                 )
@@ -152,6 +150,8 @@ def eloan(request):
         # CALL PUBLICSEARCH WEBAPP, DISPLAY SEARCH RESULTS IN A DIV BELOW LOAN OUT INFO
         # TODO: Need to incorporate typeSpecimenBasionym field into solr data source and template.
         #################################################
+
+        results = {}
 
         # Args to pass to solr - REQUIRED
         solr_server = SOLRSERVER
@@ -175,6 +175,6 @@ def eloan(request):
     else:
         # Include a bit of instruction to the user
         emptyMsg = 'Please enter a loan number'
+        TIMESTAMP = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
         return render(request, 'eloan.html', {'title': TITLE, 'timestamp': TIMESTAMP, 'results': emptyMsg, 'displayType': 'empty'}
         )
-
