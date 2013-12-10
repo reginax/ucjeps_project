@@ -91,6 +91,7 @@ def loginfo(infotype, context, request):
 
 def getfromXML(element,xpath):
     result = element.find(xpath)
+    if result is None: return ''
     result = '' if result.text is None else result.text
     result = re.sub(r"^.*\)'(.*)'$", "\\1", result)
     return result
