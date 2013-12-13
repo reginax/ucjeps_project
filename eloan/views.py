@@ -1,6 +1,5 @@
 __author__ = 'jblowe, rjaffe'
-# Calls Public Search web app. LAST TESTED AGAINST ucjeps_project commit at
-# https://github.com/cspace-deployment/ucjeps_project/commit/d988852b97337ca8f5daa3b05347a520a2e0f240
+# Calls Public Search web app. 
 
 import re
 import time
