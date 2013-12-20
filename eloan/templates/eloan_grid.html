@@ -3,7 +3,7 @@
     <div class="grid">
         <div class="tiny" style="padding-bottom: 4px;">
             <input type="checkbox" name="item-{{ item.counter }}" value="{{ item.csid }}" checked>
-            <a href="http://localhost:8000/public/publicsearch?maxresults=1&accession={{ item.accession }}&displayType=full">{{ item.accession }}</a>
+            <a href="{% url 'publicsearch:publicSearch' %}?maxresults=1&accession={{ item.accession }}&displayType=full">{{ item.accession }}</a>
         </div>
         {% if item.blobs %}
             <div>
