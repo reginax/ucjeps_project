@@ -46,7 +46,7 @@ SOLRQUERYPARAM = 'accession'
 
 # CONSTANTS
 SEARCHRESULTS = {}
-TITLE = 'eLoan'
+TITLE = 'E-loan'
 
 def eloan(request):
     """
@@ -55,8 +55,16 @@ def eloan(request):
     :return:
     """
     if 'kw' in request.GET and request.GET['kw']:
-        eloanNum = urllib.quote_plus(request.GET['kw'])
-        eloanNum = str(eloanNum)
+
+        #if 'kw' begins with a capital 'E' and only digits follow, continue. Else send error "E-loan numbers begin..."
+        if re.match(r"^E[0-9]+$", request.GET['kw']) is not None:
+            eloanNum = urllib.quote_plus(request.GET['kw'])
+            eloanNum = str(eloanNum)
+        else:
+            errMsg = 'Error: E-loan numbers begin with a capital E and only digits follow. You entered: '+request.GET['kw']
+            return render(request, 'eloan.html',
+                          {'results': errMsg, 'displayType': 'error'}
+            )
 
         if 'recType' in request.GET and request.GET['recType']:
             recType = urllib.quote_plus(request.GET['recType'])
@@ -68,10 +76,10 @@ def eloan(request):
             recType = 'loansout'
 
         #################################################################
-        #  GET ELOAN INFORMATION AND RELATED OBJECTS FROM CSPACE-SERVICES
+        #  GET E-LOAN INFORMATION AND RELATED OBJECTS FROM CSPACE-SERVICES
         #################################################################
 
-        #  get eloan list-item
+        #  get e-loan list-item
         asquery = '%s?as=%s_common%%3AloanOutNumber%%3D%%27%s%%27&wf_deleted=false' % (recType, recType, eloanNum,)
 
         expectedmimetype = 'application/xml'
@@ -91,14 +99,14 @@ def eloan(request):
             )
         locsid = locsid.text
 
-        # get eloan record
+        # get e-loan record
         loquery = '%s/%s' % (recType, locsid)
 
         # Make authenticated connection to ucjeps.cspace...
         lodata = get_entity(request, loquery, expectedmimetype).content
         loanoutXML = fromstring(lodata)
 
-        # Start gathering loan out info into results: eloan number (already have), borrower's contact and eloan date.
+        # Start gathering loan out info into results: loan number (already have), borrower's contact and loan date.
         loaninfo = []
         loaninfo.append(eloanNum)
 
