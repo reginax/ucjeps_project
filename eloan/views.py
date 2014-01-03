@@ -6,7 +6,7 @@ import time
 from django.shortcuts import render
 import urllib
 from cspace_django_site.main import cspace_django_site
-from eloanutils import get_entity, build_solr_query
+from eloanutils import get_entity, build_solr_query, getShortIdfromRefName
 from publicsearch.utils import writeCsv, doSearch, setupGoogleMap, setupBMapper, getfromXML
 
 # alas, there are many ways the XML parsing functionality might be installed.
@@ -56,14 +56,16 @@ def eloan(request):
     """
     if 'kw' in request.GET and request.GET['kw']:
 
-        #if 'kw' begins with a capital 'E' and only digits follow, continue. Else send error "E-loan numbers begin..."
-        if re.match(r"^E[0-9]+$", request.GET['kw']) is not None:
+        TIMESTAMP = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
+
+        #if 'kw' conforms to the UCJEPS naming convention, continue. Else send error "E-loan numbers begin..."
+        if re.match(r"^.+E[0-9]+$", request.GET['kw']) is not None:
             eloanNum = urllib.quote_plus(request.GET['kw'])
             eloanNum = str(eloanNum)
         else:
-            errMsg = 'Error: E-loan numbers begin with a capital E and only digits follow. You entered: '+request.GET['kw']
+            errMsg = 'Error: E-loan numbers begin with a collection code, followed by a capital E and only digits after that. You entered: '+request.GET['kw']
             return render(request, 'eloan.html',
-                          {'results': errMsg, 'displayType': 'error'}
+                          {'results': errMsg, 'displayType': 'error', 'title': TITLE, 'timestamp': TIMESTAMP }
             )
 
         if 'recType' in request.GET and request.GET['recType']:
@@ -95,7 +97,7 @@ def eloan(request):
         if locsid is None:
             errMsg = 'Error: We could not find the loan \'%s.\' Please try another.' % eloanNum
             return render(request, 'eloan.html',
-                          {'results': errMsg, 'displayType': 'error'}
+                          {'results': errMsg, 'displayType': 'error', 'title': TITLE, 'timestamp': TIMESTAMP }
             )
         locsid = locsid.text
 
@@ -110,38 +112,48 @@ def eloan(request):
         loaninfo = []
         loaninfo.append(eloanNum)
 
+        borrower = getShortIdfromRefName(loanoutXML, './/borrower')
+        # Unnecessary? (Don't all CSpace refnames have a shortIdentifier?)
+        if borrower == '':
+            borrower = getfromXML(loanoutXML, './/borrower')
+        loaninfo.append(borrower)
+
         borcontact = getfromXML(loanoutXML, './/borrowersContact')
         loaninfo.append(borcontact)
 
         lodate = getfromXML(loanoutXML, './/loanOutDate')
         loaninfo.append(lodate)
 
-        # Get related collection objects; some pertinent info can be gleaned from list results
-        # Record type hard-coded for now. Generalize this?
-        roquery = '%s?sbj=%s&objType%%3D%%27%s' % ('relations', locsid, 'collectionobject')
-
-        # Make authenticated connection to ucjeps.cspace...
-        rolistdata = get_entity(request, roquery, expectedmimetype).content
-        relatedObjListXML = fromstring(rolistdata)
-        relatedObjXML = relatedObjListXML.findall('./relation-list-item')
+        # Get list of collection objects included in the loan out as Loan Out Items.
+        loitemsXML = loanoutXML.findall('.//objectGroupList/objectGroup/objectNumbers')
 
         objectNumbers = []
-        #objectCsids = []
-        #objectNames = []
-        for i in relatedObjXML:
 
-            # Note: ObjectNumber not a required field in UCJEPS instance, so using it for search is problematic
-            objNum = getfromXML(i, './object/number')
-            # Search will fail for records with no object number so pass error message to screen
-            if objNum == '':
-                errMsg = 'Error: You have requested a loan that contains a record with no Specimen ID. Please have the herbarium staff check the loan.'
-                TIMESTAMP = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
-                return render(request, 'eloan.html',
-                              {'loaninfo': loaninfo, 'results': errMsg, 'displayType': 'error', 'title': TITLE, 'timestamp': TIMESTAMP }
-                )
-                # else:
-            #     continue
-            objectNumbers.append(objNum)
+        # In case UCJEPS staff have not listed any loan out items (e.g., they've related the cataloging records instead)
+        if loitemsXML == []:
+            errMsg = 'Error: You have requested a loan that contains no specimens. Please have the herbarium staff check the loan.'
+            return render(request, 'eloan.html',
+                            {'loaninfo': loaninfo, 'results': errMsg, 'displayType': 'error', 'title': TITLE, 'timestamp': TIMESTAMP }
+                    )
+
+        # In case primary repeatable group under Loan Out Items has no value in the object number field
+        elif loitemsXML[0].text is None:
+            errMsg = 'Error: You have requested a loan that contains a record with no Specimen ID. Please have the herbarium staff check the loan.'
+            return render(request, 'eloan.html',
+                            {'loaninfo': loaninfo, 'results': errMsg, 'displayType': 'error', 'title': TITLE, 'timestamp': TIMESTAMP }
+                    )
+
+        elif loitemsXML[0].text:
+            for loitem in loitemsXML:
+                objNum = loitem.text
+                if objNum is None:
+                    objNum = ''
+                if objNum == '':
+                    errMsg = 'Error: You have requested a loan that contains a record with no Specimen ID. Please have the herbarium staff check the loan.'
+                    return render(request, 'eloan.html',
+                                    {'loaninfo': loaninfo, 'results': errMsg, 'displayType': 'error', 'title': TITLE, 'timestamp': TIMESTAMP }
+                            )
+                objectNumbers.append(objNum)
 
             # Other options ... if we ever need to search by CSID or objectName
             # Note: CSIDs are passed in URL but do not appear on public search form
