@@ -1,5 +1,6 @@
 #results #errorMsg {
     color: red;
+    font-size: 1.2em;
 }
 
 #results #emptyMsg {
@@ -9,5 +10,11 @@
 
 #recordInfo .headerLabel {
     font-weight: bold;
+    font-size: 1.2em;
+}
+
+#full-search-link {
+    font-weight: bold;
+    font-size: 1.2em;
 }
 
