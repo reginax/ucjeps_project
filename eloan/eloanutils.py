@@ -88,10 +88,19 @@ def build_solr_query(solr_server, solr_core, solr_queryparam_key, solr_querypara
     results = doSearch(solr_server, solr_core, solr_context)
     return results
 
+def getInstitutionCodefromDisplayName(element,xpath):
+    result = element.find(xpath)
+    if result is None: return ''
+    result = '' if result.text is None else result.text
+    if re.match(r".*:item:name\(.+?\)'.*\).*'$", result):
+        result = re.sub(r"^.*:item:name\(.+?\)'.*\((.*)\).*\'$", "\\1", result)
+    else:
+        result = ''
+    return result
+
 def getShortIdfromRefName(element,xpath):
     result = element.find(xpath)
     if result is None: return ''
     result = '' if result.text is None else result.text
     result = re.sub(r"^.*:item:name\((.+?)\).*\'$", "\\1", result)
     return result
-

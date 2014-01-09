@@ -6,7 +6,7 @@ import time
 from django.shortcuts import render
 import urllib
 from cspace_django_site.main import cspace_django_site
-from eloanutils import get_entity, build_solr_query, getShortIdfromRefName
+from eloanutils import get_entity, build_solr_query, getInstitutionCodefromDisplayName, getShortIdfromRefName
 from publicsearch.utils import writeCsv, doSearch, setupGoogleMap, setupBMapper, getfromXML
 
 # alas, there are many ways the XML parsing functionality might be installed.
@@ -112,14 +112,15 @@ def eloan(request):
         loaninfo = []
         loaninfo.append(eloanNum)
 
-        borrower = getShortIdfromRefName(loanoutXML, './/borrower')
-        # Unnecessary? (Don't all CSpace refnames have a shortIdentifier?)
+        borrower = getInstitutionCodefromDisplayName(loanoutXML, './/borrower')
         if borrower == '':
+            borrower = getShortIdfromRefName(loanoutXML, './/borrower')
+        if re.match(".*\d{13}", borrower):
             borrower = getfromXML(loanoutXML, './/borrower')
         loaninfo.append(borrower)
 
-        borcontact = getfromXML(loanoutXML, './/borrowersContact')
-        loaninfo.append(borcontact)
+        #borcontact = getfromXML(loanoutXML, './/borrowersContact')
+        #loaninfo.append(borcontact)
 
         lodate = getfromXML(loanoutXML, './/loanOutDate')
         loaninfo.append(lodate)
