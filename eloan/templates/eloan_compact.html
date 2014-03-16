@@ -15,7 +15,7 @@
     <div>
         <div class="result-title"> {# Remove checkbox until 'Download selected as CSV' works properly #}
 {#            <input type="checkbox" name="item-{{ item.counter }}" value="{{ item.csid }}" checked>#}
-            <b><a href="http://localhost:8000/public/publicsearch?maxresults=1&displayType=full&accession={{ item.accession }}">{{ item.accession }}</a></b>
+            <b><a href="{% url 'publicsearch:publicSearch' %}?maxresults=1&displayType=full&accession={{ item.accession }}">{{ item.accession }}</a></b>
             {% if user.is_active and user.is_staff %}
                 <a href="http://ucjeps.cspace.berkeley.edu/collectionspace/ui/ucjeps/html/cataloging.html?csid={{ item.csid }}"><img src="{% static "publicsearch/images/open_cspace.png" %}" class="cspaceLink">Open in CSpace</a>
             {% endif %}

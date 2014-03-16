@@ -17,7 +17,7 @@
     {% for item in items %}
         <tr>
             <td><input type="checkbox" name="item-{{ item.counter }}" value="{{ item.csid }}" checked></td>
-            <td><a href="http://localhost:8000/public/publicsearch?maxresults=1&accession={{ item.accession }}&displayType=full">{{ item.accession }}</a></td>
+            <td><a href="{% url 'publicsearch:publicSearch' %}?maxresults=1&accession={{ item.accession }}&displayType=full">{{ item.accession }}</a></td>
             <td> {{ item.determination }} </td>
             <td> {{ item.collector }} </td>
             <td> {{ item.collectiondate }} </td>
@@ -25,7 +25,7 @@
             <td> {{ item.county }} </td>
             <td> {{ item.state }} </td>
             <td> {{ item.country }} </td>
-            <td> {{ item.locality } </td>
+            <td> {{ item.locality }} </td>
         </tr>
     {% endfor %}
     </tbody>
