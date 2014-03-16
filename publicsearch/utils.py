@@ -17,7 +17,7 @@ MAXFACETS = 1000
 MAXLONGRESULTS = 50
 #IMAGESERVER = 'http://ucjeps.cspace.berkeley.edu:8180/cspace-services' # no final slash
 IMAGESERVER = '../../imageserver'
-BMAPPERSERVER = 'https://pahma-dev.cspace.berkeley.edu' # no final slash
+BMAPPERSERVER = 'https://ucjeps.cspace.berkeley.edu' # no final slash
 BMAPPERDIR = 'bmapper'
 #BMAPPERTABFILEDIR = '%s/%s/%s' % (BMAPPERSERVER, MEDIA_URL, 'publicsearch/bmapper')
 BMAPPERCONFIGFILE = 'ucjeps.xml'
@@ -69,7 +69,7 @@ PARMS = {
 
 # Get an instance of a logger, log some startup info
 logger = logging.getLogger(__name__)
-logger.info('%s :: %s :: %s' % ('startup', '-', '%s | %s | %s' % (SOLRSERVER, IMAGESERVER, BMAPPERSERVER)))
+logger.info('%s :: %s :: %s' % ('portal startup', '-', '%s | %s | %s' % (SOLRSERVER, IMAGESERVER, BMAPPERSERVER)))
 
 def loginfo(infotype, context, request):
     logdata = ''

@@ -33,7 +33,7 @@ def publicsearch(request):
         context = {}
 
     context = setConstants(context)
-    loginfo('start', context, request)
+    loginfo('start search', context, request)
     return render(request, 'publicsearch.html', context)
 
 

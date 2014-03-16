@@ -31,9 +31,9 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
         'LOCATION': '/tmp/image_cache',
-        'CULL_FREQUENCY': 1000,
+        'CULL_FREQUENCY': 10000,
         'OPTIONS': {
-            'MAX_ENTRIES': 100000
+            'MAX_ENTRIES': 1000000
         }
     }
 }
