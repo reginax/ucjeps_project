@@ -18,8 +18,7 @@ protocol = config.get('connect', 'protocol')
 port = config.get('connect', 'port')
 port = ':%s' % port if port else ''
 
-
-server = protocol + "://" + hostname  + port
+server = protocol + "://" + hostname + port
 passman = urllib2.HTTPPasswordMgr()
 passman.add_password(realm, server, username, password)
 authhandler = urllib2.HTTPBasicAuthHandler(passman)
@@ -32,7 +31,6 @@ logger.info('%s :: %s :: %s' % ('imageserver startup', '-', '%s' % server))
 
 #@login_required()
 def get_image(request, image):
-
     try:
         url = "%s/cspace-services/%s" % (server, image)
         elapsedtime = time.time()
@@ -42,6 +40,8 @@ def get_image(request, image):
     except urllib2.HTTPError, e:
         print 'The server couldn\'t fulfill the request.'
         print 'Error code: ', e.code
+        print e.headers
+        print 'has WWW-Authenticate', e.headers.has_key('WWW-Authenticate')
         raise
     except urllib2.URLError, e:
         print 'We failed to reach a server.'
