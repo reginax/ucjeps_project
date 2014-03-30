@@ -8,6 +8,7 @@ from os import path
 import urllib2
 import time
 import logging
+import base64
 
 config = cspace.getConfig(path.dirname(__file__), 'imageserver')
 username = config.get('connect', 'username')
@@ -19,11 +20,6 @@ port = config.get('connect', 'port')
 port = ':%s' % port if port else ''
 
 server = protocol + "://" + hostname + port
-passman = urllib2.HTTPPasswordMgr()
-passman.add_password(realm, server, username, password)
-authhandler = urllib2.HTTPBasicAuthHandler(passman)
-opener = urllib2.build_opener(authhandler)
-urllib2.install_opener(opener)
 
 # Get an instance of a logger, log some startup info
 logger = logging.getLogger(__name__)
@@ -32,10 +28,23 @@ logger.info('%s :: %s :: %s' % ('imageserver startup', '-', '%s' % server))
 #@login_required()
 def get_image(request, image):
     try:
-        url = "%s/cspace-services/%s" % (server, image)
         elapsedtime = time.time()
+
+        passman = urllib2.HTTPPasswordMgr()
+        passman.add_password(realm, server, username, password)
+        authhandler = urllib2.HTTPBasicAuthHandler(passman)
+        opener = urllib2.build_opener(authhandler)
+
+        unencoded_credentials = "%s:%s" % (username, password)
+        auth_value = 'Basic %s' % base64.b64encode(unencoded_credentials).strip()
+        opener.addheaders = [('Authorization', auth_value)]
+
+        urllib2.install_opener(opener)
+
+        url = "%s/cspace-services/%s" % (server, image)
         f = urllib2.urlopen(url)
         data = f.read()
+
         elapsedtime = time.time() - elapsedtime
     except urllib2.HTTPError, e:
         print 'The server couldn\'t fulfill the request.'
