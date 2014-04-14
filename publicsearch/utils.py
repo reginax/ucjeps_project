@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 import re
 import time, datetime
 import csv
@@ -63,6 +65,18 @@ PARMS = {
     'coordinateuncertainty': ['Coordinate uncertainty', 'true', '', 'coordinateuncertainty_f', ''],
     'coordinateuncertaintyunit': ['Coordinate uncertainty unit', 'true', '', 'coordinateuncertaintyunit_txt', ''],
     'updatedat': ['Last updated at', 'true', '', 'updatedat_dt', ''],
+    'previousdeterminations': ['Previous Determinations', 'true', '', 'previousdeterminations_ss', ''],
+    'associatedtaxa': ['Associated Taxa', 'true', '', 'associatedtaxa_ss', ''],
+    'typeassertions': ['Type Assertions', 'true', '', 'typeassertions_ss', ''],
+    'othernumbers': ['Other Numbers', 'true', '', 'othernumbers_ss', ''],
+    'labelheader': ['Label Header', 'true', '', 'labelheader_txt', ''],
+    'labelfooter': ['Label Footer', 'true', '', 'labelfooter_txt', ''],
+    'depth': ['Depth', 'true', '', 'depth_txt', ''],
+    'mindepth': ['Min. Depth', 'true', '', 'mindepth_txt', ''],
+    'maxdepth': ['Max. Depth', 'true', '', 'maxdepth_txt', ''],
+    'depthunit': ['Depth Unit', 'true', '', 'depthunit_txt', ''],
+    'sex': ['Sex', 'true', '', 'sex_s', ''],
+    'phase': ['Phase', 'true', '', 'phase_s', ''],
     'blobs': ['blob_ss', 'true', '', 'blob_ss', ''],
 }
 
@@ -414,7 +428,7 @@ def doSearch(solr_server, solr_core, context):
             try:
                 # make all arrays into strings for display
                 if type(listItem[PARMS[p][3]]) == type([]):
-                    item[p] = ', '.join(listItem[PARMS[p][3]])
+                    item[p] = ';'.join(listItem[PARMS[p][3]])
                 else:
                     item[p] = listItem[PARMS[p][3]]
 
@@ -425,14 +439,22 @@ def doSearch(solr_server, solr_core, context):
                         item[p] = item[p].isoformat().replace('T00:00:00+00:00', '')
                     except:
                         print 'date problem: ', item[p]
-
             except:
                 #raise
                 pass
-                # the list of blob csids need to remain an array, so restore it from psql result
-            #item['blob_ss'] = listItem.get('blob_ss')
+        # the following multivalue fields need to be split
+        #item['labelheader'] = 'Label Header'
+        #item['labelfooter'] = 'Label Footer'
+        for fld in 'previousdeterminations,associatedtaxa,typeassertions,othernumbers'.split(','):
+            #test = (fld[:-1] + ';')  * 3
+            #test = test[:-1]
+            #item[fld] = test
+            if fld in item.keys():
+                item[fld] = [ u for u in item[fld].split(u'␥') if u != '']
+
+        # blobs are handled specially
         if 'blobs' in item.keys():
-            item['blobs'] = item['blobs'].split(',')
+                item['blobs'] = item['blobs'].split(';')
         item['marker'] = makeMarker(item)
         context['items'].append(item)
 
@@ -445,7 +467,10 @@ def doSearch(solr_server, solr_core, context):
     #print 'items',len(context['items'])
     context['count'] = response._numFound
     m = {}
-    for p in PARMS: m[PARMS[p][3].replace('_txt', '_s')] = p
+    context['labels'] = {}
+    for p in PARMS:
+        m[PARMS[p][3].replace('_txt', '_s')] = p
+        context['labels'][p] = PARMS[p][0]
     context['fields'] = [m[f] for f in facetfields]
     context['facetflds'] = [[m[f], facetflds[f]] for f in facetfields]
     context['range'] = range(len(facetfields))

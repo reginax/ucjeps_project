@@ -22,12 +22,44 @@
         </div>
         <div>
             <h2><a class="facet-item" data-facetType="determination">{{ item.determination }}</a></h2>
-            (<a class="facet-item" data-facetType="majorgroup">{{ item.majorgroup }}</a>)</div>
+            (<a class="facet-item" data-facetType="majorgroup">{{ item.majorgroup }}</a>)
+        </div>
+
+        <div>
+            {% if item.labelheader %}
+                <h4 class="smallheader">{{ labels.labelheader }}: {{ item.labelheader }}</h4>{% endif %}
+            {% if item.previousdeterminations %}
+                <h4>{{ labels.previousdeterminations }}</h4>
+                    {% for t in item.previousdeterminations %}
+                        <li>{{ t }}</li>
+                    {% endfor %}
+            {% endif %}
+            {% if item.typeassertions %}
+                <h4>{{ labels.typeassertions }}</h4>
+                    {% for t in item.typeassertions %}
+                        <li>{{ t }}</li>
+                    {% endfor %}
+            {% endif %}
+            {% if item.associatedtaxa %}
+                <h4>{{ labels.associatedtaxa }}</h4>
+                    {% for t in item.associatedtaxa %}
+                        <li>{{ t }}</li>
+                    {% endfor %}
+            {% endif %}
+            {% if item.labelfooter %}
+                <h4 class="smallheader">{{ labels.labelfooter }}: {{ item.labelfooter }}</h4>{% endif %}
         <div>
             <a class="facet-item" data-facetType="county">{{ item.county }}</a> /
             <a class="facet-item" data-facetType="state">{{ item.state }}</a> /
             <a class="facet-item" data-facetType="country">{{ item.country }}</a>
         </div>
+        {% if item.sex or item.phase %}
+        <div>
+            {% if item.sex %}
+            {{ labels.sex }}: <a class="facet-item" data-facetType="sex">{{ item.sex }}</a> / {% endif %}
+            {% if item.phase %}
+            {{ labels.phase }}: <a class="facet-item" data-facetType="phase">{{ item.phase }}</a>{% endif %}
+        </div>{% endif %}
         {% if item.L1 and item.L2 %}
             <div>LatLong: {{ item.L1 }} {{ item.L2 }}
                 {% if item.marker %}
@@ -42,20 +74,21 @@
             </div>
         {% endif %}
         {% if item.collector %}
-        <div>Collector: <a class="facet-item" data-facetType="collector">{{ item.collector }}</a></div>{% endif %}
+        <div>{{ labels.collector }}: <a class="facet-item" data-facetType="collector">{{ item.collector }}</a></div>{% endif %}
         {% if item.collectionnumber %}
-        <div>Collection Number: <a class="facet-item" data-facetType="collectionnumber">{{ item.collectionnumber }}</a></div>{% endif %}
+        <div>{{ labels.collectionnumber }}: <a class="facet-item" data-facetType="collectionnumber">{{ item.collectionnumber }}</a></div>{% endif %}
         {% if item.locality %}
-        <div>Locality: <a class="facet-item" data-facetType="locality">{{ item.locality }}</a></div>{% endif %}
+        <div>{{ labels.locality }}: <a class="facet-item" data-facetType="locality">{{ item.locality }}</a></div>{% endif %}
         {% if item.earlycollectiondate %}
-	    <div>Collection date: <a class="facet-item" data-facetType="collectiondate">{{ item.collectiondate }}</a></div>{% endif %}
+	    <div>{{ labels.collectiondate }}: <a class="facet-item" data-facetType="collectiondate">{{ item.collectiondate }}</a></div>{% endif %}
         {% if item.habitat %}
-	    <div>Habitat: <a class="facet-item" data-facetType="habitat">{{ item.habitat }}</a></div>{% endif %}
+	    <div>{{ labels.habitat }}: <a class="facet-item" data-facetType="habitat">{{ item.habitat }}</a></div>{% endif %}
         {% if item.elevation %}
-	    <div>Elevation: {{ item.elevation }} {{ item.elevationunit }}</div>{% endif %}
-        {% if item.updatedat %}
-        <div>Last updated: {{ item.updatedat }}</div>{% endif %}
-
+	    <div>{{ labels.elevation }}: {{ item.elevation }} {{ item.elevationunit }}</div>{% endif %}
+        {% if item.depth %}
+	    <div>{{ labels.depth }}: {{ item.depth }} {{ item.depthunit }}</div>{% endif %}
+       {% if item.updatedat %}
+        <div>{{ labels.updatedat }}: {{ item.updatedat }}</div>{% endif %}
     </div>
     <hr/>
 {% endfor %}
