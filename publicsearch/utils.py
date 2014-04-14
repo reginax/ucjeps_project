@@ -66,6 +66,8 @@ PARMS = {
     'coordinateuncertaintyunit': ['Coordinate uncertainty unit', 'true', '', 'coordinateuncertaintyunit_txt', ''],
     'updatedat': ['Last updated at', 'true', '', 'updatedat_dt', ''],
     'previousdeterminations': ['Previous Determinations', 'true', '', 'previousdeterminations_ss', ''],
+    'localname': ['Local Name', 'true', '', 'localname_txt', ''],
+    'briefdescription': ['Brief Description', 'true', '', 'briefdescription_txt', ''],
     'associatedtaxa': ['Associated Taxa', 'true', '', 'associatedtaxa_ss', ''],
     'typeassertions': ['Type Assertions', 'true', '', 'typeassertions_ss', ''],
     'othernumbers': ['Other Numbers', 'true', '', 'othernumbers_ss', ''],
