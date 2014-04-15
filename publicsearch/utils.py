@@ -456,7 +456,7 @@ def doSearch(solr_server, solr_core, context):
 
         # blobs are handled specially
         if 'blobs' in item.keys():
-                item['blobs'] = item['blobs'].split(';')
+                item['blobs'] = item['blobs'].split(',')
         item['marker'] = makeMarker(item)
         context['items'].append(item)
 
