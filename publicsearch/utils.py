@@ -13,74 +13,11 @@ from cspace_django_site.main import cspace_django_site
 
 # global variables (at least to this module...)
 
-MAXMARKERS = 65
-MAXRESULTS = 2000
-MAXFACETS = 1000
-MAXLONGRESULTS = 50
-#IMAGESERVER = 'http://ucjeps.cspace.berkeley.edu:8180/cspace-services' # no final slash
-IMAGESERVER = '../../imageserver'
-BMAPPERSERVER = 'https://ucjeps.cspace.berkeley.edu' # no final slash
-BMAPPERDIR = 'bmapper'
-#BMAPPERTABFILEDIR = '%s/%s/%s' % (BMAPPERSERVER, MEDIA_URL, 'publicsearch/bmapper')
-BMAPPERCONFIGFILE = 'ucjeps.xml'
-#BMAPPERCONFIGFILEDIR = '%s/%s/%s' % (BMAPPERSERVER, STATIC_URL, 'publicsearch/bmapper-config')
-SOLRSERVER = 'http://localhost:8983/solr'
-#SOLRCORE = 'ucjeps-metadata'
-SOLRCORE = 'ucjeps-metadata'
-LOCALDIR = "/var/www/html/bmapper"  # no final slash
-DROPDOWNS = ['majorgroup', 'county', 'state', 'country']
-search_qualifiers = ['keyword', 'phrase', 'exact']
+from appconfig import PARMS, MAXMARKERS, MAXRESULTS, MAXLONGRESULTS, MAXFACETS, IMAGESERVER, BMAPPERSERVER, BMAPPERDIR
+from appconfig import BMAPPERCONFIGFILE, SOLRSERVER, SOLRCORE, LOCALDIR, DROPDOWNS, SEARCH_QUALIFIERS
+
 SolrIsUp = True
-
 FACETS = {}
-
-PARMS = {
-    # this first one is special
-    'keyword': ['Keyword', 'true', 'a keyword search value, please', 'text', ''],
-
-    # the rest are mapping the solr field names to django form labels and fields
-    'csid': ['id', 'true', '', 'id', ''],
-    'accession': ['Specimen ID', 'true', '', 'accessionnumber_txt', ''],
-    'determination': ['Determination', 'true', '', 'determination_txt', ''],
-    'majorgroup': ['Major Group', 'true', '', 'majorgroup_txt', ''],
-    'collector': ['Collector', 'true', '', 'collector_txt', ''],
-    'collectionnumber': ['Collection Number', 'true', '', 'collectornumber_txt', ''],
-    'collectiondate': ['Collection Date', 'true', '', 'collectiondate_txt', ''],
-    'earlycollectiondate': ['earlycollectiondate_dt', 'true', '', 'earlycollectiondate_dt', ''],
-    'latecollectiondate': ['latecollectiondate', 'true', '', 'latecollectiondate_txt', ''],
-    'locality': ['Locality', 'true', '', 'locality_txt', ''],
-    'county': ['County', 'true', '', 'collcounty_txt', ''],
-    'state': ['State', 'true', '', 'collstate_txt', ''],
-    'country': ['Country', 'true', '', 'collcountry_txt', ''],
-    'elevation': ['Elevation', 'true', '', 'elevation_txt', ''],
-    'minelevation': ['Min elevation', 'true', '', 'minelevation_f', ''],
-    'maxelevation': ['Max elevation', 'true', '', 'maxelevation_f', ''],
-    'elevationunit': ['Elevation unit', 'true', '', 'elevationunit_txt', ''],
-    'habitat': ['Habitat', 'true', '', 'habitat_txt', ''],
-    'L1': ['L1', 'true', '', 'location_0_coordinate', ''],
-    'L2': ['L2', 'true', '', 'location_1_coordinate', ''],
-    'trscoordinates': ['TRS coordinates', 'true', '', 'trscoordinates_txt', ''],
-    'datum': ['Datum', 'true', '', 'datum_txt', ''],
-    'coordinatesource': ['Coordinate source', 'true', '', 'coordinatesource_txt', ''],
-    'coordinateuncertainty': ['Coordinate uncertainty', 'true', '', 'coordinateuncertainty_f', ''],
-    'coordinateuncertaintyunit': ['Coordinate uncertainty unit', 'true', '', 'coordinateuncertaintyunit_txt', ''],
-    'updatedat': ['Last updated at', 'true', '', 'updatedat_dt', ''],
-    'previousdeterminations': ['Previous Determinations', 'true', '', 'previousdeterminations_ss', ''],
-    'localname': ['Local Name', 'true', '', 'localname_txt', ''],
-    'briefdescription': ['Description', 'true', '', 'briefdescription_txt', ''],
-    'associatedtaxa': ['Associated Taxa', 'true', '', 'associatedtaxa_ss', ''],
-    'typeassertions': ['Type Assertions', 'true', '', 'typeassertions_ss', ''],
-    'othernumbers': ['Other Numbers', 'true', '', 'othernumbers_ss', ''],
-    'labelheader': ['Label Header', 'true', '', 'labelheader_txt', ''],
-    'labelfooter': ['Label Footer', 'true', '', 'labelfooter_txt', ''],
-    'depth': ['Depth', 'true', '', 'depth_txt', ''],
-    'mindepth': ['Min. Depth', 'true', '', 'mindepth_txt', ''],
-    'maxdepth': ['Max. Depth', 'true', '', 'maxdepth_txt', ''],
-    'depthunit': ['Depth Unit', 'true', '', 'depthunit_txt', ''],
-    'sex': ['Sex', 'true', '', 'sex_s', ''],
-    'phase': ['Phase', 'true', '', 'phase_s', ''],
-    'blobs': ['blob_ss', 'true', '', 'blob_ss', ''],
-}
 
 
 # Get an instance of a logger, log some startup info
@@ -290,7 +227,7 @@ def setConstants(context):
     context['imageserver'] = IMAGESERVER
     context['dropdowns'] = FACETS
     context['timestamp'] = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
-    context['qualifiers'] = search_qualifiers
+    context['qualifiers'] = SEARCH_QUALIFIERS
     context['resultoptions'] = [100, 500, 1000, 2000]
 
     context['displayTypes'] = (
@@ -500,9 +437,10 @@ context = doSearch(SOLRSERVER, SOLRCORE, context)
 
 if 'errormsg' in context:
     solrIsUp = False
+    print 'Initial solr search failed. Concluding that Solr is down or unreachable... Will not be trying again! Please fix and restart!'
 else:
     for facet in context['facetflds']:
-        #print 'facet',facet[0],len(facet[1])
+        print 'facet',facet[0],len(facet[1])
         if facet[0] in DROPDOWNS:
             FACETS[facet[0]] = sorted(facet[1])
         # if the facet is not in a dropdown, save the memory for something better

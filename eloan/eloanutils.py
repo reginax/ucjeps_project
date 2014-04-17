@@ -3,15 +3,15 @@ __author__ = 'rjaffe (after jblowe\'s "imageserver")'
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 
-from common import cspace
-from cspace_django_site.main import cspace_django_site
+from os import path
+from common import cspace # we use the config file reading function
+from cspace_django_site import settings
 from publicsearch.utils import doSearch
 
 from os import path
-from ConfigParser import NoOptionError
 import urllib2
-import ConfigParser
 import time
+import logging
 import re
 
 
@@ -32,17 +32,17 @@ def get_entity(request, entitytype, responsemimetype):
     #(url, data, statusCode) = connection.make_get_request('cspace-services/%s' % image)
     #return HttpResponse(data, mimetype='image/jpeg')
 
-    realm = 'org.collectionspace.services'
-    # uri = 'cspace-services/accounts/0/accountperms'
-    protocol = 'http'
-    port = '8180'
+    config = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'imageserver')
+    username = config.get('connect', 'username')
+    password = config.get('connect', 'password')
+    hostname = config.get('connect', 'hostname')
+    realm = config.get('connect', 'realm')
+    protocol = config.get('connect', 'protocol')
+    port = config.get('connect', 'port')
+    port = ':%s' % port if port else ''
 
-    hostname = 'ucjeps-dev.cspace.berkeley.edu'
-    username = 'admin@ucjeps.cspace.berkeley.edu'
-    # TODO xxxxx password value out before committing to github
-    password = 'xxxxxx'
+    server = protocol + "://" + hostname + port
 
-    server = protocol + "://" + hostname + ":" + port
     passman = urllib2.HTTPPasswordMgr()
     passman.add_password(realm, server, username, password)
     authhandler = urllib2.HTTPBasicAuthHandler(passman)
@@ -51,6 +51,10 @@ def get_entity(request, entitytype, responsemimetype):
     url = "%s/cspace-services/%s" % (server, entitytype)
     #print "<p>%s</p>" % url
     elapsedtime = 0
+
+    # Get an instance of a logger, log some startup info
+    logger = logging.getLogger(__name__)
+    logger.info('%s :: %s :: %s' % ('imageserver startup', '-', '%s' % server))
 
     try:
         elapsedtime = time.time()

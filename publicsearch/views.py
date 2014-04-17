@@ -17,8 +17,8 @@ from utils import writeCsv, doSearch, setupGoogleMap, setupBMapper, setDisplayTy
 # global variables (at least to this module...)
 config = cspace_django_site.getConfig()
 
-SOLRSERVER = 'http://localhost:8983/solr'
-SOLRCORE = 'ucjeps-metadata'
+from appconfig import SOLRSERVER, SOLRCORE
+
 SEARCHRESULTS = {}
 
 # This just prints the search form

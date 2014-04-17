@@ -3,6 +3,7 @@ __author__ = 'jblowe'
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from common import cspace # we use the config file reading function
+from cspace_django_site import settings
 
 from os import path
 import urllib2
@@ -10,7 +11,7 @@ import time
 import logging
 import base64
 
-config = cspace.getConfig(path.dirname(__file__), 'imageserver')
+config = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'imageserver')
 username = config.get('connect', 'username')
 password = config.get('connect', 'password')
 hostname = config.get('connect', 'hostname')

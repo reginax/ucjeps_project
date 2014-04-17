@@ -38,10 +38,7 @@ except ImportError:
 # global variables (at least to this module...)
 config = cspace_django_site.getConfig()
 
-# Static string parts for publicsearch (Solr) query
-SOLRSERVER = 'http://localhost:8983/solr'
-SOLRCORE = 'ucjeps-metadata'
-SOLRQUERYPARAM = 'accession'
+from appconfig import SOLRSERVER, SOLRCORE, SOLRQUERYPARAM
 
 
 # CONSTANTS
