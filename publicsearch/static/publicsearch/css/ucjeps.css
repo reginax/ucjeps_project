@@ -124,13 +124,12 @@ a { color: #5b80b2; text-decoration: none; }
     margin-right: 10px;
 }
 #footer-main {
-    margin-right: 6px;
+    margin-top: 5px;
 }
 #footer-main .footerBorder {
     width: 99.50%;
     height: 14px;
 	background-color: #3366CC;
-    margin-left: 6px;
 }
 #footer-main .footerText {
     width: 100%;
@@ -169,7 +168,7 @@ a { color: #5b80b2; text-decoration: none; }
 #footer-main .footerText .poweredByCS {
     float: right;
     width: 28%;
-    margin-right: 5px;
+    margin-right: 12px;
 }
 #footer-main .footerText .poweredByCS .poweredByText {
     float: right;
