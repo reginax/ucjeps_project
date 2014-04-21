@@ -54,7 +54,7 @@ def get_entity(request, entitytype, responsemimetype):
 
     # Get an instance of a logger, log some startup info
     logger = logging.getLogger(__name__)
-    logger.info('%s :: %s :: %s' % ('imageserver startup', '-', '%s' % server))
+    logger.info('%s :: %s :: %s' % ('eloan startup', '-', '%s' % server))
 
     try:
         elapsedtime = time.time()
