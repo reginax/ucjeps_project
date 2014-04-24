@@ -6,10 +6,10 @@ from cspace_django_site import settings
 
 config = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'search')
 
-MAXMARKERS = config.get('search', 'MAXMARKERS')
-MAXRESULTS = config.get('search', 'MAXRESULTS')
-MAXLONGRESULTS = config.get('search', 'MAXLONGRESULTS')
-MAXFACETS = config.get('search', 'MAXFACETS')
+MAXMARKERS = int(config.get('search', 'MAXMARKERS'))
+MAXRESULTS = int(config.get('search', 'MAXRESULTS'))
+MAXLONGRESULTS = int(config.get('search', 'MAXLONGRESULTS'))
+MAXFACETS = int(config.get('search', 'MAXFACETS'))
 IMAGESERVER = config.get('search', 'IMAGESERVER')
 BMAPPERSERVER = config.get('search', 'BMAPPERSERVER')
 BMAPPERDIR = config.get('search', 'BMAPPERDIR')
@@ -67,5 +67,6 @@ PARMS = {
     'depthunit': ['Depth Unit', 'true', '', 'depthunit_txt', ''],
     'sex': ['Sex', 'true', '', 'sex_s', ''],
     'phase': ['Phase', 'true', '', 'phase_s', ''],
+    'determinationdetails': ['Determination Details', 'true', '', 'determinationdetails_txt', ''],
     'blobs': ['blob_ss', 'true', '', 'blob_ss', ''],
 }

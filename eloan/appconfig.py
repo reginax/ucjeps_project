@@ -6,10 +6,10 @@ from cspace_django_site import settings
 
 config = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'eloan')
 
-MAXMARKERS = config.get('eloan', 'MAXMARKERS')
-MAXRESULTS = config.get('eloan', 'MAXRESULTS')
-MAXLONGRESULTS = config.get('eloan', 'MAXLONGRESULTS')
-MAXFACETS = config.get('eloan', 'MAXFACETS')
+MAXMARKERS = int(config.get('eloan', 'MAXMARKERS'))
+MAXRESULTS = int(config.get('eloan', 'MAXRESULTS'))
+MAXLONGRESULTS = int(config.get('eloan', 'MAXLONGRESULTS'))
+MAXFACETS = int(config.get('eloan', 'MAXFACETS'))
 IMAGESERVER = config.get('eloan', 'IMAGESERVER')
 BMAPPERSERVER = config.get('eloan', 'BMAPPERSERVER')
 BMAPPERDIR = config.get('eloan', 'BMAPPERDIR')

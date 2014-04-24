@@ -124,7 +124,7 @@ $(document).ready(function () {
             $(Elem).html('<img src="http://maps.google.com/maps/api/staticmap?&zoom=10&size=400x200&maptype=roadmap&markers=' +
             marker + '&sensor=false"/>' +
             '<div style="height: 40px;">' +
-            '<small><a target="_map" href="http://maps.google.com/?q=loc:'+marker+'&amp;source=embed">Larger Map</a>'+
+            '<small><a target="_map" href="http://maps.google.com/maps/i?q=loc:'+marker+'&amp;source=embed">Larger Map</a>'+
             '</small></div>');
             Elem.slideDown();
         }

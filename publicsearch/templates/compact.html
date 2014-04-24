@@ -22,6 +22,8 @@
             {% if item.labelheader %}
                 <h4><b>{{ labels.labelheader }}: {{ item.labelheader }}</b></h4>{% endif %}
             <h2><a class="facet-item" data-facetType="determination">{{ item.determination }}</a></h2>
+            {% if item.determinationdetails %}
+                <div>{{ labels.determinationdetails }}: {{ item.determinationdetails }}</div>{% endif %}
             <a class="facet-item" data-facetType="majorgroup">{{ item.majorgroup }}</a>
             {% if item.previousdeterminations %}
                 <h4>{{ labels.previousdeterminations }}</h4>
@@ -35,8 +37,7 @@
                 <div>{{ labels.collector }}: <a class="facet-item" data-facetType="collector">{{ item.collector }}</a>
                 </div>{% endif %}
             {% if item.collectionnumber %}
-                <div>{{ labels.collectionnumber }}: <a class="facet-item"
-                                                       data-facetType="collectionnumber">{{ item.collectionnumber }}</a>
+                <div>{{ labels.collectionnumber }}: <a class="facet-item" data-facetType="collectionnumber">{{ item.collectionnumber }}</a>
                 </div>{% endif %}
             {% if item.locality %}
                 <div>{{ labels.locality }}: <a class="facet-item" data-facetType="locality">{{ item.locality }}</a>
@@ -82,8 +83,7 @@
                         <div data-marker="{{ item.marker }}" class="small-map" style="display:none;">
                             <div style="height: 40px;">
                                 <small><a target="_map"
-                                          href="http://maps.google.com/?q=loc:{{ item.marker }}&amp;source=embed">Larger
-                                    Map</a>
+                                          href="http://maps.google.com/maps/i?q=loc:{{ item.marker }}&amp;source=embed">Larger Map</a>
                                 </small>
                             </div>
                         </div>
