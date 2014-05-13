@@ -29,6 +29,8 @@ def count(cachedir):
 
 if __name__ == "__main__":
     import sys
+    import time
 
     #counts, sizeinbytes = count(sys.arg[1])
+    print time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
     print "files %s, dirs %s, size %s" % (count(sys.argv[1]))
