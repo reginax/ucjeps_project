@@ -92,8 +92,8 @@ def csv(request):
             context = SEARCHRESULTS
 
             # Create the HttpResponse object with the appropriate CSV header.
-            response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="ucjeps.csv"'
+            response = HttpResponse(content_type='text/tsv')
+            response['Content-Disposition'] = 'attachment; filename="ucjeps.tsv"'
             #response.write(u'\ufeff'.encode('utf8'))
             writeCsv(response, context['items'], writeheader=True)
 
