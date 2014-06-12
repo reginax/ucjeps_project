@@ -28,16 +28,36 @@ function chooseSlideDirection(targetId) {
 $(document).ready(function () {
     $('#about').click(function() {
         chooseSlideDirection('#aboutTarget');
+        $('#advancedTarget').slideUp();
+        $('#helpTarget').slideUp();
+        $('#samplesTarget').slideUp();
+        $('#creditsTarget').slideUp();
+    });
+    $('#samples').click(function() {
+        chooseSlideDirection('#samplesTarget');
+        $('#aboutTarget').slideUp();
+        $('#advancedTarget').slideUp();
         $('#helpTarget').slideUp();
         $('#creditsTarget').slideUp();
+    });
+    $('#advanced').click(function() {
+        chooseSlideDirection('#advancedTarget');
+        $('#aboutTarget').slideUp();
+        $('#helpTarget').slideUp();
+        $('#creditsTarget').slideUp();
+        $('#samplesTarget').slideUp();
     });
     $('#help').click(function() {
         chooseSlideDirection('#helpTarget');
         $('#aboutTarget').slideUp();
+        $('#advancedTarget').slideUp();
+        $('#samplesTarget').slideUp();
         $('#creditsTarget').slideUp();
     });
     $('#credits').click(function() {
         chooseSlideDirection('#creditsTarget');
+        $('#advancedTarget').slideUp();
+        $('#samplesTarget').slideUp();
         $('#helpTarget').slideUp();
         $('#aboutTarget').slideUp();
     });

@@ -92,7 +92,7 @@ body {
 }
 #branding .user-tools {
     width: 99.5%;
-    height: 20px;
+    /* height: 20px; */
     background-color: #FFFFFF;
     margin-right: 24px;
     margin-bottom: 4px;

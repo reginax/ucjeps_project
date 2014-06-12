@@ -82,9 +82,17 @@
 <!-- End of horizontal menu -->
 
     <div class="user-tools">
+    <span style="float:left; width:800px">This is a gateway to data and images of all taxa of herbarium specimens
+    held at The University and Jepson Herbaria, University of California,
+    Berkeley.  There will be a bit more text, which I am not quite sure how to squeeze in.
+    Accordingly, I have added another horizontal rule between this section and the
+    next section.
+    </span>
         <span style="float:right">
-            <a href="#" id="about">About</a>
+            <!-- a href="#" id="about">About</a -->
             <a href="#" id="help">Help</a>
+            <a href="#" id="samples">Sample Searches</a>
+            <a href="#" id="advanced">Advanced Searching</a>
             <a href="http://ucjeps.berkeley.edu/useterms.html">Terms</a>
             <a href="#" id="credits">Credits</a>
             <a href="{% url 'login' %}?next=/ucjeps_project/public/publicsearch/" id="login" class="prettyBtn">{% trans 'Sign in' %}</a>
@@ -93,10 +101,17 @@
 {% endblock %}
 
 {% block content %}
+    <hr/>
     <div id="content-main">
         <div class="toggled">
             <div id="aboutTarget" style="display:none">
                 {% include "about.html" %}
+             </div>
+            <div id="samplesTarget" style="display:none">
+                {% include "samples.html" %}
+             </div>
+            <div id="advancedTarget" style="display:none">
+                {% include "advanced.html" %}
              </div>
             <div id="helpTarget" style="display:none">
                 {% include "help.html" %}
