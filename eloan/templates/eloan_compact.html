@@ -2,62 +2,137 @@
 
 {% for item in items %}
     <div style="float:right;">
-       {% if item.blobs %}
+        {% if item.blobs %}
             {% for t in item.blobs %}
                 <a target="image"
-                   href="{{ imageserver }}/blobs/{{ t }}/derivatives/OriginalJpeg/content">
-                    <img height="140px"
-                         src="{{ imageserver }}/blobs/{{ t }}/derivatives/Thumbnail/content"/>
+                   href="{{ imageserver }}/blobs/{{ t }}/derivatives/OriginalJpeg/content"><img height="100px" src="{{ imageserver }}/blobs/{{ t }}/derivatives/Thumbnail/content"/>
                 </a>
             {% endfor %}
         {% endif %}
     </div>
     <div>
-        <div class="result-title"> {# Remove checkbox until 'Download selected as CSV' works properly #}
-{#            <input type="checkbox" name="item-{{ item.counter }}" value="{{ item.csid }}" checked>#}
-            <b><a href="{% url 'publicsearch:publicSearch' %}?maxresults=1&displayType=full&accession={{ item.accession }}">{{ item.accession }}</a></b>
+        <div class="result-title">
+            <input type="checkbox" name="item-{{ item.counter }}" value="{{ item.csid }}" checked>
+            <b><a href="?maxresults=1&displayType=full&accession={{ item.accession }}">{{ item.accession }}</a></b>
             {% if user.is_active and user.is_staff %}
-                <a href="http://ucjeps.cspace.berkeley.edu/collectionspace/ui/ucjeps/html/cataloging.html?csid={{ item.csid }}"><img src="{% static "publicsearch/images/open_cspace.png" %}" class="cspaceLink">Open in CSpace</a>
+                <a target="cspace" href="http://ucjeps.cspace.berkeley.edu/collectionspace/ui/ucjeps/html/cataloging.html?csid={{ item.csid }}"><img src="{% static "publicsearch/images/open_cspace.png" %}" class="cspaceLink">Open in CSpace</a>
             {% endif %}
         </div>
         <div>
-            <h2>{{ item.determination }}</h2>
-            ({{ item.majorgroup }})</div>
-        <div>
-            {{ item.county }} /
-            {{ item.state }} /
-            {{ item.country }}
-        </div>
-        {% if item.L1 and item.L2 %}
-            <div>LatLong: {{ item.L1 }} {{ item.L2 }}
-                {% if item.marker %}
-                    <a class="map-item">[click for map]</a>
-                    <div class="small-map" style="display:none;">
-                        <img src="http://maps.google.com/maps/api/staticmap?&zoom=10&size=400x200&maptype=roadmap&markers={{ item.marker }}&sensor=false"/>
-                        <div style="height: 40px;">
-                            <small><a target="_map"
-                                      href="http://maps.google.com/?q=loc:{{ item.marker }}&amp;source=embed">Larger Map</a>
-                            </small>
+            {% if item.labelheader %}
+                <h4><b>{{ labels.labelheader }}: {{ item.labelheader }}</b></h4>{% endif %}
+            <h2><a class="facet-item" data-facetType="determination">{{ item.determination }}</a></h2>
+            {% if item.determinationdetails %}
+                <div>{{ labels.determinationdetails }}: {{ item.determinationdetails }}</div>{% endif %}
+            <a class="facet-item" data-facetType="majorgroup">{{ item.majorgroup }}</a>
+            {% if item.previousdeterminations %}
+                <h4>{{ labels.previousdeterminations }}</h4>
+                {% for t in item.previousdeterminations %}
+                    <li>{{ t }}</li>
+                {% endfor %}
+            {% endif %}
+            {% if item.localname %}
+                <div>{{ labels.localname }}: {{ item.localname }}</div>{% endif %}
+            {% if item.collector %}
+                <div>{{ labels.collector }}: <a class="facet-item" data-facetType="collector">{{ item.collector }}</a>
+                </div>{% endif %}
+            {% if item.collectionnumber %}
+                <div>{{ labels.collectionnumber }}: <a class="facet-item" data-facetType="collectionnumber">{{ item.collectionnumber }}</a>
+                </div>{% endif %}
+            {% if item.locality %}
+                <div>{{ labels.locality }}: <a class="facet-item" data-facetType="locality">{{ item.locality }}</a>
+                </div>{% endif %}
+            {% if item.county and item.state and item.country %}
+                <div>
+                    <a class="facet-item" data-facetType="county">{{ item.county }}</a> /
+                    <a class="facet-item" data-facetType="state">{{ item.state }}</a> /
+                    <a class="facet-item" data-facetType="country">{{ item.country }}</a>
+                </div>
+            {% elif item.county and item.state %}
+                <div>
+                    <a class="facet-item" data-facetType="county">{{ item.county }}</a> /
+                    <a class="facet-item" data-facetType="state">{{ item.state }}</a>
+                </div>
+            {% elif item.county and item.country %}
+                <div>
+                    <a class="facet-item" data-facetType="county">{{ item.county }}</a> /
+                    <a class="facet-item" data-facetType="country">{{ item.country }}</a>
+                </div>
+            {% elif item.state and item.country %}
+                <div>
+                    <a class="facet-item" data-facetType="state">{{ item.state }}</a> /
+                    <a class="facet-item" data-facetType="country">{{ item.country }}</a>
+                </div>
+            {% elif item.county %}
+                <div>
+                    <a class="facet-item" data-facetType="county">{{ item.county }}</a>
+                </div>
+            {% elif item.state %}
+                <div>
+                    <a class="facet-item" data-facetType="state">{{ item.state }}</a>
+                </div>
+            {% elif item.country %}
+                <div>
+                    <a class="facet-item" data-facetType="country">{{ item.country }}</a>
+                </div>
+            {% endif %}
+            {% if item.L1 and item.L2 %}
+                <div>LatLong: {{ item.L1 }} {{ item.L2 }}
+                    {% if item.marker %}
+                        <a class="map-item">[click for map]</a>
+                        <div data-marker="{{ item.marker }}" class="small-map" style="display:none;">
+                            <div style="height: 40px;">
+                                <small><a target="_map"
+                                          href="http://maps.google.com/maps/i?q=loc:{{ item.marker }}&amp;source=embed">Larger Map</a>
+                                </small>
+                            </div>
                         </div>
-                    </div>
-                {% endif %}
-            </div>
-        {% endif %}
-        {% if item.collector %}
-        <div>Collector: {{ item.collector }} </div>{% endif %}
-        {% if item.collectionnumber %}
-        <div>Collection Number: {{ item.collectionnumber }} </div>{% endif %}
-        {% if item.locality %}
-        <div>Locality: {{ item.locality }} </div>{% endif %}
-        {% if item.earlycollectiondate %}
-	    <div>Collection date: {{ item.collectiondate }} </div>{% endif %}
-        {% if item.habitat %}
-	    <div>Habitat: {{ item.habitat }} </div>{% endif %}
-        {% if item.elevation %}
-	    <div>Elevation: {{ item.elevation }} {{ item.elevationunit }}</div>{% endif %}
-        {% if item.updatedat %}
-        <div>Last updated: {{ item.updatedat }}</div>{% endif %}
-
+                    {% endif %}
+                </div>
+            {% endif %}
+            {% if item.collectiondate %}
+                <div>{{ labels.collectiondate }}: <a class="facet-item"
+                                                     data-facetType="collectiondate">{{ item.collectiondate }}</a>
+                </div>{% endif %}
+            {% if item.habitat %}
+                <div>{{ labels.habitat }}: <a class="facet-item" data-facetType="habitat">{{ item.habitat }}</a>
+                </div>{% endif %}
+            {% if item.elevation %}
+                <div>{{ labels.elevation }}: {{ item.elevation }} {{ item.elevationunit }}</div>{% endif %}
+            {% if item.depth %}
+                <div>{{ labels.depth }}: {{ item.depth }} {{ item.depthunit }}</div>{% endif %}
+            {% if item.briefdescription %}
+                <div>{{ labels.briefdescription }}: {{ item.briefdescription }}</div>{% endif %}
+            {% if item.associatedtaxa %}
+                <h4>{{ labels.associatedtaxa }}</h4>
+                {% for t in item.associatedtaxa %}
+                    <li>{{ t }}</li>
+                {% endfor %}
+            {% endif %}
+            {% if item.typeassertions %}
+                <h4>{{ labels.typeassertions }}</h4>
+                {% for t in item.typeassertions %}
+                    <li>{{ t }}</li>
+                {% endfor %}
+            {% endif %}
+            {% if item.sex or item.phase %}
+                <div>
+                    {% if item.sex %}
+                        {{ labels.sex }}: <a class="facet-item" data-facetType="sex">{{ item.sex }}</a> / {% endif %}
+                    {% if item.phase %}
+                        {{ labels.phase }}: <a class="facet-item" data-facetType="phase">{{ item.phase }}</a>{% endif %}
+                </div>{% endif %}
+            {% if item.othernumbers %}
+                <h4>{{ labels.othernumbers }}</h4>
+                {% for t in item.othernumbers %}
+                    <li>{{ t }}</li>
+                {% endfor %}
+            {% endif %}
+            {% if item.labelfooter %}
+                <h4><b>{{ labels.labelfooter }}: {{ item.labelfooter }}</b></h4>{% endif %}
+            {% if item.updatedat %}
+                <div>{{ labels.updatedat }}: {{ item.updatedat }}</div>{% endif %}
+        </div>
     </div>
     <hr/>
 {% endfor %}
