@@ -38,7 +38,7 @@ except ImportError:
 # global variables (at least to this module...)
 config = cspace_django_site.getConfig()
 
-from appconfig import SOLRSERVER, SOLRCORE, SOLRQUERYPARAM
+from appconfig import SOLRSERVER, SOLRCORE, SOLRQUERYPARAM, PARMS
 
 
 # CONSTANTS
@@ -180,13 +180,18 @@ def eloan(request):
         # Search public search (solr) portal
         results = build_solr_query(solr_server, solr_core, solr_queryparam_key, solr_queryparam_value)
 
+        labels = {}
+        for p in PARMS:
+            labels[p] = PARMS[p][0]
+
+
         # Either break values out of results array as we do here, or use results[value] notation in HTML templates
         return render(request, 'eloan.html',
                       {'loaninfo': loaninfo, 'results': results, 'items': results['items'],
                        'displayType': results['displayType'], 'count': results['count'],
                        'imageserver': results['imageserver'], 'url': results['url'],
                        'querystring': results['querystring'], 'timestamp': results['timestamp'],
-                       'time': results['time'], 'kw': eloanNum, 'title': TITLE }
+                       'time': results['time'], 'labels': labels, 'kw': eloanNum, 'title': TITLE }
         )
 
     else:
