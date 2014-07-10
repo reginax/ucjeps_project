@@ -116,6 +116,7 @@ $(document).ready(function () {
                     }
                 });
                 $('#tabs').tabs({ active: 0 });
+                ga('send', 'pageview', { 'page': '/search' });
 
                 $('#resultsPanel').css({
                     display: "block"
@@ -144,9 +145,10 @@ $(document).ready(function () {
             $(Elem).html('<img src="http://maps.google.com/maps/api/staticmap?&zoom=10&size=400x200&maptype=roadmap&markers=' +
             marker + '&sensor=false"/>' +
             '<div style="height: 40px;">' +
-            '<small><a target="_map" href="http://maps.google.com/maps/i?q=loc:'+marker+'&amp;source=embed">Larger Map</a>'+
+            '<small><a target="_map" href="https://maps.google.com/maps/i?q=loc:'+marker+'&amp;source=embed">Larger Map</a>'+
             '</small></div>');
             Elem.slideDown();
+            ga('send', 'pageview', { 'page': '/map/inline' });
         }
         else {
             Elem.slideUp();
@@ -184,6 +186,7 @@ $(document).ready(function () {
                 }
             });
             $('#tabs').tabs({ active: 1 });
+            ga('send', 'pageview', { 'page': '/search/refine' });
         });
     });
 
@@ -195,10 +198,12 @@ $(document).ready(function () {
             $.post("../bmapper/", formData).done(function (data) {
                 window.open(data, '_blank');
             });
+            ga('send', 'pageview', { 'page': '/map/bmapper' });
         } else if ($(this).attr('id') == 'map-google') {
             $.post("../gmapper/", formData).done(function (data) {
                 $('#maps').html(data);
             });
+            ga('send', 'pageview', { 'page': '/map/google' });
         }
     });
 // we need to make sure this gets done in the event the page is created anew (e.g. via a pasted URL)
