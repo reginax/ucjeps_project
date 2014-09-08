@@ -29,4 +29,5 @@ urlpatterns = patterns('',
                        url(r'^public/', include('publicsearch.urls', namespace='publicsearch')),
                        url(r'^public/', include('eloan.urls', namespace='eloan')),
                        url(r'^imageserver/', include('imageserver.urls', namespace='imageserver')),
+                       url(r'^landing', include('landing.urls', namespace='landing')),
                        )

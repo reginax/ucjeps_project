@@ -14,7 +14,7 @@ from cspace_django_site.main import cspace_django_site
 # global variables (at least to this module...)
 
 from appconfig import PARMS, MAXMARKERS, MAXRESULTS, MAXLONGRESULTS, MAXFACETS, IMAGESERVER, BMAPPERSERVER, BMAPPERDIR
-from appconfig import BMAPPERCONFIGFILE, SOLRSERVER, SOLRCORE, LOCALDIR, DROPDOWNS, SEARCH_QUALIFIERS
+from appconfig import BMAPPERCONFIGFILE, SOLRSERVER, SOLRCORE, LOCALDIR, DROPDOWNS, SEARCH_QUALIFIERS, TITLE
 
 SolrIsUp = True
 FACETS = {}
@@ -224,6 +224,7 @@ def setDisplayType(requestObject):
 
 def setConstants(context):
     if not SolrIsUp: context['errormsg'] = 'Solr is down!'
+    context['title'] = TITLE
     context['imageserver'] = IMAGESERVER
     context['dropdowns'] = FACETS
     context['timestamp'] = time.strftime("%b %d %Y %H:%M:%S", time.localtime())

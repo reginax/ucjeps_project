@@ -19,6 +19,7 @@ SOLRCORE = config.get('search', 'SOLRCORE')
 LOCALDIR = config.get('search', 'LOCALDIR')
 DROPDOWNS = config.get('search', 'DROPDOWNS').split(',')
 SEARCH_QUALIFIERS = config.get('search', 'SEARCH_QUALIFIERS').split(',')
+TITLE = config.get('search', 'TITLE')
 
 # still need to move this into a config file.
 # could be the same one as above, or a different one.

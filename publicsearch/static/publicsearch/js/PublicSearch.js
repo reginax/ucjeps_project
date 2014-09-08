@@ -208,4 +208,5 @@ $(document).ready(function () {
     });
 // we need to make sure this gets done in the event the page is created anew (e.g. via a pasted URL)
 $('#tabs').tabs({ active: 0 });
+window.history.pushState({},'foo','.')
 });

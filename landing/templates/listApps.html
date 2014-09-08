@@ -1,0 +1,22 @@
+{% extends "cspace_django_site/base_site.html" %}
+{% load i18n admin_static %}
+
+{% block content %}
+    <div id="content-main">
+        <h1>{{ title }}</h1>
+        {% if appList %}
+            <table>
+                <tr>
+                    <th scope="row"></th>
+                </tr>
+                {% for app in appList %}
+                    <tr>
+                        <td><a href="../{{ app }}">{{ app }}</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p>{% trans "No apps" %}</p>
+        {% endif %}
+    </div>
+{% endblock %}
