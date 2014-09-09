@@ -148,7 +148,7 @@ INSTALLED_APPS = (
     'service',
     'imageserver',
     'publicsearch',
-    'landing'
+    'landing',
     'eloan'
 )
 
