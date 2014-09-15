@@ -280,7 +280,7 @@ def doSearch(solr_server, solr_core, context):
     else:
         for p in requestObject:
             if p in ['csrfmiddlewaretoken', 'displayType', 'resultsOnly', 'maxresults', 'url', 'querystring', 'pane',
-                     'pixonly', 'locsonly', 'acceptterms']: continue
+                     'pixonly', 'locsonly', 'typesonly', 'acceptterms']: continue
             if '_qualifier' in p: continue
             if 'select-' in p: continue # skip select control for map markers
             if not p in requestObject: continue
@@ -350,6 +350,12 @@ def doSearch(solr_server, solr_core, context):
         locsonly = None
 
     try:
+        typesonly = requestObject['typesonly']
+        querystring += " AND %s:[* TO *]" % PARMS['typeassertions'][3]
+        url += '&typesonly=True'
+    except:
+        typesonly = None
+    try:
         response = s.query(querystring, facet='true', facet_field=facetfields, fq={},
                            rows=context['maxresults'], facet_limit=MAXFACETS,
                            facet_mincount=1)
@@ -416,6 +422,7 @@ def doSearch(solr_server, solr_core, context):
     context['range'] = range(len(facetfields))
     context['pixonly'] = pixonly
     context['locsonly'] = locsonly
+    context['typesonly'] = typesonly
     try:
         context['pane'] = requestObject['pane']
     except:
