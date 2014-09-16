@@ -13,7 +13,9 @@
         <div style="float:right">
             <input type="checkbox" {% if pixonly %}checked {% endif %} name='pixonly' value="pixonly"> Include only items with images.
             <br/>
-            <input type="checkbox" {% if pixonly %}checked {% endif %} name='locsonly' value="locsonly"> Include only items with latlongs.
+            <input type="checkbox" {% if locsonly %}checked {% endif %} name='locsonly' value="locsonly"> Include only items with latlongs.
+            <br/>
+            <input type="checkbox" {% if typesonly %}checked {% endif %} name='typesonly' value="typesonly"> Include only type specimens.
         </div>
         <div style="float:right">
             Display options: &nbsp; &nbsp;
