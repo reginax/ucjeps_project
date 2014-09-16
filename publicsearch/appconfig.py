@@ -66,6 +66,7 @@ PARMS = {
     'mindepth': ['Min. Depth', 'true', '', 'mindepth_txt', ''],
     'maxdepth': ['Max. Depth', 'true', '', 'maxdepth_txt', ''],
     'depthunit': ['Depth Unit', 'true', '', 'depthunit_txt', ''],
+    'cultivated': ['Cultivated', 'true', '', 'cultivated_s', ''],
     'sex': ['Sex', 'true', '', 'sex_s', ''],
     'phase': ['Phase', 'true', '', 'phase_s', ''],
     'determinationdetails': ['Determination Details', 'true', '', 'determinationdetails_txt', ''],

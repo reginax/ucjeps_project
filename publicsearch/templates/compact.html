@@ -115,6 +115,8 @@
                     <li>{{ t }}</li>
                 {% endfor %}
             {% endif %}
+            {% if item.cultivated %}
+                <div>{{ labels.cultivated }}: {{ item.cultivated }}</div>{% endif %}
             {% if item.sex or item.phase %}
                 <div>
                     {% if item.sex %}
