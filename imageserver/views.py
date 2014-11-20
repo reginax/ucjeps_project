@@ -59,4 +59,4 @@ def get_image(request, image):
         raise
 
     logger.info('%s :: %s :: %s' % ('image', '-', '%s :: %8.3f seconds' % (image, elapsedtime)))
-    return HttpResponse(data, mimetype='image/jpeg')
+    return HttpResponse(data, content_type='image/jpeg')

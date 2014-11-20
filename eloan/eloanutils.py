@@ -30,7 +30,7 @@ def get_entity(request, entitytype, responsemimetype):
     #config = cspace_django_site.getConfig()
     #connection = cspace.connection.create_connection(config, request.user)
     #(url, data, statusCode) = connection.make_get_request('cspace-services/%s' % image)
-    #return HttpResponse(data, mimetype='image/jpeg')
+    #return HttpResponse(data, content_type='image/jpeg')
 
     config = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'imageserver')
     username = config.get('connect', 'username')
@@ -71,7 +71,7 @@ def get_entity(request, entitytype, responsemimetype):
         raise
     else:
         #return (url,data,elapsedtime)
-        return HttpResponse(data, mimetype=responsemimetype)
+        return HttpResponse(data, content_type=responsemimetype)
 
 def build_solr_query(solr_server, solr_core, solr_queryparam_key, solr_queryparam_value):
     """
