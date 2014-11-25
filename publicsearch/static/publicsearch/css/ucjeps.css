@@ -15,7 +15,7 @@ body {
     margin-top: 0;
 }
 #branding .banner {
-	background-color: #3366CC;
+	background-color: #F4FAFF;
     width: 99.5%;
     margin-left: -14px;
 }
@@ -43,7 +43,7 @@ body {
 }
 #branding .banner .bannerTitle {
 	font-family: "Times New Roman", Times, serif;
-	color: #FFFF00;
+	color: black;
 	font-weight: bold;
 	font-style: italic;
 	font-size: 36px;
@@ -51,7 +51,7 @@ body {
 }
 #branding .banner a.logoText {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-	color: #FFFF44;
+	color: #FFFFFF;
 	font-weight: bold;
 	font-style: normal;
 	font-size: 10px;
