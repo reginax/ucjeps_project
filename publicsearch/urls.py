@@ -10,4 +10,5 @@ urlpatterns = patterns('',
                        url(r'^bmapper/$', views.bmapper, name='bmapper'),
                        url(r'^csv/$', views.csv, name='csv'),
                        url(r'^gmapper/$', views.gmapper, name='gmapper'),
+                       url(r'^/?$', views.direct, name='direct'),
                        )

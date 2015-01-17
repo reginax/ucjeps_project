@@ -5,12 +5,14 @@ import logging
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_PARENT_DIR = os.path.dirname(BASE_DIR)
 LOGS_DIR = BASE_PARENT_DIR + os.sep + 'logs'
+PROJECT_NAME = os.path.basename(BASE_PARENT_DIR)
+
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    # ('Your Name', 'your_email@berkeley.edu'),
+    # ('Your Name', 'your_email@berkeley.com'),
 )
 
 MANAGERS = ADMINS
@@ -82,7 +84,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, '../static_root')
 
 # URL prefix for static files.
 # Example: "http://intakes.com/static/", "http://static.intakes.com/"
-STATIC_URL = '/static_root/'
+STATIC_URL = '/' + PROJECT_NAME + '_static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -167,7 +169,7 @@ LOGGING = {
     },
     'formatters': {
         'standard': {
-            'format': "[%(asctime)s] %(levelname)s :: %(message)s",
+            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
             'datefmt': "%d/%b/%Y %H:%M:%S"
         },
         'verbose': {
@@ -219,8 +221,8 @@ LOGGING = {
 #
 # Log things from this file only to a separate "settings.log" file.
 #
-logging.basicConfig(filename=LOGS_DIR + os.sep + 'settings.log', level=logging.INFO)
-logging.info('Settings log file started.')
+logging.basicConfig(filename=LOGS_DIR + os.sep + 'settings.log', level=logging.DEBUG)
+logging.debug('Settings log file started.')
 
 #
 # If the application's WSGI setup script added an environment variable to tell us
@@ -237,7 +239,6 @@ else:
 logging.debug('WSGI_BASE =' + WSGI_BASE)
 LOGIN_URL = WSGI_BASE + '/accounts/login'
 LOGIN_REDIRECT_URL = WSGI_BASE + '/landing'
-
 
 #
 # AuthN backends

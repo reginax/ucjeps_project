@@ -6,7 +6,7 @@ from os import path
 from django.contrib.auth.decorators import login_required
 from cspace_django_site.settings import STATIC_URL
 from cspace_django_site.settings import MEDIA_URL
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render, render_to_response, redirect
 from django.template.loader import render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
 from django import forms
@@ -20,6 +20,11 @@ config = cspace_django_site.getConfig()
 from appconfig import SOLRSERVER, SOLRCORE
 
 SEARCHRESULTS = {}
+
+
+def direct(request):
+    return redirect('public/')
+
 
 # This just prints the search form
 def publicsearch(request):
