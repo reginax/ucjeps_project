@@ -23,7 +23,7 @@ SEARCHRESULTS = {}
 
 
 def direct(request):
-    return redirect('public/')
+    return redirect('publicsearch/')
 
 
 # This just prints the search form

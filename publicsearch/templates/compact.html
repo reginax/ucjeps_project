@@ -1,16 +1,16 @@
 {% load staticfiles %}
 
 {% for item in items %}
-    <div style="float:right;">
-        {% if item.blobs %}
-            {% for t in item.blobs %}
-                <a target="image"
-                   href="{{ imageserver }}/blobs/{{ t }}/derivatives/OriginalJpeg/content"><img height="100px" src="{{ imageserver }}/blobs/{{ t }}/derivatives/Thumbnail/content"/>
-                </a>
-            {% endfor %}
-        {% endif %}
-    </div>
-    <div>
+    <div style="min-height:250px;">
+        <div style="float:right;">
+            {% if item.blobs %}
+                {% for t in item.blobs %}
+                    <a target="image"
+                       href="{{ imageserver }}/blobs/{{ t }}/derivatives/OriginalJpeg/content"><img height="250px" src="{{ imageserver }}/blobs/{{ t }}/derivatives/Medium/content"/>
+                    </a>
+                {% endfor %}
+            {% endif %}
+        </div>
         <div class="result-title">
             <input type="checkbox" name="item-{{ item.counter }}" value="{{ item.csid }}" checked>
             <b><a href="?maxresults=1&displayType=full&accession={{ item.accession }}">{{ item.accession }}</a></b>
@@ -116,7 +116,8 @@
                 {% endfor %}
             {% endif %}
             {% if item.cultivated %}
-                <div>{{ labels.cultivated }}: {{ item.cultivated }}</div>{% endif %}
+                {% if item.cultivated == "true" %}
+                <div>{{ labels.cultivated }}</div>{% endif %}{% endif %}
             {% if item.sex or item.phase %}
                 <div>
                     {% if item.sex %}
