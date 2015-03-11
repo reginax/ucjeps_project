@@ -90,6 +90,17 @@
                     {% endif %}
                 </div>
             {% endif %}
+            {% if item.datum %}
+                <div>{{ labels.datum }}: <a class="facet-item"
+                                                     data-facetType="datum">{{ item.datum }}</a>
+                </div>{% endif %}
+            {% if item.coordinatesource %}
+                <div>{{ labels.coordinatesource }}: <a class="facet-item"
+                                                     data-facetType="coordinatesource">{{ item.coordinatesource }}</a>
+                </div>{% endif %}
+            {% if item.coordinateuncertainty %}
+                <div>{{ labels.coordinateuncertainty }}: {{ item.coordinateuncertainty }} {{ item.coordinateuncertaintyunit }}
+                </div>{% endif %}
             {% if item.collectiondate %}
                 <div>{{ labels.collectiondate }}: <a class="facet-item"
                                                      data-facetType="collectiondate">{{ item.collectiondate }}</a>
