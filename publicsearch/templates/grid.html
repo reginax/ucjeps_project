@@ -20,7 +20,7 @@
             <br/>&nbsp;[no image]
             </div>
         {% endif %}
-        <p><h4>{{ item.determination }}</h4></p>
+        <p><h4><a class="facet-item" data-facetType="determination">{{ item.termformatteddisplayname|safe }}</a></h4></p>
         <p class="tiny">{{ item.county }} / {{ item.state }} / {{ item.country }}</p>
         {% if item.collector %}
         <p class="tiny">Collector: {{ item.collector }}</p>{% endif %}

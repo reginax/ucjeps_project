@@ -15,7 +15,9 @@
                    value="{{ searchValues.determination }}"/>
         </td>
         <td>
-            <label>Major Group</label></td>
+            <label>Major Group</label>
+        </td>
+        <td/>
         <td>
             <select id="majorgroup" name="majorgroup">
                 <option value="">Please select</option>
@@ -49,6 +51,7 @@
         </td>
         <td>
             <label>Date Collected</label></td>
+        <td/>
         <td>
             <input type="text" id="collectiondate" name="collectiondate"
                    value="{{ searchValues.collectiondate }}"/>
@@ -75,8 +78,20 @@
         <td>
             <input type="text" id="locality" name="locality" value="{{ searchValues.locality }}"/>
         </td>
-        <td/>
-        <td/>
+        <td>
+            <label>Associated Taxa</label>
+        </td>
+        <td>
+            <select id="associatedtaxa_qualifier" name="associatedtaxa_qualifier">
+                {% for option in qualifiers %}
+                    <option value="{{option}}"{% if option == searchValues.associatedtaxa_qualifier %} selected{% endif %}>{{option}}</option>
+                {% endfor %}
+            </select>
+        </td>
+        <td>
+            <input type="text" id="associatedtaxa" name="associatedtaxa"
+                   value="{{ searchValues.associatedtaxa }}"/>
+        </td>
         <td>
             <label>Specimen ID</label>
         </td>
@@ -101,6 +116,7 @@
         <td>
             <label>State</label>
         </td>
+        <td/>
         <td>
             <select id="state" name="state">
                 <option value="">Please select</option>

@@ -21,7 +21,9 @@
         <div>
             {% if item.labelheader %}
                 <h4><b>{{ labels.labelheader }}: {{ item.labelheader }}</b></h4>{% endif %}
-            <h2><a class="facet-item" data-facetType="determination">{{ item.determination }}</a></h2>
+            <h2><a class="facet-item" data-facetType="determination">{{ item.termformatteddisplayname|safe }}</a></h2>
+            {% if item.family %}
+                <div>{{ labels.family }}: {{ item.family }}</div>{% endif %}
             {% if item.determinationdetails %}
                 <div>{{ labels.determinationdetails }}: {{ item.determinationdetails }}</div>{% endif %}
             <a class="facet-item" data-facetType="majorgroup">{{ item.majorgroup }}</a>
@@ -82,28 +84,32 @@
                         <a class="map-item">[click for map]</a>
                         <div data-marker="{{ item.marker }}" class="small-map" style="display:none;">
                             <div style="height: 40px;">
-                                <small><a target="_map"
-                                          href="http://maps.google.com/maps/i?q=loc:{{ item.marker }}&amp;source=embed">Larger Map</a>
-                                </small>
+                                <small><a target="_map" href="http://maps.google.com/maps/i?q=loc:{{ item.marker }}&amp;source=embed">Larger Map</a></small>
                             </div>
+                            {% if item.datum %}
+                                <p>{{ labels.datum }}: <a class="facet-item" data-facetType="datum">{{ item.datum }}</a>
+                                </p>{% endif %}
+                            {% if item.coordinatesource %}
+                                <p>{{ labels.coordinatesource }}: <a class="facet-item" data-facetType="coordinatesource">{{ item.coordinatesource }}</a>
+                                </p>{% endif %}
+                            {% if item.coordinateuncertainty %}
+                                <p>{{ labels.coordinateuncertainty }}: {{ item.coordinateuncertainty }} {{ item.coordinateuncertaintyunit }}
+                                </p>{% endif %}
+                            {% if item.localitynote %}
+                                <p>{{ labels.localitynote }}: {{ item.localitynote }}
+                                </p>{% endif %}
+                            {% if item.localitysource %}
+                                <p>{{ labels.localitysource }}: {{ item.localitysource }}
+                                </p>{% endif %}
+                            {% if item.localitysourcedetail %}
+                                <p>{{ labels.localitysourcedetail }}: {{ item.localitysourcedetail }}
+                                </p>{% endif %}
                         </div>
                     {% endif %}
                 </div>
             {% endif %}
-            {% if item.datum %}
-                <div>{{ labels.datum }}: <a class="facet-item"
-                                                     data-facetType="datum">{{ item.datum }}</a>
-                </div>{% endif %}
-            {% if item.coordinatesource %}
-                <div>{{ labels.coordinatesource }}: <a class="facet-item"
-                                                     data-facetType="coordinatesource">{{ item.coordinatesource }}</a>
-                </div>{% endif %}
-            {% if item.coordinateuncertainty %}
-                <div>{{ labels.coordinateuncertainty }}: {{ item.coordinateuncertainty }} {{ item.coordinateuncertaintyunit }}
-                </div>{% endif %}
             {% if item.collectiondate %}
-                <div>{{ labels.collectiondate }}: <a class="facet-item"
-                                                     data-facetType="collectiondate">{{ item.collectiondate }}</a>
+                <div>{{ labels.collectiondate }}: <a class="facet-item" data-facetType="collectiondate">{{ item.collectiondate }}</a>
                 </div>{% endif %}
             {% if item.habitat %}
                 <div>{{ labels.habitat }}: <a class="facet-item" data-facetType="habitat">{{ item.habitat }}</a>
@@ -142,6 +148,9 @@
                     <li>{{ t }}</li>
                 {% endfor %}
             {% endif %}
+            {% if item.ucbgaccessionnumber %}
+                <div>{{ labels.ucbgaccessionnumber }}: <a class="facet-item" data-facetType="ucbgaccessionnumber">{{ item.ucbgaccessionnumber }}</a>
+                </div>{% endif %}
             {% if item.labelfooter %}
                 <h4><b>{{ labels.labelfooter }}: {{ item.labelfooter }}</b></h4>{% endif %}
             {% if item.updatedat %}

@@ -14,7 +14,7 @@ from cspace_django_site.main import cspace_django_site
 # global variables (at least to this module...)
 
 from appconfig import PARMS, MAXMARKERS, MAXRESULTS, MAXLONGRESULTS, MAXFACETS, IMAGESERVER, BMAPPERSERVER, BMAPPERDIR
-from appconfig import BMAPPERCONFIGFILE, SOLRSERVER, SOLRCORE, LOCALDIR, DROPDOWNS, SEARCH_QUALIFIERS, TITLE
+from appconfig import BMAPPERURL, BMAPPERCONFIGFILE, SOLRSERVER, SOLRCORE, LOCALDIR, DROPDOWNS, SEARCH_QUALIFIERS, TITLE
 
 SolrIsUp = True
 FACETS = {}
@@ -200,9 +200,8 @@ def setupBMapper(requestObject, context):
     context['items'] = mappableitems
     bmapperconfigfile = '%s/%s/%s' % (BMAPPERSERVER, BMAPPERDIR, BMAPPERCONFIGFILE)
     tabfile = '%s/%s/%s' % (BMAPPERSERVER, BMAPPERDIR, filename)
-    context[
-        'bmapperurl'] = "http://berkeleymapper.berkeley.edu/run.php?ViewResults=tab&tabfile=%s&configfile=%s&sourcename=Consortium+of+California+Herbaria+result+set&maptype=Terrain" % (
-        tabfile, bmapperconfigfile)
+    print BMAPPERURL
+    context['bmapperurl'] = BMAPPERURL % (tabfile, bmapperconfigfile)
     return context
     # return HttpResponseRedirect(context['bmapperurl'])
 
@@ -262,6 +261,11 @@ def setConstants(context):
 
     return context
 
+def recodevarname(p):
+    if PARMS[p][4] == 'ss':
+        return PARMS[p][3].replace('_txt', '_ss')
+    else:
+        return PARMS[p][3].replace('_txt', '_s')
 
 def doSearch(solr_server, solr_core, context):
     elapsedtime = time.time()
@@ -298,12 +302,12 @@ def doSearch(solr_server, solr_core, context):
                     if p in DROPDOWNS:
                         # if it's a value in a dropdown, it must always be an "exact search"
                         t = '"' + t + '"'
-                        index = PARMS[p][3].replace('_txt', '_s')
+                        index = recodevarname(p)
                     elif p + '_qualifier' in requestObject:
                         # print 'qualifier:',requestObject[p+'_qualifier']
                         qualifier = requestObject[p + '_qualifier']
                         if qualifier == 'exact':
-                            index = PARMS[p][3].replace('_txt', '_s')
+                            index = recodevarname(p)
                             t = '"' + t + '"'
                         elif qualifier == 'phrase':
                             index = PARMS[p][3]
@@ -397,18 +401,13 @@ def doSearch(solr_server, solr_core, context):
                 #raise
                 pass
         # the following multivalue fields need to be split
-        #item['labelheader'] = 'Label Header'
-        #item['labelfooter'] = 'Label Footer'
         for fld in 'previousdeterminations,associatedtaxa,typeassertions,othernumbers'.split(','):
-            #test = (fld[:-1] + ';')  * 3
-            #test = test[:-1]
-            #item[fld] = test
             if fld in item.keys():
-                item[fld] = [ u for u in item[fld].split(u'␥') if u != '']
+                item[fld] = item[fld].split(';')
 
         # blobs are handled specially
         if 'blobs' in item.keys():
-                item['blobs'] = item['blobs'].split(',')
+                item['blobs'] = item['blobs'].split(';')
         item['marker'] = makeMarker(item)
         context['items'].append(item)
 

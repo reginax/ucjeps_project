@@ -14,6 +14,7 @@ IMAGESERVER = config.get('search', 'IMAGESERVER')
 BMAPPERSERVER = config.get('search', 'BMAPPERSERVER')
 BMAPPERDIR = config.get('search', 'BMAPPERDIR')
 BMAPPERCONFIGFILE = config.get('search', 'BMAPPERCONFIGFILE')
+BMAPPERURL = config.get('search', 'BMAPPERURL')
 SOLRSERVER = config.get('search', 'SOLRSERVER')
 SOLRCORE = config.get('search', 'SOLRCORE')
 LOCALDIR = config.get('search', 'LOCALDIR')
@@ -29,18 +30,23 @@ PARMS = {
 
     # the rest are mapping the solr field names to django form labels and fields
     'csid': ['id', 'true', '', 'id', ''],
-    'accession': ['Specimen ID', 'true', '', 'accessionnumber_txt', ''],
+    'accession': ['Specimen ID', 'true', '', 'accessionnumber_s', ''],
     'determination': ['Determination', 'true', '', 'determination_txt', ''],
+    'termformatteddisplayname': ['Determination', 'true', '', 'termformatteddisplayname_s', ''],
     'majorgroup': ['Major Group', 'true', '', 'majorgroup_txt', ''],
+    'family': ['Family', 'true', '', 'family_txt', ''],
     'collector': ['Collector', 'true', '', 'collector_txt', ''],
     'collectionnumber': ['Collection Number', 'true', '', 'collectornumber_txt', ''],
     'collectiondate': ['Collection Date', 'true', '', 'collectiondate_txt', ''],
     'earlycollectiondate': ['earlycollectiondate_dt', 'true', '', 'earlycollectiondate_dt', ''],
     'latecollectiondate': ['latecollectiondate', 'true', '', 'latecollectiondate_txt', ''],
     'locality': ['Locality', 'true', '', 'locality_txt', ''],
-    'county': ['County', 'true', '', 'collcounty_txt', ''],
-    'state': ['State', 'true', '', 'collstate_txt', ''],
-    'country': ['Country', 'true', '', 'collcountry_txt', ''],
+    'localitynote': ['Locality Note', 'true', '', 'localitynote_txt', ''],
+    'localitysource': ['Locality Source', 'true', '', 'localitysource_txt', ''],
+    'localitysourcedetail': ['Locality Source Detail', 'true', '', 'localitysourcedetail_txt', ''],
+    'county': ['County', 'true', '', 'collcounty_s', ''],
+    'state': ['State', 'true', '', 'collstate_s', ''],
+    'country': ['Country', 'true', '', 'collcountry_s', ''],
     'elevation': ['Elevation', 'true', '', 'elevation_txt', ''],
     'minelevation': ['Min elevation', 'true', '', 'minelevation_f', ''],
     'maxelevation': ['Max elevation', 'true', '', 'maxelevation_f', ''],
@@ -54,12 +60,14 @@ PARMS = {
     'coordinateuncertainty': ['Coordinate uncertainty', 'true', '', 'coordinateuncertainty_f', ''],
     'coordinateuncertaintyunit': ['Coordinate uncertainty unit', 'true', '', 'coordinateuncertaintyunit_txt', ''],
     'updatedat': ['Last updated at', 'true', '', 'updatedat_dt', ''],
-    'previousdeterminations': ['Previous Determinations', 'true', '', 'previousdeterminations_ss', ''],
+    'previousdeterminations': ['Previous Determinations', 'true', '', 'previousdeterminations_txt', 'ss'],
     'localname': ['Local Name', 'true', '', 'localname_txt', ''],
     'briefdescription': ['Description', 'true', '', 'briefdescription_txt', ''],
-    'associatedtaxa': ['Associated Taxa', 'true', '', 'associatedtaxa_ss', ''],
-    'typeassertions': ['Type Assertions', 'true', '', 'typeassertions_ss', ''],
-    'othernumbers': ['Other Numbers', 'true', '', 'othernumbers_ss', ''],
+    'associatedtaxa': ['Associated Taxa', 'true', '', 'associatedtaxa_txt', 'ss'],
+    'typeassertions': ['Type Assertions', 'true', '', 'typeassertions_txt', 'ss'],
+    'othernumbers': ['Other Numbers', 'true', '', 'othernumbers_txt', 'ss'],
+    'ucbgaccessionnumber': ['UCBG Accession Number', 'true', '', 'ucbgaccessionnumber_txt', ''],
+    'loanstatus': ['Loan Status', 'true', '', 'loanstatus_txt', ''],
     'labelheader': ['Label Header', 'true', '', 'labelheader_txt', ''],
     'labelfooter': ['Label Footer', 'true', '', 'labelfooter_txt', ''],
     'depth': ['Depth', 'true', '', 'depth_txt', ''],
@@ -67,8 +75,8 @@ PARMS = {
     'maxdepth': ['Max. Depth', 'true', '', 'maxdepth_txt', ''],
     'depthunit': ['Depth Unit', 'true', '', 'depthunit_txt', ''],
     'cultivated': ['Cultivated', 'true', '', 'cultivated_s', ''],
-    'sex': ['Sex', 'true', '', 'sex_s', ''],
-    'phase': ['Phase', 'true', '', 'phase_s', ''],
+    'sex': ['Sex', 'true', '', 'sex_txt', ''],
+    'phase': ['Phase', 'true', '', 'phase_txt', ''],
     'determinationdetails': ['Determination Details', 'true', '', 'determinationdetails_txt', ''],
     'blobs': ['blob_ss', 'true', '', 'blob_ss', ''],
 }
