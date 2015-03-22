@@ -9,9 +9,7 @@
             <div>
                 {% for t in item.blobs %}
                     <a target="image"
-                       href="{{ imageserver }}/blobs/{{ t }}/derivatives/OriginalJpeg/content">
-                        <img height="100px"
-                             src="{{ imageserver }}/blobs/{{ t }}/derivatives/Thumbnail/content"/>
+                       href="{{ imageserver }}/blobs/{{ t }}/derivatives/OriginalJpeg/content"><img height="250px" src="{{ imageserver }}/blobs/{{ t }}/derivatives/Medium/content"/>
                     </a>
                 {% endfor %}
             </div>
