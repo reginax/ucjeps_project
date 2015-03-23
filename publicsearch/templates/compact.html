@@ -149,7 +149,11 @@
                 {% endfor %}
             {% endif %}
             {% if item.ucbgaccessionnumber %}
-                <div>{{ labels.ucbgaccessionnumber }}: <a target=_blank href="https://dev.cspace.berkeley.edu/botgarden_project/search/search/?accessionnumber={{ item.ucbgaccessionnumber }}&displayType=full&maxresults=100&start=1">{{ item.ucbgaccessionnumber }}</a>
+                <div><a target="ucbg"
+                       href="https://dev.cspace.berkeley.edu/botgarden_project/search/search/?accessionnumber={{ item.ucbgaccessionnumber }}&displayType=full&maxresults=100&start=1">
+                        <img src="{% static "publicsearch/images/open_cspace.png" %}" class="cspaceLink"> Open {{ item.ucbgaccessionnumber }}
+                        in UCBG portal
+                    </a>
                 </div>{% endif %}
             {% if item.labelfooter %}
                 <h4><b>{{ labels.labelfooter }}: {{ item.labelfooter }}</b></h4>{% endif %}
