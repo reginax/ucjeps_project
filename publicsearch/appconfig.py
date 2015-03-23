@@ -65,7 +65,7 @@ PARMS = {
     'briefdescription': ['Description', 'true', '', 'briefdescription_txt', ''],
     'associatedtaxa': ['Associated Taxa', 'true', '', 'associatedtaxa_txt', 'ss'],
     'typeassertions': ['Type Assertions', 'true', '', 'typeassertions_txt', 'ss'],
-    'othernumbers': ['Other Numbers', 'true', '', 'othernumbers_txt', 'ss'],
+    'othernumber': ['Other Numbers', 'true', '', 'othernumber_txt', 'ss'],
     'ucbgaccessionnumber': ['UCBG Accession Number', 'true', '', 'ucbgaccessionnumber_txt', ''],
     'loanstatus': ['Loan Status', 'true', '', 'loanstatus_txt', ''],
     'labelheader': ['Label Header', 'true', '', 'labelheader_txt', ''],
