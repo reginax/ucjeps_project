@@ -149,7 +149,7 @@
                 {% endfor %}
             {% endif %}
             {% if item.ucbgaccessionnumber %}
-                <div>{{ labels.ucbgaccessionnumber }}: <a class="facet-item" data-facetType="ucbgaccessionnumber">{{ item.ucbgaccessionnumber }}</a>
+                <div>{{ labels.ucbgaccessionnumber }}: <a target=_blank href="https://dev.cspace.berkeley.edu/botgarden_project/search/search/?accessionnumber={{ item.ucbgaccessionnumber }}&displayType=full&maxresults=100&start=1">{{ item.ucbgaccessionnumber }}</a>
                 </div>{% endif %}
             {% if item.labelfooter %}
                 <h4><b>{{ labels.labelfooter }}: {{ item.labelfooter }}</b></h4>{% endif %}
