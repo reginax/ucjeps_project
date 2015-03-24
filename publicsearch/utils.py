@@ -84,7 +84,7 @@ def getfields(fieldset):
         return ["ucjeps", "accession", "determination", "collector", "", "collectionnumber", "", "collectiondate",
                 "", "", "county", "elevation", "locality", "L1", "L2", "datum"]
     elif fieldset == 'facetfields':
-        return ['determination_s', 'majorgroup_s', 'collector_s', 'collcounty_s', 'collstate_s', 'collcountry_s']
+        return ['determination_s', 'majorgroup_s', 'collector_ss', 'collcounty_s', 'collstate_s', 'collcountry_s']
 
 
 def getfacets(response):
@@ -422,7 +422,7 @@ def doSearch(solr_server, solr_core, context):
     m = {}
     context['labels'] = {}
     for p in PARMS:
-        m[PARMS[p][3].replace('_txt', '_s')] = p
+        m[recodevarname(p)] = p
         context['labels'][p] = PARMS[p][0]
     context['fields'] = [m[f] for f in facetfields]
     context['facetflds'] = [[m[f], facetflds[f]] for f in facetfields]

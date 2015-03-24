@@ -68,6 +68,7 @@ PARMS = {
     'othernumber': ['Other Numbers', 'true', '', 'othernumber_txt', 'ss'],
     'ucbgaccessionnumber': ['UCBG Accession Number', 'true', '', 'ucbgaccessionnumber_txt', ''],
     'loanstatus': ['Loan Status', 'true', '', 'loanstatus_txt', ''],
+    'loannumber': ['Loan Number', 'true', '', 'loannumber_txt', ''],
     'labelheader': ['Label Header', 'true', '', 'labelheader_txt', ''],
     'labelfooter': ['Label Footer', 'true', '', 'labelfooter_txt', ''],
     'depth': ['Depth', 'true', '', 'depth_txt', ''],
