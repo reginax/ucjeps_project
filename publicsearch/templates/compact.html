@@ -36,7 +36,10 @@
             {% if item.localname %}
                 <div>{{ labels.localname }}: {{ item.localname }}</div>{% endif %}
             {% if item.collector %}
-                <div>{{ labels.collector }}: <a class="facet-item" data-facetType="collector">{{ item.collector }}</a>
+                <div>{{ labels.collector }}:
+                {% for t in item.collector %}
+                    <li><a class="facet-item" data-facetType="collector">{{ t }}</a></li>
+                {% endfor %}
                 </div>{% endif %}
             {% if item.collectionnumber %}
                 <div>{{ labels.collectionnumber }}: <a class="facet-item" data-facetType="collectionnumber">{{ item.collectionnumber }}</a>
