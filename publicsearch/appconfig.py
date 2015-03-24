@@ -35,7 +35,7 @@ PARMS = {
     'termformatteddisplayname': ['Determination', 'true', '', 'termformatteddisplayname_s', ''],
     'majorgroup': ['Major Group', 'true', '', 'majorgroup_txt', ''],
     'family': ['Family', 'true', '', 'family_txt', ''],
-    'collector': ['Collector', 'true', '', 'collector_txt', ''],
+    'collector': ['Collector', 'true', '', 'collector_txt', 'ss'],
     'collectionnumber': ['Collection Number', 'true', '', 'collectornumber_txt', ''],
     'collectiondate': ['Collection Date', 'true', '', 'collectiondate_txt', ''],
     'earlycollectiondate': ['earlycollectiondate_dt', 'true', '', 'earlycollectiondate_dt', ''],

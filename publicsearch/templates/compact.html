@@ -155,6 +155,11 @@
                         in UCBG portal
                     </a>
                 </div>{% endif %}
+            {% if item.loanstatus %}
+                <span style="color:red;"><b>{{ labels.loanstatus }}: {{ item.loanstatus }} ({{ item.loannumber }})</b></span>
+            <a href="mailto:jblowe@berkeley.edu?Subject=Loan of {{ item.accession }}, ({{ item.loannumber }})">email a request for this item</a>
+        </div>
+            {% endif %}
             {% if item.labelfooter %}
                 <h4><b>{{ labels.labelfooter }}: {{ item.labelfooter }}</b></h4>{% endif %}
             {% if item.updatedat %}
