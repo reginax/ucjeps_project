@@ -29,7 +29,7 @@ PARMS = {
     'keyword': ['Keyword', 'true', 'a keyword search value, please', 'text', ''],
 
     # the rest are mapping the solr field names to django form labels and fields
-    'csid': ['id', 'true', '', 'id', ''],
+    'csid': ['csid', 'true', '', 'csid_s', ''],
     'accession': ['Specimen ID', 'true', '', 'accessionnumber_s', ''],
     'determination': ['Determination', 'true', '', 'determination_txt', ''],
     'termformatteddisplayname': ['Determination', 'true', '', 'termformatteddisplayname_s', ''],

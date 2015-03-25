@@ -21,7 +21,7 @@
         <p><h4><a class="facet-item" data-facetType="determination">{{ item.termformatteddisplayname|safe }}</a></h4></p>
         <p class="tiny">{{ item.county }} / {{ item.state }} / {{ item.country }}</p>
         {% if item.collector %}
-        <p class="tiny">Collector: {{ item.collector }}</p>{% endif %}
+        <p class="tiny">Collector: {{ item.collectorverbatim }}</p>{% endif %}
         {% if item.collectionnumber %}
         <p class="tiny">Collection Number: {{ item.collectionnumber }}</p>{% endif %}
         {% if item.earlycollectiondate %}
