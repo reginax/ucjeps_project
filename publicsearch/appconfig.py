@@ -4,7 +4,7 @@ from os import path
 from common import cspace # we use the config file reading function
 from cspace_django_site import settings
 
-config = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'search')
+config = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'publicsearch')
 
 MAXMARKERS = int(config.get('search', 'MAXMARKERS'))
 MAXRESULTS = int(config.get('search', 'MAXRESULTS'))

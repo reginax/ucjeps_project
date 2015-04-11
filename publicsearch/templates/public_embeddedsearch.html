@@ -13,7 +13,7 @@
 {% block scripts %}
     <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-1.10.0.min.js" %}"></script>
     <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-ui-1.10.3.custom.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "publicsearch/js/PublicSearch.js" %}"></script>
+    <script type="text/javascript" src="{% static "publicsearch/js/public_search.js" %}"></script>
     <script type="text/javascript" src="{% static "publicsearch/js/jquery.tablesorter.js" %}"></script>
 {% endblock %}
 
@@ -21,13 +21,13 @@
     <div id="content-main">
         <div class="searchPanel">
             {% if resultsOnly %}
-                {% include "showfields.html" %}
+                {% include "public_showfields.html" %}
             {% else %}
                 <form class="searchForm" id="search">
                     {% csrf_token %}
                     <div>
-                        {% include "fields.html" %}
-                        {% include "buttons.html" %}
+                        {% include "public_fields.html" %}
+                        {% include "public_buttons.html" %}
                     </div>
                 </form>
             {% endif %}
@@ -37,7 +37,7 @@
         </div>
         <div id="resultsPanel">
             {% if items %}
-                {% include "searchResults.html" %}
+                {% include "public_searchResults.html" %}
             {% endif %}
         </div>
     </div>

@@ -39,7 +39,7 @@ def publicsearch(request):
 
     context = setConstants(context)
     loginfo('start search', context, request)
-    return render(request, 'publicsearch.html', context)
+    return render(request, 'public_publicsearch.html', context)
 
 
 def embeddedsearch(request):
@@ -54,7 +54,7 @@ def embeddedsearch(request):
 
     context = setConstants(context)
     loginfo('start search', context, request)
-    return render(request, 'embeddedsearch.html', context)
+    return render(request, 'public_embeddedsearch.html', context)
 
 
 def retrieveResults(request):
@@ -72,7 +72,7 @@ def retrieveResults(request):
             context = setConstants(context)
 
         loginfo('results.%s' % context['displayType'], context, request)
-        return render(request, 'searchResults.html', context)
+        return render(request, 'public_searchResults.html', context)
 
 
 def bmapper(request):
@@ -98,7 +98,7 @@ def gmapper(request):
             context = setupGoogleMap(requestObject, context)
 
             loginfo('gmapper', context, request)
-            return render(request, 'maps.html', context)
+            return render(request, 'public_maps.html', context)
 
 
 def csv(request):

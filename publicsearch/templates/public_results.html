@@ -8,10 +8,10 @@
     <input type="hidden" name="url" id="url" value="{{ url }}"/>
     </div>
     {% if displayType == 'list' %}
-        {% include "short.html" %}
+        {% include "public_short.html" %}
     {% elif displayType == 'full' %}
-        {% include "compact.html" %}
+        {% include "public_compact.html" %}
     {% elif displayType == 'grid' %}
-        {% include "grid.html" %}
+        {% include "public_grid.html" %}
     {% endif %}
 </div>

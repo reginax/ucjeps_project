@@ -11,7 +11,7 @@
 {% block scripts %}
     <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-1.10.0.min.js" %}"></script>
     <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-ui-1.10.3.custom.min.js" %}"></script>
-    <script type="text/javascript" src="{% static "publicsearch/js/PublicSearch.js" %}"></script>
+    <script type="text/javascript" src="{% static "publicsearch/js/public_search.js" %}"></script>
     <script type="text/javascript" src="{% static "publicsearch/js/jquery.tablesorter.js" %}"></script>
 {% endblock %}
 
@@ -134,30 +134,30 @@
     <div id="content-main">
         <div class="toggled">
             <div id="aboutTarget" style="display:none">
-                {% include "about.html" %}
+                {% include "public_about.html" %}
              </div>
             <div id="samplesTarget" style="display:none">
-                {% include "samples.html" %}
+                {% include "public_samples.html" %}
              </div>
             <div id="advancedTarget" style="display:none">
-                {% include "advanced.html" %}
+                {% include "public_advanced.html" %}
              </div>
             <div id="helpTarget" style="display:none">
-                {% include "help.html" %}
+                {% include "public_help.html" %}
             </div>
             <div id="creditsTarget" style="display:none">
-                {% include "credits.html" %}
+                {% include "public_credits.html" %}
             </div>
         </div>
         <div class="searchPanel">
             {% if resultsOnly %}
-                {% include "showfields.html" %}
+                {% include "public_showfields.html" %}
             {% else %}
                 <form class="searchForm" id="search">
                     {% csrf_token %}
                     <div>
-                        {% include "fields.html" %}
-                        {% include "buttons.html" %}
+                        {% include "public_fields.html" %}
+                        {% include "public_buttons.html" %}
                     </div>
                 </form>
             {% endif %}
@@ -167,7 +167,7 @@
         </div>
         <div id="resultsPanel">
             {% if items %}
-                {% include "searchResults.html" %}
+                {% include "public_searchResults.html" %}
             {% endif %}
         </div>
     </div>
