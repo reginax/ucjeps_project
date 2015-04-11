@@ -64,7 +64,10 @@ def make_get_request(realm, uri, hostname, protocol, port, username, password):
     :param password:
     """
 
-    server = protocol + "://" + hostname + ":" + port
+    if port == '':
+        server = protocol + "://" + hostname
+    else:
+        server = protocol + "://" + hostname + ":" + port
     passMgr = urllib2.HTTPPasswordMgr()
     passMgr.add_password(realm, server, username, password)
     authhandler = urllib2.HTTPBasicAuthHandler(passMgr)
@@ -78,11 +81,11 @@ def make_get_request(realm, uri, hostname, protocol, port, username, password):
         data = f.read()
         result = (url, data, statusCode)
     except urllib2.HTTPError, e:
-        print 'The server couldn\'t fulfill the request.'
+        print 'The server (%s) couldn\'t fulfill the request.' % server
         print 'Error code: ', e.code
         result = (url, None, e.code)
     except urllib2.URLError, e:
-        print 'We failed to reach a server.'
+        print 'We failed to reach the server (%s).' % server
         print 'Reason: ', e.reason
         result = (url, None, e.reason)
 
@@ -90,7 +93,11 @@ def make_get_request(realm, uri, hostname, protocol, port, username, password):
 
 
 def postxml(realm, uri, hostname, protocol, port, username, password, payload, requestType):
-    server = protocol + "://" + hostname + ":" + port
+
+    if port == '':
+        server = protocol + "://" + hostname
+    else:
+        server = protocol + "://" + hostname + ":" + port
     passMgr = urllib2.HTTPPasswordMgr()
     passMgr.add_password(realm, server, username, password)
     authhandler = urllib2.HTTPBasicAuthHandler(passMgr)

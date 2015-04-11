@@ -150,6 +150,9 @@ INSTALLED_APPS = (
     'service',
     'imageserver',
     'publicsearch',
+    'search',
+    'suggestpostgres',
+    'suggestsolr',
     'landing',
     'eloan'
 )
