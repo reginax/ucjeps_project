@@ -21,21 +21,21 @@ field	8	collector	Collector(s)	collector_ss	x		keyword	2,1	4			3		4	x
 field	9	collectorverbatim	Collector(s) (verbatim)	collectorverbatim_s	x		keyword				3	4	2	5	x
 field	10	collectionnumber	Collection Number	collectornumber_s	x		keyword	2,3			5	5		6	x
 field	11	collectiondate	Date Collected	collectiondate_s	x		keyword	2,2			4	6		7	x
-field	12	earlycollectiondate	earlycollectiondate_dt	earlycollectiondate_dt	x		date					7		8	x
-field	13	latecollectiondate	latecollectiondate	latecollectiondate_dt	x		date					8		9	x
-field	14	locality	Locality	locality_s	x		keyword	3,1			9	9	3	10	x
-field	15	localitynote	Locality Note	localitynote_s	x		keyword					10		11	x
-field	16	localitysource	Locality Source	localitysource_s	x		keyword					11		12	x
-field	17	localitysourcedetail	Locality Source Detail	localitysourcedetail_s	x		keyword					12		13	x
-field	18	county	County	collcounty_s	x		dropdown	4,1	5		6	13		14	x
-field	19	state	State	collstate_s	x		dropdown	4,2	6		7	14		15	x
-field	20	country	Country	collcountry_s	x		dropdown	4,3	7		8	15		16	x
-field	21	elevation	Elevation	elevation_s	x		keyword					16		17	x
-field	22	minelevation	Min elevation	minelevation_f	x		keyword					17		18	x
-field	23	maxelevation	Max elevation	maxelevation_f	x		keyword					18		19	x
-field	24	elevationunit	Elevation unit	elevationunit_s	x		keyword					19		20	x
-field	25	habitat	Habitat	habitat_s	x		keyword					20		21	x
-field	26	latlong	LatLong	latlong_p	x		location			3				22	x
+field	12	earlycollectiondate	earlycollectiondate_dt	earlycollectiondate_dt	x		date							8	x
+field	13	latecollectiondate	latecollectiondate	latecollectiondate_dt	x		date					7		9	x
+field	14	locality	Locality	locality_s	x		keyword	3,1			9	8	3	10	x
+field	15	localitynote	Locality Note	localitynote_s	x		keyword					9		11	x
+field	16	localitysource	Locality Source	localitysource_s	x		keyword					10		12	x
+field	17	localitysourcedetail	Locality Source Detail	localitysourcedetail_s	x		keyword					11		13	x
+field	18	county	County	collcounty_s	x		dropdown	4,1	5		6	12		14	x
+field	19	state	State	collstate_s	x		dropdown	4,2	6		7	13		15	x
+field	20	country	Country	collcountry_s	x		dropdown	4,3	7		8	14		16	x
+field	21	elevation	Elevation	elevation_s	x		keyword					15		17	x
+field	22	minelevation	Min elevation	minelevation_f	x		keyword					16		18	x
+field	23	maxelevation	Max elevation	maxelevation_f	x		keyword					17		19	x
+field	24	elevationunit	Elevation unit	elevationunit_s	x		keyword					18		20	x
+field	25	habitat	Habitat	habitat_s	x		keyword					19		21	x
+field	26	latlong	LatLong	latlong_p	x		location			3		20		22	x
 field	27	L1	L1	location_1_coordinate	x									23	x
 field	28	L2	L2	location_2_coordinate	x									24	x
 field	29	trscoordinates	TRS coordinates	trscoordinates_s	x		dropdown					21		25	x
@@ -43,7 +43,7 @@ field	30	datum	Datum	datum_s	x		dropdown					22		26	x
 field	31	coordinatesource	Coordinate source	coordinatesource_s	x		dropdown					23		27	x
 field	32	coordinateuncertainty	Coordinate uncertainty	coordinateuncertainty_f	x		keyword					24		28	x
 field	33	coordinateuncertaintyunit	Coordinate uncertainty unit	coordinateuncertaintyunit_s	x		keyword					25		29	x
-field	34	updatedat	Last updated at	updatedat_dt	x		date							30	x
+field	34	updatedat	Last updated at	updatedat_dt	x		date					46		30	x
 field	35	previousdeterminations	Previous Determinations	previousdeterminations_ss	x		keyword					26		31	x
 field	36	localname	Local Name	localname_s	x		keyword					27		32	x
 field	37	briefdescription	Description	briefdescription_s	x		keyword					28		33	x
@@ -63,4 +63,4 @@ field	50	cultivated	Cultivated	cultivated_s	x		keyword					42		46	x
 field	51	sex	Sex	sex_s	x		dropdown					43		47	x
 field	52	phase	Phase	phase_s	x		dropdown					44		48	x
 field	53	determinationdetails	Determination Details	determinationdetails_s	x		keyword					45		49	x
-field	54	blobs	blob_ss	blob_ss	x		blob					46		50	x
+field	54	blobs	blob_ss	blob_ss	x		blob							50	x
