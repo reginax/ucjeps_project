@@ -42,7 +42,7 @@ PARMS = {
     'earlycollectiondate': ['earlycollectiondate_dt', 'true', '', 'earlycollectiondate_dt', ''],
     'latecollectiondate': ['latecollectiondate', 'true', '', 'latecollectiondate_txt', ''],
     'locality': ['Locality', 'true', '', 'locality_txt', ''],
-    'otherlocalities': ['Other Localities', 'true', '', 'otherlocalities_s', ''],
+    'otherlocalities': ['Other Localities', 'true', '', 'otherlocalities_ss', ''],
     'localitynote': ['Locality Note', 'true', '', 'localitynote_txt', ''],
     'localitysource': ['Locality Source', 'true', '', 'localitysource_txt', ''],
     'localitysourcedetail': ['Locality Source Detail', 'true', '', 'localitysourcedetail_txt', ''],
