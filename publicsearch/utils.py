@@ -401,10 +401,8 @@ def doSearch(solr_server, solr_core, context):
                 #raise
                 pass
 
-        #if 'collector' in item:
-        #    item['collectorverbatim'] = item['collector']
         # the following multivalue fields need to be split
-        for fld in 'previousdeterminations,associatedtaxa,typeassertions,othernumber,collector'.split(','):
+        for fld in 'previousdeterminations,associatedtaxa,typeassertions,othernumber,collector,otherlocalities'.split(','):
             if fld in item.keys():
                 item[fld] = item[fld].split(';')
 

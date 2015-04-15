@@ -53,6 +53,12 @@
             {% if item.locality %}
                 <div>{{ labels.locality }}: <a class="facet-item" data-facetType="locality">{{ item.locality }}</a>
                 </div>{% endif %}
+            {% if item.otherlocalities %}
+                <div><h4>{{ labels.otherlocalities }}</h4>
+                {% for t in item.otherlocalities %}
+                    <li><a class="facet-item" data-facetType="otherlocalities">{{ t }}</a></li>
+                {% endfor %}
+                </div>{% endif %}
             {% if item.county and item.state and item.country %}
                 <div>
                     <a class="facet-item" data-facetType="county">{{ item.county }}</a> /
