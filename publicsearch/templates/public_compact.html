@@ -97,28 +97,28 @@
                 <div>LatLong: {{ item.L1 }} {{ item.L2 }}
                     {% if item.marker %}
                         <a class="map-item">[click for map]</a>
-                        <div data-marker="{{ item.marker }}" class="small-map" style="display:none;">
-                            <div style="height: 40px;">
+                        <div data-marker="{{ item.marker }}" class="small-map" style="display:none; margin-bottom:10px;">
+                            <div class="map-replace">
                                 <small><a target="_map" href="http://maps.google.com/maps/i?q=loc:{{ item.marker }}&amp;source=embed">Larger Map</a></small>
                             </div>
                             {% if item.datum %}
-                                <p>{{ labels.datum }}: <a class="facet-item" data-facetType="datum">{{ item.datum }}</a>
-                                </p>{% endif %}
+                                <div>{{ labels.datum }}: <a class="facet-item" data-facetType="datum">{{ item.datum }}</a>
+                                </div>{% endif %}
                             {% if item.coordinatesource %}
-                                <p>{{ labels.coordinatesource }}: <a class="facet-item" data-facetType="coordinatesource">{{ item.coordinatesource }}</a>
-                                </p>{% endif %}
+                                <div>{{ labels.coordinatesource }}: <a class="facet-item" data-facetType="coordinatesource">{{ item.coordinatesource }}</a>
+                                </div>{% endif %}
                             {% if item.coordinateuncertainty %}
-                                <p>{{ labels.coordinateuncertainty }}: {{ item.coordinateuncertainty }} {{ item.coordinateuncertaintyunit }}
-                                </p>{% endif %}
+                                <div>{{ labels.coordinateuncertainty }}: {{ item.coordinateuncertainty }} {{ item.coordinateuncertaintyunit }}
+                                </div>{% endif %}
                             {% if item.localitynote %}
-                                <p>{{ labels.localitynote }}: {{ item.localitynote }}
-                                </p>{% endif %}
+                                <div>{{ labels.localitynote }}: {{ item.localitynote }}
+                                </div>{% endif %}
                             {% if item.localitysource %}
-                                <p>{{ labels.localitysource }}: {{ item.localitysource }}
-                                </p>{% endif %}
+                                <div>{{ labels.localitysource }}: {{ item.localitysource }}
+                                </div>{% endif %}
                             {% if item.localitysourcedetail %}
-                                <p>{{ labels.localitysourcedetail }}: {{ item.localitysourcedetail }}
-                                </p>{% endif %}
+                                <div>{{ labels.localitysourcedetail }}: {{ item.localitysourcedetail }}
+                                </div>{% endif %}
                         </div>
                     {% endif %}
                 </div>
