@@ -32,7 +32,7 @@ def get_entity(request, entitytype, responsemimetype):
     #(url, data, statusCode) = connection.make_get_request('cspace-services/%s' % image)
     #return HttpResponse(data, content_type='image/jpeg')
 
-    config = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'imageserver')
+    config = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'eloan')
     username = config.get('connect', 'username')
     password = config.get('connect', 'password')
     hostname = config.get('connect', 'hostname')

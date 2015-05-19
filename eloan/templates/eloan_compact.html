@@ -34,7 +34,7 @@
             {% if item.localname %}
                 <div>{{ labels.localname }}: {{ item.localname }}</div>{% endif %}
             {% if item.collector %}
-                <div>{{ labels.collector }}: <a class="facet-item" data-facetType="collector">{{ item.collector }}</a>
+                <div>{{ labels.collectorverbatim }}: <a class="facet-item" data-facetType="collector">{{ item.collectorverbatim }}</a>
                 </div>{% endif %}
             {% if item.collectionnumber %}
                 <div>{{ labels.collectionnumber }}: <a class="facet-item" data-facetType="collectionnumber">{{ item.collectionnumber }}</a>
@@ -80,11 +80,9 @@
                 <div>LatLong: {{ item.L1 }} {{ item.L2 }}
                     {% if item.marker %}
                         <a class="map-item">[click for map]</a>
-                        <div data-marker="{{ item.marker }}" class="small-map" style="display:none;">
-                            <div style="height: 40px;">
-                                <small><a target="_map"
-                                          href="http://maps.google.com/maps/i?q=loc:{{ item.marker }}&amp;source=embed">Larger Map</a>
-                                </small>
+                        <div data-marker="{{ item.marker }}" class="small-map" style="display:none; margin-bottom:10px;">
+                            <div class="map-replace">
+                                <small><a target="_map" href="http://maps.google.com/maps/i?q=loc:{{ item.marker }}&amp;source=embed">Larger Map</a></small>
                             </div>
                         </div>
                     {% endif %}
