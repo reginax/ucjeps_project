@@ -82,7 +82,7 @@ def getfields(fieldset):
                 "", "", "county", "elevation", "locality", "L1", "L2", "datum"]
     elif fieldset == 'csvdata':
         return ["ucjeps", "accession", "determination", "collector", "", "collectionnumber", "", "collectiondate",
-                "", "", "county", "elevation", "locality", "L1", "L2", "datum"]
+                "", "", "county", "elevation", "locality", "datum", "L1", "L2"]
     elif fieldset == 'facetfields':
         return ['determination_s', 'majorgroup_s', 'collector_ss', 'collcounty_s', 'collstate_s', 'collcountry_s']
 
