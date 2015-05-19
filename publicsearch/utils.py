@@ -74,9 +74,9 @@ def getfields(fieldset):
                 "County",
                 "Elevation",
                 "Locality",
+                "Datum",
                 "Latitude",
-                "Longitude",
-                "Datum"]
+                "Longitude"]
     elif fieldset == 'bmapperdata':
         return ["na", "accession", "determination", "collector", "na", "collectionnumber", "na", "collectiondate",
                 "", "", "county", "elevation", "locality", "L1", "L2", "datum"]
@@ -228,7 +228,7 @@ def setConstants(context):
     context['dropdowns'] = FACETS
     context['timestamp'] = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
     context['qualifiers'] = SEARCH_QUALIFIERS
-    context['resultoptions'] = [100, 500, 1000, 2000, 2500]
+    context['resultoptions'] = [100, 500, 1000, 2000, 10000]
 
     context['displayTypes'] = (
         ('list', 'List'),
@@ -408,7 +408,7 @@ def doSearch(solr_server, solr_core, context):
 
         # blobs are handled specially
         if 'blobs' in item.keys():
-                item['blobs'] = item['blobs'].split(',')
+                item['blobs'] = item['blobs'].split(';')
         item['marker'] = makeMarker(item)
         context['items'].append(item)
 
