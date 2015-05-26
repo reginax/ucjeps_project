@@ -63,6 +63,6 @@ field	50	cultivated	Cultivated	cultivated_s	x		keyword					42		46	x
 field	51	sex	Sex	sex_s	x		dropdown					43		47	x
 field	52	phase	Phase	phase_s	x		dropdown					44		48	x
 field	53	determinationdetails	Determination Details	determinationdetails_s	x		keyword					45		49	x
-field	54	blobs	blob_ss	blob_ss	x		blob					46		50	x
+field	54	blobs	Images	blob_ss	x		blob					46		50	x
 field	55	collnumprefix	Collector Num Prefix	na			constant			5					
 field	55	collnumsuffix	Collector Num Suffix	na			constant			7					
