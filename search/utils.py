@@ -9,8 +9,8 @@ import logging
 from os import path
 from copy import deepcopy
 
-# from django.http import HttpResponse, HttpResponseRedirect
-#from cspace_django_site.main import cspace_django_site
+from django.http import HttpResponse, HttpResponseRedirect
+# from cspace_django_site.main import cspace_django_site
 
 # global variables
 
@@ -18,14 +18,16 @@ from appconfig import MAXMARKERS, MAXRESULTS, MAXLONGRESULTS, MAXFACETS, IMAGESE
 from appconfig import BMAPPERURL, BMAPPERCONFIGFILE, LOCALDIR, SEARCH_QUALIFIERS
 from appconfig import EMAILABLEURL, SUGGESTIONS, LAYOUT, CSPACESERVER, INSTITUTION
 from appconfig import VERSION, FIELDDEFINITIONS, getParms
-from appconfig import DROPDOWNS, FIELDS, FACETS, LOCATION, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE, DEFAULTSORTKEY
+from appconfig import DROPDOWNS, FIELDS, FACETS, LOCATION, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE
+from appconfig import CSVPREFIX, CSVEXTENSION, TITLE, DEFAULTSORTKEY, REQUIRED
+from appconfig import DERIVATIVECOMPACT, DERIVATIVEGRID, SIZECOMPACT, SIZEGRID
 
 SolrIsUp = True  # an initial guess! this is verified below...
 
 
 def loginfo(infotype, context, request):
     logdata = ''
-    #user = getattr(request, 'user', None)
+    # user = getattr(request, 'user', None)
     if request.user and not request.user.is_anonymous():
         username = request.user.username
     else:
@@ -50,34 +52,29 @@ def getfromXML(element, xpath):
 
 
 def deURN(urn):
-    #find identifier in URN
+    # find identifier in URN
     m = re.search("\'(.*)\'$", urn)
     if m is not None:
         # strip out single quotes
         return m.group(0)[1:len(m.group(0)) - 1]
 
 
-def getfields(fieldset):
-    # for solr faceting
-    if fieldset == 'inCSV':
-        pickField = 'name'
-    elif fieldset == 'Facet':
-        pickField = 'solrfield'
-    elif fieldset == 'FacetLabels':
-        pickField = 'label'
-        fieldset = 'Facet'
-    elif fieldset == "bMapper":
-        pickField = 'name'
-    #elif fieldset == "bmapperdata":
-    #    return []
+def getfields(fieldset, pickField):
+    result = []
+    pickField = pickField.split(',')
+    for pick in pickField:
+        if not pick in 'name solrfield label'.split(' '):
+            pick = 'solrfield'
+        result.append([f[pick] for f in FIELDS[fieldset]])
+    if len(pickField) > 1:
+        # is this right??
+        return zip(result[0], result[1])
     else:
-        pickField = 'solrfield'
-
-    return [f[pickField] for f in FIELDS[fieldset]]
+        return result[0]
 
 
 def getfacets(response):
-    #facets = response.get('facet_counts').get('facet_fields')
+    # facets = response.get('facet_counts').get('facet_fields')
     facets = response.facet_counts
     facets = facets['facet_fields']
     _facets = {}
@@ -109,55 +106,58 @@ def makeMarker(location):
         return None
 
 
-def writeCsv(filehandle, items, writeheader, bmapper=False):
-    if bmapper:
-        fieldset = getfields('bMapper')
-    else:
-        fieldset = getfields('inCSV')
-    print "Fieldset: %s" % fieldset
+def checkValue(cell):
+    # the following few lines are a hack to handle non-unicode data which appears to be present in the solr datasource
+    if isinstance(cell, unicode):
+        try:
+            cell = cell.translate({0xd7: u"x"})
+            cell = cell.decode('utf-8', 'ignore').encode('utf-8')
+        except:
+            print 'unicode problem', cell.encode('utf-8', 'ignore')
+            cell = u'invalid unicode data'
+    return cell
+
+
+def writeCsv(filehandle, fieldset, items, writeheader=False, csvFormat='csv'):
+    # print "Fieldset: %s" % fieldset
     writer = csv.writer(filehandle, delimiter='\t')
-    # write the berkeley mapper header as the header for the csv file, if asked...
+    # write the header
     if writeheader:
-        writer.writerow(getfields('bMapper'))
+        writer.writerow(fieldset)
     for item in items:
         # get the cells from the item dict in the order specified; make empty cells if key is not found.
         row = []
-        if bmapper:
+        if csvFormat == 'bmapper':
             r = []
             for x in item['otherfields']:
                 if x['name'] not in fieldset:
                     continue
-                r.append(x['value'])
+                r.append(checkValue(x['value']))
             location = item['location']
             l = location.split(',')
             r.append(l[0])
             r.append(l[1])
             for cell in r:
-                # the following few lines are a hack to handle non-unicode data which appears to be present in the solr datasource
-                if isinstance(cell, unicode):
-                    try:
-                        cell = cell.translate({0xd7: u"x"})
-                        cell = cell.decode('utf-8', 'ignore').encode('utf-8')
-                    except:
-                        print 'unicode problem', cell.encode('utf-8', 'ignore')
-                        cell = u'invalid unicode data'
                 row.append(cell)
-            writer.writerow(row)
-            continue
-        for x in item['otherfields']:
-            if x['name'] not in fieldset:
-                continue
-            cell = x['value']
-            # the following few lines are a hack to handle non-unicode data which appears to be present in the solr datasource
-            if isinstance(cell, unicode):
-                try:
-                    cell = cell.translate({0xd7: u"x"})
-                    cell = cell.decode('utf-8', 'ignore').encode('utf-8')
-                except:
-                    print 'unicode problem', cell.encode('utf-8', 'ignore')
-                    cell = u'invalid unicode data'
-            row.append(cell)
+        elif csvFormat == 'statistics':
+            row.append(checkValue(item[0]))  # summarizeon
+            row.append(checkValue(item[1]))  # count
+            for x in item[2]:
+                if type(x) == type([]):
+                    x = '|'.join(x)
+                    pass
+                cell = checkValue(x)
+                row.append(cell)
+        else:
+            for x in item['otherfields']:
+                if x['name'] not in fieldset:
+                    continue
+                cell = checkValue(x['value'])
+                row.append(cell)
+
         writer.writerow(row)
+
+    return filehandle
 
 
 def getMapPoints(context, requestObject):
@@ -196,13 +196,11 @@ def setupGoogleMap(requestObject, context):
     markerlength = 200
     for item in context['items']:
         if item['csid'] in selected:
-            #if True:
+            # if True:
             try:
                 m = makeMarker(item['location'])
                 if markerlength > 2048: break
-                #if len(mappableitems) >= MAXMARKERS: break
                 if m is not None:
-                    #print 'm= x%sx' % m
                     markerlist.append(m)
                     mappableitems.append(item)
                     markerlength += len(m) + 8  # 8 is the length of '&markers='
@@ -217,9 +215,9 @@ def setupGoogleMap(requestObject, context):
             '%s points plotted. all %s selected objects in result set examined.' % (len(markerlist), len(selected)))
     context['items'] = mappableitems
     context['markerlist'] = '&markers='.join(markerlist)
-    #context['markerlist'] = '&markers='.join(markerlist[:MAXMARKERS])
+    # context['markerlist'] = '&markers='.join(markerlist[:MAXMARKERS])
 
-    #if len(markerlist) >= MAXMARKERS:
+    # if len(markerlist) >= MAXMARKERS:
     #    context['mapmsg'].append(
     #        '%s points is the limit. Only first %s accessions (with latlongs) plotted!' % (MAXMARKERS, len(markerlist)))
 
@@ -232,13 +230,12 @@ def setupBMapper(requestObject, context):
     mappableitems, numSelected = getMapPoints(context, requestObject)
     context['mapmsg'] = []
     filename = 'bmapper%s.csv' % datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S")
-    #filehandle = open(filename, 'wb')
     filehandle = open(path.join(LOCALDIR, filename), 'wb')
-    writeCsv(filehandle, mappableitems, writeheader=False, bmapper=True)
+    writeCsv(filehandle, getfields('bMapper', 'name'), mappableitems, writeheader=False, csvFormat='bmapper')
     filehandle.close()
     context['mapmsg'].append('%s points of the %s selected objects examined had latlongs (%s in result set).' % (
         len(mappableitems), numSelected, context['count']))
-    #context['mapmsg'].append('if our connection to berkeley mapper were working, you be able see them plotted there.')
+    # context['mapmsg'].append('if our connection to berkeley mapper were working, you be able see them plotted there.')
     context['items'] = mappableitems
     bmapperconfigfile = '%s/%s/%s' % (BMAPPERSERVER, BMAPPERDIR, BMAPPERCONFIGFILE)
     tabfile = '%s/%s/%s' % (BMAPPERSERVER, BMAPPERDIR, filename)
@@ -247,21 +244,42 @@ def setupBMapper(requestObject, context):
     # return HttpResponseRedirect(context['bmapperurl'])
 
 
-def setupCSV(requestObject, context):
+def computeStats(requestObject, context):
+    context['summarizeonlabel'] = PARMS[requestObject['summarizeon']][0]
+    context['summarizeon'] = requestObject['summarizeon']
+    context['summaryrows'] = [requestObject[z] for z in requestObject if 'include-' in z]
+    context['summarylabels'] = [PARMS[var][0] for var in context['summaryrows']]
     context = doSearch(context)
-    selected = []
-    # check to see if 'select all' is clicked...if so, skip checking individual items
-    if 'select-item' in requestObject:
-        csvitems = context['items']
+    return context
+
+
+def setupCSV(requestObject, context):
+    if 'downloadstats' in requestObject:
+        context = computeStats(requestObject, context)
+        csvitems = context['summaryrows']
+        format = 'statistics'
     else:
-        for p in requestObject:
-            if 'item-' in p:
-                selected.append(requestObject[p])
-        csvitems = []
-        for item in context['items']:
-            if item['csid'] in selected:
-                csvitems.append(item)
-    return csvitems
+        format = 'csv'
+        context = doSearch(context)
+        selected = []
+        # check to see if 'select all' is clicked...if so, skip checking individual items
+        if 'select-item' in requestObject:
+            csvitems = context['items']
+        else:
+            for p in requestObject:
+                if 'item-' in p:
+                    selected.append(requestObject[p])
+            csvitems = []
+            for item in context['items']:
+                if item['csid'] in selected:
+                    csvitems.append(item)
+
+    if 'downloadstats' in requestObject:
+        fieldset = [context['summarizeonlabel'], 'N'] + context['summarylabels']
+    else:
+        fieldset = getfields('inCSV', 'name')
+
+    return format, fieldset, csvitems
 
 
 def setDisplayType(requestObject):
@@ -292,7 +310,7 @@ def extractValue(listItem, key):
     # handle dates (convert them to collatable strings)
     if isinstance(temp, datetime.date):
         try:
-            #item[p] = item[p].toordinal()
+            # item[p] = item[p].toordinal()
             temp = temp.isoformat().replace('T00:00:00+00:00', '')
         except:
             print 'date problem: ', temp
@@ -312,6 +330,10 @@ def setConstants(context):
     context['version'] = VERSION
     context['layout'] = LAYOUT
     context['dropdowns'] = FACETS
+    context['derivativecompact'] = DERIVATIVECOMPACT
+    context['derivativegrid'] = DERIVATIVEGRID
+    context['sizecompact'] = SIZECOMPACT
+    context['sizegrid'] = SIZEGRID
     context['timestamp'] = time.strftime("%b %d %Y %H:%M:%S", time.localtime())
     context['qualifiers'] = [{'val': s, 'dis': s} for s in SEARCH_QUALIFIERS]
     context['resultoptions'] = [100, 500, 1000, 2000, 10000]
@@ -379,9 +401,9 @@ def setConstants(context):
 
 
 def doSearch(context):
+    elapsedtime = time.time()
     solr_server = SOLRSERVER
     solr_core = SOLRCORE
-    elapsedtime = time.time()
     context = setConstants(context)
     requestObject = context['searchValues']
 
@@ -398,9 +420,22 @@ def doSearch(context):
     s = solr.SolrConnection(url='%s/%s' % (solr_server, solr_core))
     queryterms = []
     urlterms = []
-    #facetfields = getfields(context['facets'])
-    facetfields = getfields('Facet')
-    if 'map-google' in requestObject or 'csv' in requestObject or 'map-bmapper' in requestObject:
+
+    if 'berkeleymapper' in context:
+        displayFields = 'bMapper'
+    elif 'csv' in requestObject:
+        displayFields = 'inCSV'
+    else:
+        displayFields = context['displayType'] + 'Display'
+
+    facetfields = getfields('Facet', 'solrfield')
+    if 'summarize' in requestObject or 'downloadstats' in requestObject:
+        solrfl = [PARMS[p][3] for p in context['summaryrows']]
+        solrfl.append(PARMS[context['summarizeon']][3])
+    else:
+        solrfl = getfields(displayFields, 'solrfield')
+    solrfl += REQUIRED  # always get these
+    if 'map-google' in requestObject or 'csv' in requestObject or 'map-bmapper' in requestObject or 'summarize' in requestObject or 'downloadstats' in requestObject:
         querystring = requestObject['querystring']
         url = requestObject['url']
         # Did the user request the full set?
@@ -410,11 +445,13 @@ def doSearch(context):
     else:
         for p in requestObject:
             if p in ['csrfmiddlewaretoken', 'displayType', 'resultsOnly', 'maxresults', 'url', 'querystring', 'pane',
-                     'pixonly', 'locsonly', 'acceptterms', 'submit', 'start', 'sortkey']: continue
+                     'pixonly', 'locsonly', 'acceptterms', 'submit', 'start', 'sortkey', 'count', 'summarizeon',
+                     'summarize', 'summaryfields']: continue
             if '_qualifier' in p: continue
             if 'select-' in p: continue  # skip select control for map markers
-            if not requestObject[p]: continue  # uh...looks like we can have empty items...let's skip 'em
+            if 'include-' in p: continue  # skip form values used in statistics
             if 'item-' in p: continue
+            if not requestObject[p]: continue  # uh...looks like we can have empty items...let's skip 'em
             searchTerm = requestObject[p]
             terms = searchTerm.split(' OR ')
             ORs = []
@@ -471,6 +508,10 @@ def doSearch(context):
             urlterms.append('displayType=%s' % context['displayType'])
             urlterms.append('maxresults=%s' % context['maxresults'])
             urlterms.append('start=%s' % context['start'])
+
+            if 'summarize' in requestObject or 'downloadstats' in requestObject:
+                urlterms.append('summarize=%s' % context['summarizeon'])
+                urlterms.append('summaryfields=%s' % ','.join(context['summaryrows']))
         url = '&'.join(urlterms)
 
     if 'pixonly' in context:
@@ -494,14 +535,15 @@ def doSearch(context):
         startpage = 0
         context['start'] = 1
     try:
-        response = s.query(querystring, facet='true', facet_field=facetfields, fq={},
+        solrtime = time.time()
+        response = s.query(querystring, facet='true', facet_field=facetfields, fq={}, fields=solrfl,
                            rows=context['maxresults'], facet_limit=MAXFACETS, sort=context['sortkey'],
                            facet_mincount=1, start=startpage)
-        print 'Solr search succeeded, %s results, %s rows requested starting at %s' % (
-        response.numFound, context['maxresults'], startpage)
-    #except:
+        print 'Solr search succeeded, %s results, %s rows requested starting at %s; %8.2f seconds.' % (
+            response.numFound, context['maxresults'], startpage, time.time() - solrtime)
+    # except:
     except Exception as inst:
-        #raise
+        # raise
         print 'Solr search failed: %s' % str(inst)
         context['errormsg'] = 'Solr4 query failed'
         return context
@@ -509,49 +551,59 @@ def doSearch(context):
     results = response.results
 
     context['items'] = []
+    summaryrows = {}
     imageCount = 0
-    if 'berkeleymapper' in context:
-        displayFields = 'bMapper'
-    else:
-        displayFields = context['displayType'] + 'Display'
-    for i, listItem in enumerate(results):
+    for i, rowDict in enumerate(results):
         item = {}
         item['counter'] = i
         otherfields = []
 
+        if 'summarize' in requestObject or 'downloadstats' in requestObject:
+            summarizeon = extractValue(rowDict, PARMS[context['summarizeon']][3])
+            summfields = [extractValue(rowDict, PARMS[p][3]) for p in context['summaryrows']]
+            if not summarizeon in summaryrows:
+                x = []
+                for ii in range(len(context['summaryrows'])): x.append([])
+                summaryrows[summarizeon] = [0, deepcopy(x)]
+            for sumi, sumcol in enumerate(summfields):
+                if not sumcol in summaryrows[summarizeon][1][sumi]:
+                    summaryrows[summarizeon][1][sumi] += [sumcol, ]
+                    # print summarizeon, sumi, sumcol, summaryrows[summarizeon][1][sumi]
+            summaryrows[summarizeon][0] += 1
+
         # pull out the fields that have special functions in the UI
         for p in PARMS:
             if 'mainentry' in PARMS[p][1]:
-                item['mainentry'] = extractValue(listItem, PARMS[p][3])
+                item['mainentry'] = extractValue(rowDict, PARMS[p][3])
             elif 'accession' in PARMS[p][1]:
                 x = PARMS[p]
-                item['accession'] = extractValue(listItem, PARMS[p][3])
+                item['accession'] = extractValue(rowDict, PARMS[p][3])
                 item['accessionfield'] = PARMS[p][4]
             if 'sortkey' in PARMS[p][1]:
-                item['sortkey'] = extractValue(listItem, PARMS[p][3])
+                item['sortkey'] = extractValue(rowDict, PARMS[p][3])
 
         for p in FIELDS[displayFields]:
             try:
                 otherfields.append(
-                    {'label': p['label'], 'name': p['name'], 'value': extractValue(listItem, p['solrfield'])})
+                    {'label': p['label'], 'name': p['name'], 'value': extractValue(rowDict, p['solrfield'])})
             except:
                 pass
-                #raise
-                #otherfields.append({'label':p['label'],'value': ''})
+                # raise
+                # otherfields.append({'label':p['label'],'value': ''})
         item['otherfields'] = otherfields
-        if 'csid_s' in listItem.keys():
-            item['csid'] = listItem['csid_s']
+        if 'csid_s' in rowDict.keys():
+            item['csid'] = rowDict['csid_s']
         # the list of blob csids need to remain an array, so restore it from psql result
-        if 'blob_ss' in listItem.keys():
-            item['blobs'] = listItem['blob_ss']
+        if 'blob_ss' in rowDict.keys():
+            item['blobs'] = rowDict['blob_ss']
             imageCount += len(item['blobs'])
-        if LOCATION in listItem.keys():
-            item['marker'] = makeMarker(listItem[LOCATION])
-            item['location'] = listItem[LOCATION]
+        if LOCATION in rowDict.keys():
+            item['marker'] = makeMarker(rowDict[LOCATION])
+            item['location'] = rowDict[LOCATION]
         context['items'].append(item)
 
-    #if context['displayType'] in ['full', 'grid'] and response._numFound > MAXRESULTS:
-    #    context['recordlimit'] = '(limited to %s for long display)' % MAXRESULTS
+    # if context['displayType'] in ['full', 'grid'] and response._numFound > MAXRESULTS:
+    # context['recordlimit'] = '(limited to %s for long display)' % MAXRESULTS
     #    context['items'] = context['items'][:MAXLONGRESULTS]
     if context['displayType'] in ['full', 'grid', 'list'] and response._numFound > context['maxresults']:
         context['recordlimit'] = '(display limited to %s)' % context['maxresults']
@@ -572,7 +624,9 @@ def doSearch(context):
     facets = getfacets(response)
     context['labels'] = [p['label'] for p in FIELDS[displayFields]]
     context['facets'] = [[m[f], facets[f]] for f in facetfields]
-    context['fields'] = getfields('FacetLabels')
+    context['fields'] = getfields('Facet', 'label')
+    context['statsfields'] = getfields('inCSV', 'name,label,solrfield')
+    context['summaryrows'] = [[r, summaryrows[r][0], summaryrows[r][1]] for r in sorted(summaryrows.keys())]
     context['range'] = range(len(facetfields))
     context['pixonly'] = pixonly
     context['locsonly'] = locsonly

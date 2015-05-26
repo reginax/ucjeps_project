@@ -105,30 +105,9 @@ $(document).ready(function () {
         }
     });
 
-
-    $('#about').click(function() {
-        chooseSlideDirection('#aboutTarget');
-        $('#helpTarget').slideUp();
-        $('#creditsTarget').slideUp();
-        $('#termsTarget').slideUp();
-    });
-    $('#help').click(function() {
-        chooseSlideDirection('#helpTarget');
-        $('#aboutTarget').slideUp();
-        $('#creditsTarget').slideUp();
-        $('#termsTarget').slideUp();
-    });
-    $('#terms').click(function() {
-        chooseSlideDirection('#termsTarget');
-        $('#helpTarget').slideUp();
-        $('#aboutTarget').slideUp();
-        $('#creditsTarget').slideUp();
-    });
-    $('#credits').click(function() {
-        chooseSlideDirection('#creditsTarget');
-        $('#helpTarget').slideUp();
-        $('#aboutTarget').slideUp();
-        $('#termsTarget').slideUp();
+    $('.expandInfo').click(function() {
+      chooseSlideDirection("#" + $(this).attr('id') + "Target");
+      $('.expandedInfo').not("#" + $(this).attr('id') + "Target").slideUp();
     });
     
     $("#acceptterms").click(function () {
@@ -254,6 +233,36 @@ $(document).ready(function () {
 
     $(document).on('click', '.sel-item', function () {
         $('#select-items').prop('checked', false);
+    });
+
+    $(document).on('click', '#summarize', function () {
+
+        $('#waitingImage').css({
+            display: "block"
+        });
+
+        var formData = getFormData('#selectedItems');
+        formData[$(this).attr('name')] = '';
+
+        if ($(this).attr('id') == 'summarize') {
+            $.post("../statistics/", formData).done(function (data) {
+                $('#statsresults').html(data);
+            });
+            ga('send', 'pageview', { 'page': '/summarize/display' });
+//        } else if ($(this).attr('id') == 'downloadstats') {
+//            $.post("../statistics/", formData).done(function (data) {
+//                alert( "success" );
+//            });
+//            ga('send', 'pageview', { 'page': '/summarize/download' });
+        }
+
+        $('#waitingImage').css({
+            display: "none"
+        });
+
+        $('#statsListing').tablesorter({theme: 'blue'});
+
+        ga('send', 'pageview', { 'page': '/statistics' });
     });
 
     $(document).on('click', '.map-item', function () {
