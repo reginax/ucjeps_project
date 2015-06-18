@@ -3,11 +3,13 @@ __author__ = 'jblowe, rjaffe'
 
 import re
 import time
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response, redirect
 import urllib
+import urllib2
 from cspace_django_site.main import cspace_django_site
 from eloanutils import get_entity, build_solr_query, getInstitutionCodefromDisplayName, getShortIdfromRefName
 from publicsearch.utils import getfromXML
+
 
 # alas, there are many ways the XML parsing functionality might be installed.
 # the following code attempts to find and import the best...
@@ -59,8 +61,12 @@ def eloan(request):
 
         #if 'kw' conforms to the UCJEPS naming convention, continue. Else send error "E-loan numbers begin..."
         if re.match(r"^.+E[0-9]+$", request.GET['kw']) is not None:
-            eloanNum = urllib.quote_plus(request.GET['kw'])
-            eloanNum = str(eloanNum)
+            try:
+                eloanNum = urllib.quote_plus(request.GET['kw'])
+                eloanNum = str(eloanNum)
+            except urllib2.HTTPError, e:
+                print 'The server couldn\'t fulfill the request.'
+                raise
         else:
             errMsg = 'Error: E-loan numbers begin with a collection code, followed by a capital E and only digits after that. You entered: '+request.GET['kw']
             return render(request, 'eloan.html',

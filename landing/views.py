@@ -15,7 +15,7 @@ hostname = cspace.getConfigOptionWithSection(config,
 
 TITLE = 'Applications Available'
 
-landingConfig = cspace.getConffig(path.join(settings.BASE_PARENT_DIR, 'config'), 'landing')
+landingConfig = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'landing')
 hiddenApps = landingConfig.get('landing', 'hiddenApps').split(',')
 loginRequiredApps = landingConfig.get('landing', 'loginRequiredApps').split(',')
 
