@@ -40,6 +40,8 @@ config = cspace_django_site.getConfig()
 
 from appconfig import SOLRSERVER, SOLRCORE, SOLRQUERYPARAM, PARMS
 
+def direct(request):
+    return redirect('eloan/')
 
 # CONSTANTS
 SEARCHRESULTS = {}
