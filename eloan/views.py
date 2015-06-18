@@ -61,12 +61,8 @@ def eloan(request):
 
         #if 'kw' conforms to the UCJEPS naming convention, continue. Else send error "E-loan numbers begin..."
         if re.match(r"^.+E[0-9]+$", request.GET['kw']) is not None:
-            try:
-                eloanNum = urllib.quote_plus(request.GET['kw'])
-                eloanNum = str(eloanNum)
-            except urllib2.HTTPError, e:
-                print 'The server couldn\'t fulfill the request.'
-                raise
+            eloanNum = urllib.quote_plus(request.GET['kw'])
+            eloanNum = str(eloanNum)
         else:
             errMsg = 'Error: E-loan numbers begin with a collection code, followed by a capital E and only digits after that. You entered: '+request.GET['kw']
             return render(request, 'eloan.html',
@@ -74,13 +70,18 @@ def eloan(request):
             )
 
         if 'recType' in request.GET and request.GET['recType']:
+
             recType = urllib.quote_plus(request.GET['recType'])
             recType = str(recType)
 
         # Record type hard-coded for now in eloan.html. Generalize?
         # This else clause in not really needed.
         else:
-            recType = 'loansout'
+            try:
+                recType = 'loansout'
+            except urllib2.HTTPError, e:
+                print 'Error1'
+                return
 
         #################################################################
         #  GET E-LOAN INFORMATION AND RELATED OBJECTS FROM CSPACE-SERVICES
@@ -110,8 +111,13 @@ def eloan(request):
         loquery = '%s/%s' % (recType, locsid)
 
         # Make authenticated connection to ucjeps.cspace...
-        lodata = get_entity(request, loquery, expectedmimetype).content
-        loanoutXML = fromstring(lodata)
+        try:
+            lodata = get_entity(request, loquery, expectedmimetype).content
+            loanoutXML = fromstring(lodata)
+
+        except urllib2.HTTPError, e:
+            print 'Error2.'
+            return
 
         # Start gathering loan out info into results: loan number (already have), borrower's contact and loan date.
         loaninfo = []
