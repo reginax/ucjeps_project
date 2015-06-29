@@ -93,7 +93,13 @@ def eloan(request):
         expectedmimetype = 'application/xml'
 
         # Make authenticated connection to ucjeps.cspace...
-        lolistdata = get_entity(request, asquery, expectedmimetype).content
+        lolistdata = get_entity(request, asquery, expectedmimetype)
+        if lolistdata is None:
+            errMsg = 'Sorry, I can\'t talk to CSpace so I can\'t help you with your eloan. Please contact the administrator.'
+            return render(request, 'eloan.html',
+                            {'results': errMsg, 'displayType': 'error', 'title': TITLE, 'timestamp': TIMESTAMP }
+                    )
+        lolistdata = lolistdata.content
         loanoutlistXML = fromstring(lolistdata)
 
         # To grab everything: loinfo = loanoutlistXML.find('.//list-item')
