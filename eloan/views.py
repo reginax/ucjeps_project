@@ -3,7 +3,7 @@ __author__ = 'jblowe, rjaffe'
 
 import re
 import time
-from django.shortcuts import render, render_to_response, redirect
+from django.shortcuts import render, render_to_response
 import urllib
 import urllib2
 from cspace_django_site.main import cspace_django_site
@@ -41,9 +41,6 @@ except ImportError:
 config = cspace_django_site.getConfig()
 
 from appconfig import SOLRSERVER, SOLRCORE, SOLRQUERYPARAM, PARMS
-
-def direct(request):
-    return redirect('eloan/')
 
 # CONSTANTS
 SEARCHRESULTS = {}
