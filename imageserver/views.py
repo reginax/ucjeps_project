@@ -1,6 +1,7 @@
 __author__ = 'jblowe'
 
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
 from django.http import HttpResponse
 from common import cspace # we use the config file reading function
 from cspace_django_site import settings
@@ -45,7 +46,6 @@ def get_image(request, image):
         url = "%s/cspace-services/%s" % (server, image)
         f = urllib2.urlopen(url)
         data = f.read()
-
         elapsedtime = time.time() - elapsedtime
     except:
         logger.info('%s :: %s :: %s' % ('image error', '-', '%s :: %8.3f seconds' % (image, elapsedtime)))
