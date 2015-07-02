@@ -3,7 +3,7 @@ __author__ = 'jblowe, rjaffe'
 
 import re
 import time
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render, render_to_response, redirect
 import urllib
 import urllib2
 from cspace_django_site.main import cspace_django_site
@@ -45,6 +45,9 @@ from appconfig import SOLRSERVER, SOLRCORE, SOLRQUERYPARAM, PARMS
 # CONSTANTS
 SEARCHRESULTS = {}
 TITLE = 'E-loan'
+
+def direct(request):
+    return redirect('eloan/')
 
 def eloan(request):
     """
