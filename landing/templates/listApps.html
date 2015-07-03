@@ -17,7 +17,7 @@
                 </tr>
                 {% for app in appList %}
                     <tr>
-                        <td><a href="{{ settings.PROJECT_DIR }}/{{ app }}">{{ app }}</a></td>
+                        <td><a href="{{ settings.WSGI_BASE }}/{{ app }}">{{ app }}</a></td>
                     </tr>
                 {% endfor %}
             </table>
