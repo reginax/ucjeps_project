@@ -46,8 +46,6 @@ from appconfig import SOLRSERVER, SOLRCORE, SOLRQUERYPARAM, PARMS
 SEARCHRESULTS = {}
 TITLE = 'E-loan'
 
-def direct(request):
-    return redirect('eloan/')
 
 def eloan(request):
     """

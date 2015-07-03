@@ -23,7 +23,7 @@
 
 {% block loginBtn %}
 <div id="user-tools">
-    <a href="{% url 'login' %}?next={% url 'eloan:eloan' %}" id="login" class="prettyBtn">{% trans 'Sign in' %}</a>
+    <a href="{% url 'login' %}?next=eloan" id="login" class="prettyBtn">{% trans 'Sign in' %}</a>
 </div>
 {% endblock %}
 
@@ -36,7 +36,7 @@
     {# {% if user.has_usable_password %} #}
     <!-- <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> / -->
     {# {% endif %} #}
-    <a href="{% url 'logout' %}?next={% url 'eloan:eloan' %}" id="logout" class="prettyBtn">{% trans 'Sign out' %}</a>
+    <a href="{% url 'logout' %}?next=eloan" id="logout" class="prettyBtn">{% trans 'Sign out' %}</a>
 {% endblock %}
 
 {% block content %}
@@ -58,7 +58,7 @@
 {#        {% if error %}#}
 {#            <p style="color: red;">Please submit a search term.</p>#}
 {#        {% endif %}#}
-        <form action="" method="get">
+        <form action="eloan" method="get">
             <input type="text" name="kw" value="{{ kw }}">
             <input type="hidden" name="recType" value="{{ 'loansout' }}">
             <input type="submit" value="Search">
