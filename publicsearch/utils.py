@@ -455,7 +455,7 @@ print 'Starting initialization'
 context = {'displayType': 'list', 'maxresults': 0,
            'searchValues': {'csv': 'true', 'querystring': '*:*', 'url': '', 'maxfacets': 1000, 'count': 0}}
 context = doSearch(SOLRSERVER, SOLRCORE, context)
-print 'solr facet search time: %s' % context['time']
+#print 'solr facet search time: %s' % context['time']
 
 start = time.time()
 if 'errormsg' in context:
