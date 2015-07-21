@@ -26,6 +26,7 @@ function chooseSlideDirection(targetId) {
 
 
 $(document).ready(function () {
+    var display;
     $('#about').click(function() {
         chooseSlideDirection('#aboutTarget');
         $('#advancedTarget').slideUp();
@@ -75,6 +76,7 @@ $(document).ready(function () {
     });
 
     $('#search-list, #search-full, #search-grid').click(function () {
+        display = $(this).attr('name');
         submitForm($(this).attr('name'));
     });
 
