@@ -11,7 +11,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 import django.conf.global_settings as DEFAULT_SETTINGS  # http://stackoverflow.com/a/15446953/1763984
-GOOGLE_ANALYTICS = False
+GOOGLE_ANALYTICS = -1
 TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
     'django.core.context_processors.request',
     'cspace_django_site.context_processors.settings',
@@ -32,18 +32,6 @@ DATABASES = {
         'PASSWORD': '',
         'HOST': '',              # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
         'PORT': '',              # Set to empty string for default.
-    }
-}
-
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': '/home/app_webapps/cache/' + PROJECT_NAME + '/images',
-        #'LOCATION': '/tmp/' + PROJECT_NAME + '/images',
-        'CULL_FREQUENCY': 10000,
-        'OPTIONS': {
-            'MAX_ENTRIES': 1000000
-        }
     }
 }
 
@@ -266,3 +254,8 @@ except ImportError:
     from utils.secret_key_gen import *
     generate_secret_key(os.path.join(SETTINGS_DIR, 'secret_key.py'))
     from secret_key import *
+
+try:
+	from extra_settings import *
+except ImportError, exp:
+	pass

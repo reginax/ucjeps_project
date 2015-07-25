@@ -125,6 +125,7 @@ $(document).ready(function () {
     $('#search-list, #search-full, #search-grid').click(function () {
         display = $(this).attr('name');
         submitForm($(this).attr('name'));
+
     });
 
     $('#search input[type=text]').keypress(function(event) {
@@ -219,7 +220,7 @@ $(document).ready(function () {
                     display: "block"
                 });
 
-                ga('send', 'pageview', { 'page': '/search' });
+                enablega('send', 'pageview', { 'page': '/search' }, googleAnalytics);
             });
         }
     };
@@ -249,12 +250,12 @@ $(document).ready(function () {
             $.post("../statistics/", formData).done(function (data) {
                 $('#statsresults').html(data);
             });
-            ga('send', 'pageview', { 'page': '/summarize/display' });
+            enablega('send', 'pageview', { 'page': '/summarize/display' }, googleAnalytics);
 //        } else if ($(this).attr('id') == 'downloadstats') {
 //            $.post("../statistics/", formData).done(function (data) {
 //                alert( "success" );
 //            });
-//            ga('send', 'pageview', { 'page': '/summarize/download' });
+//            enablega('send', 'pageview', { 'page': '/summarize/download' }, googleAnalytics);
         }
 
         $('#waitingImage').css({
@@ -263,7 +264,7 @@ $(document).ready(function () {
 
         $('#statsListing').tablesorter({theme: 'blue'});
 
-        ga('send', 'pageview', { 'page': '/statistics' });
+        enablega('send', 'pageview', { 'page': '/statistics' }, googleAnalytics);
     });
 
     $(document).on('click', '.map-item', function () {
@@ -277,7 +278,7 @@ $(document).ready(function () {
             '<small><a target="_map" href="https://maps.google.com/maps/i?q=loc:'+marker+'&amp;source=embed">Larger Map</a>'+
             '</small></div>');
             Elem.slideDown();
-            ga('send', 'pageview', { 'page': '/map/inline' });
+            enablega('send', 'pageview', { 'page': '/map/inline' }, googleAnalytics);
         }
         else {
             Elem.slideUp();
@@ -322,7 +323,7 @@ $(document).ready(function () {
             });
 
             $('#tabs').tabs({ active: 1 });
-            ga('send', 'pageview', { 'page': '/search/refine' });
+            enablega('send', 'pageview', { 'page': '/search/refine' }, googleAnalytics);
         });
 
     });
@@ -335,12 +336,12 @@ $(document).ready(function () {
             $.post("../bmapper/", formData).done(function (data) {
                 window.open(data, '_blank');
             });
-            ga('send', 'pageview', { 'page': '/map/bmapper' });
+            enablega('send', 'pageview', { 'page': '/map/bmapper' }, googleAnalytics);
         } else if ($(this).attr('id') == 'map-google') {
             $.post("../gmapper/", formData).done(function (data) {
                 $('#maps').html(data);
             });
-            ga('send', 'pageview', { 'page': '/map/google' });
+            enablega('send', 'pageview', { 'page': '/map/google' }, googleAnalytics);
         }
     });
 // we need to make sure this gets done in the event the page is created anew (e.g. via a pasted URL)
@@ -350,4 +351,3 @@ $('#tabs').tabs({ active: 0 });
 // on the first load (or a reload) of the page, clear the form...
 //clearForm($('#search')[0]);
 });
-
