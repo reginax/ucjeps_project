@@ -2,7 +2,6 @@
 
 import csv
 import solr
-import time
 from os import path, popen
 from copy import deepcopy
 
@@ -247,6 +246,5 @@ def loadFields(fieldFile):
     return DROPDOWNS, FIELDS, FACETS, LOCATION, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE, DEFAULTSORTKEY, REQUIRED
 
 # on startup, do a query to get options values for forms...
-start = time.time()
 DROPDOWNS, FIELDS, FACETS, LOCATION, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE, DEFAULTSORTKEY, REQUIRED = loadFields(FIELDDEFINITIONS)
-print 'Initialization complete: %s' % (time.time() - start)
+print 'Reading field definitions from %s' % path.join(settings.BASE_PARENT_DIR, 'config/' + FIELDDEFINITIONS)
