@@ -236,7 +236,8 @@ $(document).ready(function () {
     $(document).on('click', '.sel-item', function () {
         $('#select-items').prop('checked', false);
     });
-    
+
+
     $(document).on('click', '#summarize', function () {
         var formData = getFormData('#selectedItems');
         formData[$(this).attr('name')] = '';
@@ -300,7 +301,6 @@ $(document).ready(function () {
                 }
             }
         }
-
         var formData = getFormData('#search');
         // TODO: CURRENTLY DEFAULT TO SEARCH-LIST BUT SHOULD HAVE A PERSISTENT DISPLAY TYPE? CURRENTLY DOESN'T ON DEV
         formData['search-list'] = '';
@@ -322,7 +322,6 @@ $(document).ready(function () {
             $('#tabs').tabs({ active: 1 });
             enablega('send', 'pageview', { 'page': '/search/refine' }, googleAnalytics);
         });
-
     });
 
     $(document).on('click', '#map-bmapper, #map-google', function () {
