@@ -34,4 +34,5 @@ urlpatterns = patterns('',
                        url(r'^search/?', include('search.urls', namespace='search')),
                        url(r'^imageserver/', include('imageserver.urls', namespace='imageserver')),
                        url(r'^landing/?', include('landing.urls', namespace='landing')),
+                       url(r'^uploadmedia/', include('uploadmedia.urls', namespace='uploadmedia')),
                        )

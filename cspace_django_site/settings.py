@@ -149,7 +149,8 @@ INSTALLED_APPS = (
     'suggestpostgres',
     'suggestsolr',
     'landing',
-    'eloan'
+    'eloan',
+    'uploadmedia',
 )
 
 # A sample logging configuration. The only tangible logging
