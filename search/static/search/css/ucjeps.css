@@ -113,7 +113,7 @@ body {
 }
 .smallheader { background-color: darkgray; color: #FFFFFF; font-size: 12px; font-weight: bold; }
 
-a:link, a:visited { color: #5b80b2; text-decoration: none; }
+a:link, a:visited { color: #5b80b2; text-decoration: none; margin-left: 5px; }
 a:hover { color: #036; }
 a { color: #5b80b2; text-decoration: none; }
 
