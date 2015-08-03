@@ -267,3 +267,12 @@ a#logout:hover { background-color: #333; color: #FFF; }
 #login-form input[type=text], #login-form input[type=password] {
     width: 95%;
 }
+
+.line {
+    margin-right: 30px;
+ }
+
+.unit {
+    margin-top: 6px;
+}
+

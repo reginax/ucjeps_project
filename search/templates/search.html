@@ -6,6 +6,8 @@
     <link rel="stylesheet" type="text/css" href="{% static "search/css/theme.blue.css" %}"/>
     <link rel="stylesheet" type="text/css" href="{% static "cspace_django_site/css/smoothness/jquery-ui-1.10.3.custom.min.css" %}"/>
     <link rel="stylesheet" type="text/css" href="{% static "search/css/PublicSearch.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "search/css/ucjeps.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "search/css/dropdownmenu.css" %}"/>
 {% endblock %}
 
 {% block scripts %}
@@ -16,15 +18,19 @@
         var googleAnalytics = {{ googleAnalytics }};
     </script>
     <script type="text/javascript" src="{% static "search/js/jquery.tablesorter.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "search/js/menu_ucjeps_home.js" %}"></script>
+    <script type="text/javascript" src="{% static "search/js/AC_RunActiveContent.js" %}"></script>
 {% endblock %}
 
 <!-- Overwrite default placement of login button, included below in branding block -->
 {% block loginBtn %}{% endblock %}
 
 {% block branding %}
-    <h4 class="bannerLeft"></h4>
-    <h4 class="bannerRight"></h4>
-    <h1 class="bannerTitle" id="site-name">{{ apptitle }}</h1>
+{#    <h4 class="bannerLeft"></h4>#}
+{#    <h4 class="bannerRight"></h4>#}
+{#    <h1 class="bannerTitle" id="site-name">{{ apptitle }}</h1>#}
+     {% include "header.html" %}
+     {% include "globalnav.html" %}
 
     <!-- div class="user-tools" -->
     <div class="unit" style="float:right;">
