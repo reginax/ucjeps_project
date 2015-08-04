@@ -1,6 +1,8 @@
 __author__ = 'jblowe, amywieliczka'
 
 import time, datetime
+import urllib2
+import os
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, render_to_response, redirect
@@ -123,3 +125,16 @@ def loadNewFields(request, fieldfile):
     context = setConstants({})
     loginfo('loaded fields', context, request)
     return render(request, 'search.html', context)
+
+def updateHeaders(request):
+    try:
+        headers = urllib2.urlopen("http://ucjeps.berkeley.edu/common/php/header.php")
+        global_nav = urllib2.urlopen("http://ucjeps.berkeley.edu/common/php/globalnav.php")
+        FILEDIR = os.path.abspath(os.path.dirname(__file__))
+        new_f1 = open(os.path.join(FILEDIR, "templates/../search/templates/header.html"), 'w')
+        new_f2 = open(os.path.join(FILEDIR, "templates/../search/templates/globalnav.html"), 'w')
+
+        new_f1.write(headers.read())
+        new_f2.write(global_nav.read())
+    except:
+        print "Bad network/ url"
