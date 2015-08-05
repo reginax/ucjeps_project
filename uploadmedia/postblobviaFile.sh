@@ -4,7 +4,7 @@ source ~/venv/bin/activate
 
 # modify these for each deployment...
 PROTO="https://"
-TENANT='bampfa'
+TENANT='tenant'
 HOST="${TENANT}-dev.cspace.berkeley.edu"
 SRVC="cspace-services/blobs"
 URL="${PROTO}${HOST}/$SRVC"

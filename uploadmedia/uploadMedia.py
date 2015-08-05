@@ -45,6 +45,7 @@ def uploadmedia(mediaElements, config):
         username = config.get('connect', 'username')
         password = config.get('connect', 'password')
         institution = config.get('info', 'institution')
+        alwayscreatemedia = config.get('info', 'alwayscreatemedia')
     except:
         print "could not get at least one of realm, hostname, username, password or institution from config file."
         # print "can't continue, exiting..."
@@ -53,11 +54,14 @@ def uploadmedia(mediaElements, config):
     objectCSID = getCSID('objectnumber', mediaElements['objectnumber'], config)
     if objectCSID == [] or objectCSID is None:
         print "could not get (i.e. find) objectnumber's csid: %s." % mediaElements['objectnumber']
+        mediaElements['objectCSID'] = ''
         # raise Exception("<span style='color:red'>Object Number not found: %s!</span>" % mediaElements['objectnumber'])
         # raise
     else:
         objectCSID = objectCSID[0]
         mediaElements['objectCSID'] = objectCSID
+
+    if alwayscreatemedia or objectCSID is not None:
 
         updateItems = {'objectStatus': 'found',
                        'subjectCsid': '',
@@ -79,13 +83,26 @@ def uploadmedia(mediaElements, config):
         # print updateItems
         payload = mediaPayload(updateItems, institution)
         messages.append(payload)
-        messages.append(payload)
         (url, data, mediaCSID, elapsedtime) = postxml('POST', uri, realm, hostname, username, password, payload)
         # elapsedtimetotal += elapsedtime
         messages.append('got mediacsid %s elapsedtime %s ' % (mediaCSID, elapsedtime))
         mediaElements['mediaCSID'] = mediaCSID
         messages.append("media REST API post succeeded...")
 
+        # for PAHMA, each uploaded image becomes the primary
+        if institution == 'pahma':
+            primary_payload = """<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+            <ns2:invocationContext xmlns:ns2="http://collectionspace.org/services/common/invocable"
+            <mode>single</mode>
+            <docType>""" + mediaCSID + """</docType>
+            <singleCSID></singleCSID>
+            </ns2:invocationContext>
+            """
+            postxml('POST', 'batch/57c6de27-4f1e-48d3-a661', realm, hostname, username, password, primary_payload)
+        else:
+            pass
+
+    if objectCSID != '':
         # now relate media record to collection object
 
         uri = 'relations'
@@ -119,19 +136,6 @@ def uploadmedia(mediaElements, config):
         messages.append('got relation csid %s elapsedtime %s ' % (csid, elapsedtime))
         mediaElements['obj2mediaCSID'] = csid
         messages.append("relations REST API post succeeded...")
-
-        # for PAHMA, each uploaded image becomes the primary
-        if institution == 'pahma':
-            primary_payload = """<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-            <ns2:invocationContext xmlns:ns2="http://collectionspace.org/services/common/invocable"
-            <mode>single</mode>
-            <docType>""" + mediaCSID + """</docType>
-            <singleCSID></singleCSID>
-            </ns2:invocationContext>
-            """
-            postxml('POST', 'batch/57c6de27-4f1e-48d3-a661', realm, hostname, username, password, primary_payload)
-        else:
-            pass
 
     return mediaElements
 

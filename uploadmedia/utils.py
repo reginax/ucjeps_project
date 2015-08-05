@@ -20,6 +20,7 @@ SERVERINFO = {
     'serverlabelcolor': config.get('info', 'serverlabelcolor'),
     'serverlabel': config.get('info', 'serverlabel')
 }
+INSTITUTION = config.get('info', 'institution')
 
 if isdir(TEMPIMAGEDIR):
     print "Using %s as working directory for images and metadata files" % TEMPIMAGEDIR
@@ -146,7 +147,7 @@ def getNumber(filename):
     imagenumber = ''
     # the following is only for bampfa filenames...
     # input is something like: bampfa_1995-46-194-a-199.jpg, output should be: 1995.46.194.a-199
-    if 'bampfa_' in filename:
+    if INSTITUTION == 'bampfa':
         objectnumber = filename.replace('bampfa_', '')
         try:
             objectnumber, imagenumber, imagetype = objectnumber.split('_')
@@ -157,8 +158,18 @@ def getNumber(filename):
         #objectnumber = objectnumber.replace('-', '.', numHyphens)
         objectnumber = objectnumber.replace('-', '.')
         objectnumber = objectnumberpattern.sub(r'\1-\2', objectnumber)
-    # for non-bampfa users (i.e. pahma, at the moment) it suffices to split on underscore...
-    else:
+    elif INSTITUTION == 'ucjeps':
+        # typically, UC1107670.JPG
+        filenameparts = filename.split('.')
+        objectnumber = filenameparts[0]
+        imagenumber = ''
+    elif INSTITUTION == 'cinefiles':
+        # e.g. 56306.p3.300gray.tif
+        filenameparts = filename.split('.')
+        objectnumber = filenameparts[0]
+        imagenumber = filenameparts[1].replace('p','')
+    # for pahma it suffices to split on underscore...
+    elif INSTITUTION == 'pahma':
         objectnumber = filename
         objectnumber = objectnumber.split('_')[0]
     # the following is a last ditch attempt to get an object number from a filename...
