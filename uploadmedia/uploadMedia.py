@@ -102,7 +102,7 @@ def uploadmedia(mediaElements, config):
         else:
             pass
 
-    if objectCSID != '':
+    if objectCSID is not None:
         # now relate media record to collection object
 
         uri = 'relations'
