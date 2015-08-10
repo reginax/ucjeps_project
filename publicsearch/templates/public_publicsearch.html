@@ -6,6 +6,9 @@
     <link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/tablesorter.css" %}"/>
     <link rel="stylesheet" type="text/css" href="{% static "cspace_django_site/css/smoothness/jquery-ui-1.10.3.custom.min.css" %}"/>
     <link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/ucjeps.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/PublicSearch.css" %}"/>
+     <link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/dropdownmenu.css" %}"/>
+
 {% endblock %}
 
 {% block scripts %}
@@ -13,72 +16,75 @@
     <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-ui-1.10.3.custom.min.js" %}"></script>
     <script type="text/javascript" src="{% static "publicsearch/js/public_search.js" %}"></script>
     <script type="text/javascript" src="{% static "publicsearch/js/jquery.tablesorter.js" %}"></script>
+     <script type="text/javascript" src="{% static "publicsearch/js/menu_ucjeps_home.js" %}"></script>
 {% endblock %}
 
 {% block branding %}
-     <!-- Beginning of banner -->
-    <table class="banner" width="0" border="0" cellspacing="0" cellpadding="0">
-        <tr>
-            <td colspan="5" align="center" valign="middle">&nbsp;</td>
-        </tr>
-
-        <tr>
-            <td rowspan="5" width="12" align="center" valign="middle"></td>
-            <td rowspan="3" width="120" align="center" valign="middle">
-                <a href="http://ucjeps.berkeley.edu/uc/"><img src="{% static "publicsearch/images/logo_uc_80.png" %}"  alt="University Herbarium (UC)" width="80" height="80" border="0" /></a></td>
-            <td align="center">&nbsp;</td>
-            <td rowspan="3" width="120" align="center" valign="middle">
-                <a href="http://ucjeps.berkeley.edu/jeps/"><img src="{% static "publicsearch/images/logo_jeps_80.png" %}" alt="Jepson Herbarium (JEPS)" width="80" height="79" border="0" /></a></td>
-            <td rowspan="5" width="12" align="center" valign="middle"></td>
-        </tr>
-
-        <tr>
-            <td align="center" valign="middle"><span class="bannerTitle">The University and Jepson Herbaria</span><br /></td>
-        </tr>
-
-        <tr>
-            <td align="center" valign="top"><a href="http://www.berkeley.edu" class="bannerTagLine">University of California, Berkeley</a></td>
-        </tr>
-
-        <tr>
-            <td align="center"><a href="http://ucjeps.berkeley.edu/uc/" class="logoText">University&nbsp;Herbarium</a></td>
-            <td height="14" align="center"></td>
-            <td align="center"><a href="http://ucjeps.berkeley.edu/jeps/" class="logoText">Jepson&nbsp;Herbarium</a></td>
-        </tr>
-
-        <tr>
-            <td colspan="3" align="center"></td>
-        </tr>
-
-        <tr>
-            <td height="8" colspan="5" align="center">&nbsp;</td>
-        </tr>
-
-        <tr class="bannerBottomBorder">
-            <td colspan="6"></td>
-        </tr>
-
-        <tr class="bannerBottomEdge">
-            <td class="edge" colspan="6"></td>
-        </tr>
-    </table>
-<!-- End of banner -->
-
-<!-- Beginning of horizontal menu -->
-    <table class=horizMenu border="0" cellspacing="0" cellpadding="0">
-        <tr>
-            <td height="20" width="606" align="center">
-                <a href="http://ucjeps.berkeley.edu/main/directory.html" class="horizMenuActive">Directory</a>
-                <a href="http://ucjeps.berkeley.edu/news/" class="horizMenuActive">News</a>
-                <a href="http://ucjeps.berkeley.edu/main/sitemap.html" class="horizMenuActive">Site Map</a>
-                <a href="http://www.facebook.com/pages/Berkeley-CA/University-and-Jepson-Herbaria-UC-Berkeley/92158086132" class="horizMenuActive">See Us On <img src="{% static "publicsearch/images/facebook.jpg" %}" width="53" height="20" /></a>
-                <a href="http://ucjeps.berkeley.edu/jeps/friends/index.html" class="horizMenuActive">Donate</a>
-                <a href="http://ucjeps.berkeley.edu/index.html" class="horizMenuActive">Home</a>
-                <span class="horizMenuInactive">Search Portal</span>
-            </td>
-            <td width="129" />
-        </tr>
-    </table>
+    {% include "public_header.html" %}
+    {% include "public_globalnav.html" %}
+{#     <!-- Beginning of banner -->#}
+{#    <table class="banner" width="0" border="0" cellspacing="0" cellpadding="0">#}
+{#        <tr>#}
+{#            <td colspan="5" align="center" valign="middle">&nbsp;</td>#}
+{#        </tr>#}
+{##}
+{#        <tr>#}
+{#            <td rowspan="5" width="12" align="center" valign="middle"></td>#}
+{#            <td rowspan="3" width="120" align="center" valign="middle">#}
+{#                <a href="http://ucjeps.berkeley.edu/uc/"><img src="{% static "publicsearch/images/logo_uc_80.png" %}"  alt="University Herbarium (UC)" width="80" height="80" border="0" /></a></td>#}
+{#            <td align="center">&nbsp;</td>#}
+{#            <td rowspan="3" width="120" align="center" valign="middle">#}
+{#                <a href="http://ucjeps.berkeley.edu/jeps/"><img src="{% static "publicsearch/images/logo_jeps_80.png" %}" alt="Jepson Herbarium (JEPS)" width="80" height="79" border="0" /></a></td>#}
+{#            <td rowspan="5" width="12" align="center" valign="middle"></td>#}
+{#        </tr>#}
+{##}
+{#        <tr>#}
+{#            <td align="center" valign="middle"><span class="bannerTitle">The University and Jepson Herbaria</span><br /></td>#}
+{#        </tr>#}
+{##}
+{#        <tr>#}
+{#            <td align="center" valign="top"><a href="http://www.berkeley.edu" class="bannerTagLine">University of California, Berkeley</a></td>#}
+{#        </tr>#}
+{##}
+{#        <tr>#}
+{#            <td align="center"><a href="http://ucjeps.berkeley.edu/uc/" class="logoText">University&nbsp;Herbarium</a></td>#}
+{#            <td height="14" align="center"></td>#}
+{#            <td align="center"><a href="http://ucjeps.berkeley.edu/jeps/" class="logoText">Jepson&nbsp;Herbarium</a></td>#}
+{#        </tr>#}
+{##}
+{#        <tr>#}
+{#            <td colspan="3" align="center"></td>#}
+{#        </tr>#}
+{##}
+{#        <tr>#}
+{#            <td height="8" colspan="5" align="center">&nbsp;</td>#}
+{#        </tr>#}
+{##}
+{#        <tr class="bannerBottomBorder">#}
+{#            <td colspan="6"></td>#}
+{#        </tr>#}
+{##}
+{#        <tr class="bannerBottomEdge">#}
+{#            <td class="edge" colspan="6"></td>#}
+{#        </tr>#}
+{#    </table>#}
+{#<!-- End of banner -->#}
+{##}
+{#<!-- Beginning of horizontal menu -->#}
+{#    <table class=horizMenu border="0" cellspacing="0" cellpadding="0">#}
+{#        <tr>#}
+{#            <td height="20" width="606" align="center">#}
+{#                <a href="http://ucjeps.berkeley.edu/main/directory.html" class="horizMenuActive">Directory</a>#}
+{#                <a href="http://ucjeps.berkeley.edu/news/" class="horizMenuActive">News</a>#}
+{#                <a href="http://ucjeps.berkeley.edu/main/sitemap.html" class="horizMenuActive">Site Map</a>#}
+{#                <a href="http://www.facebook.com/pages/Berkeley-CA/University-and-Jepson-Herbaria-UC-Berkeley/92158086132" class="horizMenuActive">See Us On <img src="{% static "publicsearch/images/facebook.jpg" %}" width="53" height="20" /></a>#}
+{#                <a href="http://ucjeps.berkeley.edu/jeps/friends/index.html" class="horizMenuActive">Donate</a>#}
+{#                <a href="http://ucjeps.berkeley.edu/index.html" class="horizMenuActive">Home</a>#}
+{#                <span class="horizMenuInactive">Search Portal</span>#}
+{#            </td>#}
+{#            <td width="129" />#}
+{#        </tr>#}
+{#    </table>#}
 <!-- End of horizontal menu -->
 <div class="user-tools">
     <span style="float:left; width:800px; font-size:12px;">
