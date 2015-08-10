@@ -7,8 +7,7 @@
     <link rel="stylesheet" type="text/css" href="{% static "cspace_django_site/css/smoothness/jquery-ui-1.10.3.custom.min.css" %}"/>
     <link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/ucjeps.css" %}"/>
     <link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/dropdownmenu.css" %}"/>
-    <script type="text/javascript" src="{% static "search/js/menu_ucjeps_home.js" %}"></script>
-    <script type="text/javascript" src="{% static "search/js/AC_RunActiveContent.js" %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static "publicsearch/css/PublicSearch.css" %}"/>
 {% endblock %}
 
 {% block scripts %}
@@ -16,12 +15,13 @@
     <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-ui-1.10.3.custom.min.js" %}"></script>
     <script type="text/javascript" src="{% static "publicsearch/js/public_search.js" %}"></script>
     <script type="text/javascript" src="{% static "publicsearch/js/jquery.tablesorter.js" %}"></script>
+    <script type="text/javascript" src="{% static "publicsearch/js/menu_ucjeps_home.js" %}"></script>
 {% endblock %}
 
 {% block branding %}
      {% include "header.html" %}
      {% include "globalnav.html" %}
-<!-- End of banner -->
+
 <div class="user-tools">
         <span style="float:right">
             <!-- a href="#" id="about">About</a -->
