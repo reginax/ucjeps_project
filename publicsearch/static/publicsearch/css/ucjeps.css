@@ -45,7 +45,7 @@ body {
 	font-family: "Times New Roman", Times, serif;
 	color: #FFFF00;
 	font-weight: bold;
-	font-style: italic;
+	/*font-style: italic;*/
 	font-size: 36px;
 	letter-spacing: 0.3em;
 }
@@ -113,7 +113,7 @@ body {
 }
 .smallheader { background-color: darkgray; color: #FFFFFF; font-size: 12px; font-weight: bold; }
 
-a:link, a:visited { color: #5b80b2; text-decoration: none; }
+a:link, a:visited { color: #5b80b2; text-decoration: none; margin-left: 5px; }
 a:hover { color: #036; }
 a { color: #5b80b2; text-decoration: none; }
 
