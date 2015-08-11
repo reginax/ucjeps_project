@@ -73,3 +73,7 @@ nav ul {
 #header {
 	overflow: visible;
 }
+
+.unit {margin-right: 30px; margin-top: 6px;}
+
+.line {margin-right: 30px;}
