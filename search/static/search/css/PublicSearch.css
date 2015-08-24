@@ -55,6 +55,11 @@
     margin-right: auto;
 }
 
+
+.expandInfo {
+    margin-left: 20px;
+}
+
 a:link, a:visited { color: #5b80b2; text-decoration: none; }
 a:hover { color: #036; }
 a { color: #5b80b2; text-decoration: none; }
