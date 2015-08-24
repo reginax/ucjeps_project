@@ -6,7 +6,7 @@ import time
 from cswaExtras import postxml, relationsPayload, getConfig, getCSID
 
 
-def mediaPayload(f, institution):
+def mediaPayload(mh, institution):
     payload = """<?xml version="1.0" encoding="UTF-8"?>
 <document name="media">
 <ns2:media_common xmlns:ns2="http://collectionspace.org/services/media" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -19,6 +19,11 @@ def mediaPayload(f, institution):
 <language>urn:cspace:INSTITUTION.cspace.berkeley.edu:vocabularies:name(languages):item:name(eng)'English'</language>
 </languageList>
 <identificationNumber>%s</identificationNumber>
+<typeList>
+<type>%s</type>
+</typeList>
+<source>%s</source>
+<copyrightStatement>%s</copyrightStatement>
 </ns2:media_common>
 <ns2:media_INSTITUTION xmlns:ns2="http://collectionspace.org/services/media/local/INSTITUTION" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 <approvedForWeb>true</approvedForWeb>
@@ -28,12 +33,12 @@ IMAGENUMBERELEMENT
 </document>
 """
     if institution == 'bampfa':
-        payload = payload.replace('IMAGENUMBERELEMENT', '<imageNumber>%s</imageNumber>' % f['imageNumber'])
+        payload = payload.replace('IMAGENUMBERELEMENT', '<imageNumber>%s</imageNumber>' % mh['imageNumber'])
     else:
         payload = payload.replace('IMAGENUMBERELEMENT', '')
     payload = payload.replace('INSTITUTION', institution)
     payload = payload % (
-        f['blobCsid'], f['rightsHolderRefname'], f['creator'], f['name'], f['contributor'], f['objectNumber'])
+        mh['blobCsid'], mh['rightsHolderRefname'], mh['creator'], mh['name'], mh['contributor'], mh['objectNumber'], mh['imageType'], mh['source'], mh['copyrightStatement'])
     # print payload
     return payload
 
@@ -50,6 +55,13 @@ def uploadmedia(mediaElements, config):
         print "could not get at least one of realm, hostname, username, password or institution from config file."
         # print "can't continue, exiting..."
         raise
+
+    # for ucjeps
+    for extra in 'imagetype copyright source'.split(' '):
+        try:
+            mediaElements[extra] = config.get('info', extra)
+        except:
+            mediaElements[extra] = ''
 
     objectCSID = getCSID('objectnumber', mediaElements['objectnumber'], config)
     if objectCSID == [] or objectCSID is None:
@@ -73,7 +85,10 @@ def uploadmedia(mediaElements, config):
                        'rightsHolderRefname': mediaElements['rightsholder'],
                        'contributor': mediaElements['contributor'],
                        'creator': mediaElements['creator'],
-                       'mediaDate': mediaElements['date'],
+                       'mediaDate': mediaElements['mediaDate'],
+                       'imageType': mediaElements['imagetype'],
+                       'copyrightStatement': mediaElements['copyrightstatement'],
+                       'source': mediaElements['source'],
         }
 
         uri = 'media'
@@ -196,8 +211,7 @@ if __name__ == "__main__":
         elapsedtimetotal = time.time()
         mediaElements = {}
         for v1, v2 in enumerate(
-                'name size objectnumber blobCSID date creator contributor rightsholder imagenumber filenamewithpath'.split(
-                        ' ')):
+                'name size objectnumber blobCSID date creator contributor rightsholder imagenumber filenamewithpath'.split(' ')):
             mediaElements[v2] = r[v1]
         # print mediaElements
         print 'objectnumber %s' % mediaElements['objectnumber']
