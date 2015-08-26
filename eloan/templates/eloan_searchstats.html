@@ -6,12 +6,6 @@
             {% if recordlimit %}{{ recordlimit }}{% endif %}
         {% else %}no items found.
         {% endif %}
-        <div id="full-search-link" style="padding-top: 10px; padding-bottom: 10px;">
-            {% if url %}
-                <a href="../publicsearch?{{ url }} " target="_blank">Click to see full search results</a>
-                <input type="hidden" name="url" value="{{ url }}"/>
-            {% endif %}
-        </div>
 {#        <br/>#}
 {#        <br/>#}
 {#        {% if querystring %}#}

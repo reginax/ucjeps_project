@@ -6,50 +6,57 @@
     <link rel="stylesheet" type="text/css" href="{% static "search/css/theme.blue.css" %}"/>
     <link rel="stylesheet" type="text/css" href="{% static "cspace_django_site/css/smoothness/jquery-ui-1.10.3.custom.min.css" %}"/>
     <link rel="stylesheet" type="text/css" href="{% static "search/css/PublicSearch.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "search/css/ucjeps.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "search/css/dropdownmenu.css" %}"/>
 {% endblock %}
 
 {% block scripts %}
     <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-1.10.0.min.js" %}"></script>
     <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-ui-1.10.3.custom.min.js" %}"></script>
     <script type="text/javascript" src="{% static "search/js/PublicSearch.js" %}"></script>
+    <script type="text/javascript">
+        var googleAnalytics = {{ googleAnalytics }};
+    </script>
     <script type="text/javascript" src="{% static "search/js/jquery.tablesorter.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "search/js/menu_ucjeps_home.js" %}"></script>
+    <script type="text/javascript" src="{% static "search/js/AC_RunActiveContent.js" %}"></script>
 {% endblock %}
 
 <!-- Overwrite default placement of login button, included below in branding block -->
 {% block loginBtn %}{% endblock %}
 
 {% block branding %}
-    <h4 class="bannerLeft"></h4>
-    <h4 class="bannerRight"></h4>
-    <h1 class="bannerTitle" id="site-name">{{ apptitle }}</h1>
+{#    <h4 class="bannerLeft"></h4>#}
+{#    <h4 class="bannerRight"></h4>#}
+{#    <h1 class="bannerTitle" id="site-name">{{ apptitle }}</h1>#}
+     {% include "header.html" %}
+     {% include "globalnav.html" %}
 
     <!-- div class="user-tools" -->
     <div class="unit" style="float:right;">
         {% include "cspace_django_site/loginBtn.html" with loginBtnNext="search/" %}
     </div>
     <div style="float:right; margin-top: 6px;" class="unit">
-        <a href="#" id="about">About</a>
-        <a href="#" id="help">Help</a>
-        <a href="#" id="terms">Terms</a>
-        <a href="#" id="credits">Credits</a>
+        {% for info in additionalInfo %}
+            <a href="#" id="{{ info.slug }}" class="expandInfo">{{ info.name }}</a>
+        {% endfor %}
     </div>
 {% endblock %}
 
 {% block content %}
     <div id="content-main">
         <div class="toggled">
-            <div id="aboutTarget" style="display:none">
-                {% include "about.html" %}
-             </div>
-            <div id="helpTarget" style="display:none">
-                {% include "help.html" %}
-            </div>
-            <div id="creditsTarget" style="display:none">
-                {% include "credits.html" %}
-            </div>
-            <div id="termsTarget" style="display:none">
-                {% include "terms.html" %}
-            </div>
+            {% for info in additionalInfo %}
+              <div id="{{ info.slug }}Target" style="display: none" class="expandedInfo">
+                <div class="info">
+                  {% if info.contentType == 'HTML' %}
+                    {{ info.content|safe }}
+                  {% elif info.contentType == 'TEXT' %}
+                    <p>{{ info.content }}</p>
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
         </div>
         <div class="searchPanel">
             {% if resultsOnly %}
@@ -68,6 +75,13 @@
             <h1><img style="vertical-align: middle" src="{% static "cspace_django_site/images/timer-animated.gif" %}" alt="Searching..."/> Searching...</h1>
        </div>
         <div id="resultsPanel">
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
             {% if items %}
                 {% include "searchResults.html" %}
             {% endif %}

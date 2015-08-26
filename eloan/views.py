@@ -3,11 +3,13 @@ __author__ = 'jblowe, rjaffe'
 
 import re
 import time
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response, redirect
 import urllib
+import urllib2
 from cspace_django_site.main import cspace_django_site
 from eloanutils import get_entity, build_solr_query, getInstitutionCodefromDisplayName, getShortIdfromRefName
-from publicsearch.utils import writeCsv, doSearch, setupGoogleMap, setupBMapper, getfromXML
+from publicsearch.utils import getfromXML
+
 
 # alas, there are many ways the XML parsing functionality might be installed.
 # the following code attempts to find and import the best...
@@ -40,10 +42,10 @@ config = cspace_django_site.getConfig()
 
 from appconfig import SOLRSERVER, SOLRCORE, SOLRQUERYPARAM, PARMS
 
-
 # CONSTANTS
 SEARCHRESULTS = {}
 TITLE = 'E-loan'
+
 
 def eloan(request):
     """
@@ -66,13 +68,18 @@ def eloan(request):
             )
 
         if 'recType' in request.GET and request.GET['recType']:
+
             recType = urllib.quote_plus(request.GET['recType'])
             recType = str(recType)
 
         # Record type hard-coded for now in eloan.html. Generalize?
         # This else clause in not really needed.
         else:
-            recType = 'loansout'
+            try:
+                recType = 'loansout'
+            except urllib2.HTTPError, e:
+                print 'Error1'
+                return
 
         #################################################################
         #  GET E-LOAN INFORMATION AND RELATED OBJECTS FROM CSPACE-SERVICES
@@ -84,7 +91,13 @@ def eloan(request):
         expectedmimetype = 'application/xml'
 
         # Make authenticated connection to ucjeps.cspace...
-        lolistdata = get_entity(request, asquery, expectedmimetype).content
+        lolistdata = get_entity(request, asquery, expectedmimetype)
+        if lolistdata is None:
+            errMsg = 'Sorry, I can\'t talk to CSpace so I can\'t help you with your eloan. Please contact the administrator.'
+            return render(request, 'eloan.html',
+                            {'results': errMsg, 'displayType': 'error', 'title': TITLE, 'timestamp': TIMESTAMP }
+                    )
+        lolistdata = lolistdata.content
         loanoutlistXML = fromstring(lolistdata)
 
         # To grab everything: loinfo = loanoutlistXML.find('.//list-item')
@@ -102,8 +115,13 @@ def eloan(request):
         loquery = '%s/%s' % (recType, locsid)
 
         # Make authenticated connection to ucjeps.cspace...
-        lodata = get_entity(request, loquery, expectedmimetype).content
-        loanoutXML = fromstring(lodata)
+        try:
+            lodata = get_entity(request, loquery, expectedmimetype).content
+            loanoutXML = fromstring(lodata)
+
+        except urllib2.HTTPError, e:
+            print 'Error2.'
+            return
 
         # Start gathering loan out info into results: loan number (already have), borrower's contact and loan date.
         loaninfo = []

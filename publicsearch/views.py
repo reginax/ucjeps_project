@@ -25,7 +25,6 @@ SEARCHRESULTS = {}
 def direct(request):
     return redirect('publicsearch/')
 
-
 # This just prints the search form
 def publicsearch(request):
     if request.method == 'GET' and request.GET != {}:

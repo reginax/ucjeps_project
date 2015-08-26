@@ -32,7 +32,7 @@ def get_entity(request, entitytype, responsemimetype):
     #(url, data, statusCode) = connection.make_get_request('cspace-services/%s' % image)
     #return HttpResponse(data, content_type='image/jpeg')
 
-    config = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'imageserver')
+    config = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'eloan')
     username = config.get('connect', 'username')
     password = config.get('connect', 'password')
     hostname = config.get('connect', 'hostname')
@@ -61,14 +61,13 @@ def get_entity(request, entitytype, responsemimetype):
         f = urllib2.urlopen(url)
         data = f.read()
         elapsedtime = time.time() - elapsedtime
-    except urllib2.HTTPError, e:
-        print 'The server couldn\'t fulfill the request.'
-        print 'Error code: ', e.code
-        raise
     except urllib2.URLError, e:
-        print 'We failed to reach a server.'
-        print 'Reason: ', e.reason
-        raise
+        if hasattr(e, 'reason'):
+            print 'We failed to reach a server.'
+            print 'Reason: ', e.reason
+        else:
+            print 'The server couldn\'t fulfill the request.'
+            print 'Error code: ', e.code
     else:
         #return (url,data,elapsedtime)
         return HttpResponse(data, content_type=responsemimetype)

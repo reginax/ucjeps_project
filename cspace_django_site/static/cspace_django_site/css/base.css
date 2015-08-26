@@ -79,7 +79,7 @@ a:hover { color: #036; }
     width: 180px;
     vertical-align: top;
     position: relative;
-    min-height: 320px;
+    /* min-height: 320px; */
     max-width: 600px;
     overflow: hidden;
 }
@@ -239,7 +239,8 @@ a#logout:hover { background-color: #333; color: #FFF; }
 }
 
 #branding h1 {
-    text-indent: -9999px; /* Hides the text in the h1 tag, but still makes text available for screenreaders */
+    /* text-indent: -9999px; Hides the text in the h1 tag, but still makes text available for screenreaders */
+    text-indent: 360px;
     height: 75px; /* The height of the tallest image referenced above in background-image */
     
     /* To add your own institution's header image, place the image in: 
@@ -266,3 +267,4 @@ a#logout:hover { background-color: #333; color: #FFF; }
 #login-form input[type=text], #login-form input[type=password] {
     width: 95%;
 }
+

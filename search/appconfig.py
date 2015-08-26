@@ -109,6 +109,19 @@ def parseRows(rows):
 def loadConfiguration(configFileName):
     config = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), configFileName)
 
+
+    try:
+        DERIVATIVEGRID = config.get('search', 'DERIVATIVEGRID')
+        DERIVATIVECOMPACT = config.get('search', 'DERIVATIVECOMPACT')
+        SIZEGRID = config.get('search', 'SIZEGRID')
+        SIZECOMPACT = config.get('search', 'SIZECOMPACT')
+    except:
+        print 'could not get image layout (size and derviative to use) from config file, using defaults'
+        DERIVATIVEGRID     = "Thumbnail"
+        DERIVATIVECOMPACT  = "Thumbnail"
+        SIZEGRID           = "100px"
+        SIZECOMPACT        = "100px"
+
     try:
         MAXMARKERS = int(config.get('search', 'MAXMARKERS'))
         MAXRESULTS = int(config.get('search', 'MAXRESULTS'))
@@ -146,10 +159,10 @@ def loadConfiguration(configFileName):
         print 'error in configuration file %s' % path.join(settings.BASE_PARENT_DIR, 'config/' + configFileName)
         print 'this webapp will probably not work.'
 
-    return MAXMARKERS, MAXRESULTS, MAXLONGRESULTS, MAXFACETS, IMAGESERVER, BMAPPERSERVER, BMAPPERDIR, BMAPPERURL, BMAPPERCONFIGFILE, CSVPREFIX, CSVEXTENSION, LOCALDIR, SEARCH_QUALIFIERS, EMAILABLEURL, SUGGESTIONS, LAYOUT, CSPACESERVER, INSTITUTION, VERSION, FIELDDEFINITIONS
+    return MAXMARKERS, MAXRESULTS, MAXLONGRESULTS, MAXFACETS, IMAGESERVER, BMAPPERSERVER, BMAPPERDIR, BMAPPERURL, BMAPPERCONFIGFILE, CSVPREFIX, CSVEXTENSION, LOCALDIR, SEARCH_QUALIFIERS, EMAILABLEURL, SUGGESTIONS, LAYOUT, CSPACESERVER, INSTITUTION, VERSION, FIELDDEFINITIONS, DERIVATIVECOMPACT, DERIVATIVEGRID, SIZECOMPACT, SIZEGRID
 
 # read this app's config file
-MAXMARKERS, MAXRESULTS, MAXLONGRESULTS, MAXFACETS, IMAGESERVER, BMAPPERSERVER, BMAPPERDIR, BMAPPERURL, BMAPPERCONFIGFILE, CSVPREFIX, CSVEXTENSION, LOCALDIR, SEARCH_QUALIFIERS, EMAILABLEURL, SUGGESTIONS, LAYOUT, CSPACESERVER, INSTITUTION, VERSION, FIELDDEFINITIONS = loadConfiguration('search')
+MAXMARKERS, MAXRESULTS, MAXLONGRESULTS, MAXFACETS, IMAGESERVER, BMAPPERSERVER, BMAPPERDIR, BMAPPERURL, BMAPPERCONFIGFILE, CSVPREFIX, CSVEXTENSION, LOCALDIR, SEARCH_QUALIFIERS, EMAILABLEURL, SUGGESTIONS, LAYOUT, CSPACESERVER, INSTITUTION, VERSION, FIELDDEFINITIONS, DERIVATIVECOMPACT, DERIVATIVEGRID, SIZECOMPACT, SIZEGRID = loadConfiguration('search')
 print 'Configuration successfully read'
 
 
@@ -221,8 +234,17 @@ def loadFields(fieldFile):
         solrIsUp = False
         print 'Solr facet search failed. Concluding that Solr is down or unreachable... Will not be trying again! Please fix and restart!'
 
-    return DROPDOWNS, FIELDS, FACETS, LOCATION, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE, DEFAULTSORTKEY
+    # figure out which solr fields are the required ones...
+    REQUIRED = []
+    requiredfields = 'csid mainentry location accession objectno sortkey blob'.split(' ')
+    for p in PARMS:
+        for r in requiredfields:
+            if r in PARMS[p][1]:
+                if PARMS[p][3] not in REQUIRED:
+                    REQUIRED.append(PARMS[p][3])
+
+    return DROPDOWNS, FIELDS, FACETS, LOCATION, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE, DEFAULTSORTKEY, REQUIRED
 
 # on startup, do a query to get options values for forms...
-DROPDOWNS, FIELDS, FACETS, LOCATION, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE, DEFAULTSORTKEY = loadFields(FIELDDEFINITIONS)
+DROPDOWNS, FIELDS, FACETS, LOCATION, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE, DEFAULTSORTKEY, REQUIRED = loadFields(FIELDDEFINITIONS)
 print 'Reading field definitions from %s' % path.join(settings.BASE_PARENT_DIR, 'config/' + FIELDDEFINITIONS)

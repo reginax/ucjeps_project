@@ -3,7 +3,7 @@
 <metadata>
  <name>CSPACE configuration file</name>
  <relatedinformation>http://ucjeps.berkeley.edu/</relatedinformation>
- <abstract> GIS configuration file for Consortium of California Herbaria query interface</abstract>
+ <abstract>GIS configuration file for UCJEPS Herbaria CollectionSpace query interface</abstract>
  <mapkeyword keyword="specimens"></mapkeyword>
  <header location="http://ucjeps.berkeley.edu/consortium/code_banner.html"></header>
  <linkbackheader location="http://ucjeps.berkeley.edu/"></linkbackheader>
@@ -28,7 +28,7 @@
 <datumshift value="true"></datumshift>
 </settings>
 <recordlinkback>
-<linkback method="root" linkurl="https://ucjeps.cspace.berkeley.edu/ucjeps_project/public/publicsearch/?displayType=full&amp;maxresults=1" text="View Details" fieldname="Link Back" key1="accession" value1="darwin:catalognumbertext" />
+<linkback method="root" linkurl="https://webapps.cspace.berkeley.edu/ucjeps/publicsearch/?displayType=full&amp;maxresults=1" text="View Details" fieldname="Link Back" key1="accession" value1="darwin:catalognumbertext" />
 </recordlinkback>
 <concepts xmlns:darwin="http://digir.net/schema/conceptual/darwin/2003/1.0">
 <concept viewlist="1" datatype="darwin:institutioncode" alias="Institution Code" />

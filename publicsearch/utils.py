@@ -280,7 +280,10 @@ def doSearch(solr_server, solr_core, context):
     if 'map-google' in requestObject or 'csv' in requestObject or 'map-bmapper' in requestObject:
         querystring = requestObject['querystring']
         url = requestObject['url']
-        context['maxresults'] = MAXRESULTS
+        # Did the user request the full set?
+        if 'select-item' in requestObject:
+            context['maxresults'] = min(requestObject['count'], MAXRESULTS)
+            context['start'] = 1
     else:
         for p in requestObject:
             if p in ['csrfmiddlewaretoken', 'displayType', 'resultsOnly', 'maxresults', 'url', 'querystring', 'pane',
@@ -448,10 +451,13 @@ def doSearch(solr_server, solr_core, context):
     return context
 
 # on startup, do a query to get options values for forms...
+print 'Starting initialization'
 context = {'displayType': 'list', 'maxresults': 0,
-           'searchValues': {'csv': 'true', 'querystring': '*:*', 'url': '', 'maxfacets': 1000}}
+           'searchValues': {'csv': 'true', 'querystring': '*:*', 'url': '', 'maxfacets': 1000, 'count': 0}}
 context = doSearch(SOLRSERVER, SOLRCORE, context)
+#print 'solr facet search time: %s' % context['time']
 
+start = time.time()
 if 'errormsg' in context:
     solrIsUp = False
     print 'Initial solr search failed. Concluding that Solr is down or unreachable... Will not be trying again! Please fix and restart!'
@@ -463,3 +469,5 @@ else:
         # if the facet is not in a dropdown, save the memory for something better
         else:
             FACETS[facet[0]] = []
+print 'Initialization complete: %s' % (time.time() - start)
+

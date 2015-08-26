@@ -26,6 +26,7 @@ function chooseSlideDirection(targetId) {
 
 
 $(document).ready(function () {
+    var display;
     $('#about').click(function() {
         chooseSlideDirection('#aboutTarget');
         $('#advancedTarget').slideUp();
@@ -75,6 +76,7 @@ $(document).ready(function () {
     });
 
     $('#search-list, #search-full, #search-grid').click(function () {
+        display = $(this).attr('name');
         submitForm($(this).attr('name'));
     });
 
@@ -141,7 +143,7 @@ $(document).ready(function () {
         var Elem = $(this).siblings('.small-map');
         if ($(Elem).css("display") == "none") {
             var marker = ($(Elem).attr('data-marker'));
-            $($(Elem).children('.map-replace')[0]).html('<img src="http://maps.google.com/maps/api/staticmap?&zoom=10&size=400x200&maptype=roadmap&markers=' +
+            $($(Elem).children('.map-replace')[0]).html('<img src="https://maps.google.com/maps/api/staticmap?&zoom=10&size=400x200&maptype=roadmap&markers=' +
             marker + '&sensor=false"/>' +
             '<div style="margin-bottom: 3px;">' +
             '<small><a target="_map" href="https://maps.google.com/maps/i?q=loc:'+marker+'&amp;source=embed">Larger Map</a>'+
