@@ -92,9 +92,7 @@
                     {% if item.marker %}
                         <a class="map-item">[click for map]</a>
                         <div data-marker="{{ item.marker }}" class="small-map" style="display:none; margin-bottom:10px;">
-                            <div class="map-replace">
-                                <small><a target="_map" href="https://maps.google.com/maps/i?q=loc:{{ item.marker }}&amp;source=embed">Larger Map</a></small>
-                            </div>
+                            <div class="map-replace"></div>
                             {% if item.datum %}
                                 <div>{{ labels.datum }}: <a class="facet-item" data-facetType="datum">{{ item.datum }}</a>
                                 </div>{% endif %}
