@@ -66,17 +66,17 @@
     </tr>
     <tr>
         <td>
-            <label>Locality</label>
+            <label>Localities</label>
         </td>
         <td>
-        <select id="locality_qualifier" name="locality_qualifier">
+        <select id="alllocalities_qualifier" name="alllocalities_qualifier">
                 {% for option in qualifiers %}
-                    <option value="{{option}}"{% if option == searchValues.locality_qualifier %} selected{% endif %}>{{option}}</option>
+                    <option value="{{option}}"{% if option == searchValues.alllocalities_qualifier %} selected{% endif %}>{{option}}</option>
                 {% endfor %}
         </select>
         </td>
         <td>
-            <input type="text" id="locality" name="locality" value="{{ searchValues.locality }}"/>
+            <input type="text" id="alllocalities" name="alllocalities" value="{{ searchValues.alllocalities }}"/>
         </td>
         <td>
             <label>Associated Taxa</label>
