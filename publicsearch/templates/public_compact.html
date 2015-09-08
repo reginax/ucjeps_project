@@ -163,14 +163,14 @@
             {% endif %}
             {% if item.ucbgaccessionnumber %}
                 <div><a target="ucbg"
-                       href="https://dev.cspace.berkeley.edu/botgarden_project/search/search/?accessionnumber={{ item.ucbgaccessionnumber }}&displayType=full&maxresults=100&start=1">
+                       href="https://webapps.cspace.berkeley.edu/botgarden/search/search/?accessionnumber={{ item.ucbgaccessionnumber }}&displayType=full&maxresults=100&start=1">
                         <img src="{% static "publicsearch/images/open_cspace.png" %}" class="cspaceLink"> Open {{ item.ucbgaccessionnumber }}
                         in UCBG portal
                     </a>
                 </div>{% endif %}
             {% if item.loanstatus %}
                 <div><span style="color:red;"><b>{{ labels.loanstatus }}: {{ item.loanstatus }} ({{ item.loannumber }})</b></span>
-                <a href="mailto:jblowe@berkeley.edu?Subject=Loan of {{ item.accession }}, ({{ item.loannumber }})">email a request for this item</a>
+                <a href="mailto:ucjepscomments@lists.berkeley.edu?Subject=Loan of {{ item.accession }}, ({{ item.loannumber }})">email a request for this item</a>
                 </div>
             {% endif %}
             {% if item.labelfooter %}
