@@ -150,6 +150,7 @@ INSTALLED_APPS = (
     'suggestsolr',
     'landing',
     'eloan',
+    'taxoneditor',
     'uploadmedia',
 )
 

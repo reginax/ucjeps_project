@@ -1,0 +1,9 @@
+{% spaceless %}
+    <form>
+    {% if multiplenames %}
+        {% include "taxon_edit_multiple.html" %}
+    {% else %}
+        {% include "taxon_edit_single.html" %}
+    {% endif %}
+    </form>
+{% endspaceless %}
