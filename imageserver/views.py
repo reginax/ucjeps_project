@@ -21,6 +21,9 @@ protocol = config.get('connect', 'protocol')
 port = config.get('connect', 'port')
 port = ':%s' % port if port else ''
 
+
+imageunavailable = config.get('connect', 'imageunavailable')
+
 server = protocol + "://" + hostname + port
 
 # Get an instance of a logger, log some startup info
@@ -49,7 +52,7 @@ def get_image(request, image):
         elapsedtime = time.time() - elapsedtime
     except:
         logger.info('%s :: %s :: %s' % ('image error', '-', '%s :: %8.3f seconds' % (image, elapsedtime)))
-        image404 = open(path.join(settings.BASE_PARENT_DIR, 'cspace_django_site/static/cspace_django_site/images', '404.jpg'),'r').read()
+        image404 = open(path.join(settings.BASE_PARENT_DIR, 'cspace_django_site/static/cspace_django_site/images', imageunavailable),'r').read()
         return HttpResponse(image404, content_type='image/jpeg')
 
     logger.info('%s :: %s :: %s' % ('image', '-', '%s :: %8.3f seconds' % (image, elapsedtime)))

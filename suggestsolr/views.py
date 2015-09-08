@@ -21,23 +21,23 @@ from django.http import HttpResponse
 from os import path
 from common import cspace # we use the config file reading function
 from cspace_django_site import settings
-from search.appconfig import getParms
+from common.appconfig import getParms, loadConfiguration
 
 import solr
 
-#solrConfig = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'suggestsolr')
-searchConfig = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'search')
-SUGGESTIONS = searchConfig.get('search', 'SUGGESTIONS')
-FIELDDEFINITIONS = searchConfig.get('search', 'FIELDDEFINITIONS')
+searchConfig = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'suggestsolr')
+FIELDEFINITIONS = searchConfig.get('solr', 'FIELDDEFINITIONS')
 
-FIELDS, PARMS, SEARCHCOLUMNS, SEARCHROWS, SOLRSERVER, SOLRCORE, TITLE, DEFAULTSORTKEY = getParms(path.join(settings.BASE_PARENT_DIR, 'config/' + FIELDDEFINITIONS))
+# read this app's config file
+prmz = loadConfiguration('common')
+prmz = getParms(path.join(settings.BASE_PARENT_DIR, 'config/' + FIELDEFINITIONS), prmz)
 
 # create a connection to a solr server
-s = solr.SolrConnection(url='%s/%s' % (SOLRSERVER, SOLRCORE))
+s = solr.SolrConnection(url='%s/%s' % (prmz.SOLRSERVER, prmz.SOLRCORE))
 
 import sys, json, re
 import cgi
-import cgitb;
+import cgitb
 
 cgitb.enable()  # for troubleshooting
 
@@ -49,13 +49,13 @@ def solrtransaction(q, elementID):
     try:
 
         # do a search
-        solrField = PARMS[elementID][3]
+        solrField = prmz.PARMS[elementID][3]
         # just distinguishing the 2 functions of this field:
         # 1. the _s version, suggestfield, is the string field to display
         # 2. the _txt version, searchfield, is the field to search on (i.e. keywords)
         suggestfield = solrField
         # usually we will search using the _txt field, but 'string' and other fields need to use the _s version
-        if 'string' in PARMS[elementID][1] or 'objectno' in PARMS[elementID][1]:
+        if 'string' in prmz.PARMS[elementID][1] or 'objectno' in prmz.PARMS[elementID][1]:
             searchfield = solrField
         else:
             searchfield = solrField.replace('_ss','_txt')

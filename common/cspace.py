@@ -21,6 +21,7 @@ CSPACE_URI_PROPERTY = 'uri'
 CSPACE_HOSTNAME_PROPERTY = 'hostname'
 CSPACE_PROTOCOL_PROPERTY = 'protocol'
 CSPACE_PORT_PROPERTY = 'port'
+CSPACE_TENANT_PROPERTY = 'tenant'
 
 
 def getConfig(base_path, filename_nosuffix):
@@ -60,6 +61,7 @@ def make_get_request(realm, uri, hostname, protocol, port, username, password):
     :param hostname:
     :param protocol:
     :param port:
+    :param tenant:
     :param username:
     :param password:
     """
@@ -135,12 +137,13 @@ def postxml(realm, uri, hostname, protocol, port, username, password, payload, r
 
 
 class connection:
-    def __init__(self, realm, uri, hostname, protocol, port, username, password, payload, requesttype):
+    def __init__(self, realm, uri, hostname, protocol, port, tenant, username, password, payload, requesttype):
         self.realm = realm
         self.uri = uri
         self.hostname = hostname
         self.protocol = protocol
         self.port = port
+        self.tenant = tenant
         self.username = username
         self.password = password
         self.payload = payload
@@ -158,7 +161,8 @@ class connection:
         hostname = getConfigOptionWithSection(config, CONFIGSECTION_SERVICES_CONNECT, CSPACE_HOSTNAME_PROPERTY)
         protocol = getConfigOptionWithSection(config, CONFIGSECTION_SERVICES_CONNECT, CSPACE_PROTOCOL_PROPERTY)
         port = getConfigOptionWithSection(config, CONFIGSECTION_SERVICES_CONNECT, CSPACE_PORT_PROPERTY)
-        return connection(realm, None, hostname, protocol, port, user.username, user.cspace_password, None, None
+        tenant = getConfigOptionWithSection(config, CONFIGSECTION_SERVICES_CONNECT, CSPACE_TENANT_PROPERTY)
+        return connection(realm, None, hostname, protocol, port, tenant, user.username, user.cspace_password, None, None
         )
 
     def make_get_request(self, uri=None):

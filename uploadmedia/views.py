@@ -10,7 +10,8 @@ from django.core.servers.basehttp import FileWrapper
 #from django import forms
 from os import path
 import time, datetime
-from utils import SERVERINFO, POSTBLOBPATH, getDropdowns, handle_uploaded_file, assignValue, getCSID, getNumber, get_exif, writeCsv, \
+from getNumber import getNumber
+from utils import SERVERINFO, POSTBLOBPATH, INSTITUTION, getDropdowns, handle_uploaded_file, assignValue,  get_exif, writeCsv, \
     getJobfile, getJoblist, loginfo, getQueue
 import subprocess
 
@@ -32,7 +33,7 @@ def prepareFiles(request, validateonly, dropdowns):
         try:
             print "%s %s: %s %s (%s %s)" % ('id', lineno, 'name', afile.name, 'size', afile.size)
             image = get_exif(afile)
-            filename, objectnumber, imagenumber = getNumber(afile.name)
+            filename, objectnumber, imagenumber = getNumber(afile.name, INSTITUTION)
             # objectCSID = getCSID(objectnumber)
             im.creator, im.creatorRefname = assignValue(im.creatorDisplayname, im.overrideCreator, image, 'Artist',
                                                         dropdowns['creators'])
@@ -54,8 +55,16 @@ def prepareFiles(request, validateonly, dropdowns):
             }
             if not validateonly:
                 handle_uploaded_file(afile)
+
+            for option in ['handling', 'approvedforweb']:
+                if option in request.POST:
+                    imageinfo[option] = request.POST[option]
+                else:
+                    imageinfo[option] = ''
+
             images.append(imageinfo)
         except:
+            # raise
             if not validateonly:
                 # we still upload the file, anyway...
                 handle_uploaded_file(afile)
@@ -68,7 +77,7 @@ def prepareFiles(request, validateonly, dropdowns):
 
         if not validateonly:
             writeCsv(getJobfile(jobnumber) + '.step1.csv', images,
-                     ['name', 'size', 'objectnumber', 'date', 'creator', 'contributor', 'rightsholder', 'imagenumber'])
+                     ['name', 'size', 'objectnumber', 'date', 'creator', 'contributor', 'rightsholder', 'imagenumber', 'handling', 'approvedforweb'])
         jobinfo['estimatedtime'] = '%8.1f' % (len(images) * 10 / 60.0)
 
         if 'createmedia' in request.POST:
@@ -165,7 +174,7 @@ def uploadfiles(request):
     elapsedtime = time.time() - elapsedtime
 
     return render(request, 'uploadmedia.html',
-                  {'title': TITLE, 'serverinfo': SERVERINFO, 'images': images, 'count': len(images),
+                  {'apptitle': TITLE, 'serverinfo': SERVERINFO, 'images': images, 'count': len(images),
                    'constants': constants, 'jobinfo': jobinfo, 'validateonly': im.validateonly,
                    'dropdowns': im.dropdowns, 'overrides': overrides, 'status': status, 'timestamp': timestamp,
                    'elapsedtime': '%8.2f' % elapsedtime})
@@ -177,7 +186,7 @@ def checkfilename(request):
     if 'filenames2check' in request.POST and request.POST['filenames2check'] != '':
         listoffilenames = request.POST['filenames2check']
         filenames = listoffilenames.split(' ')
-        objectnumbers = [getNumber(o) for o in filenames]
+        objectnumbers = [getNumber(o, INSTITUTION) for o in filenames]
     else:
         objectnumbers = []
         listoffilenames = ''
@@ -190,7 +199,7 @@ def checkfilename(request):
                                                 'objectnumbers': objectnumbers, 'dropdowns': dropdowns,
                                                 'overrides': overrides, 'timestamp': timestamp,
                                                 'elapsedtime': '%8.2f' % elapsedtime,
-                                                'status': status, 'title': TITLE, 'serverinfo': SERVERINFO})
+                                                'status': status, 'apptitle': TITLE, 'serverinfo': SERVERINFO})
 
 
 @login_required()
@@ -221,5 +230,5 @@ def showqueue(request):
     return render(request, 'uploadmedia.html',
                   {'dropdowns': dropdowns, 'overrides': overrides, 'timestamp': timestamp,
                    'elapsedtime': '%8.2f' % elapsedtime,
-                   'status': status, 'title': TITLE, 'serverinfo': SERVERINFO, 'jobs': jobs, 'jobcount': jobcount,
+                   'status': status, 'apptitle': TITLE, 'serverinfo': SERVERINFO, 'jobs': jobs, 'jobcount': jobcount,
                    'errors': errors, 'errorcount': errorcount})

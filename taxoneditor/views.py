@@ -6,7 +6,7 @@ import urllib
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from search.utils import deURN
+from common.utils import deURN
 
 # alas, there are many ways the XML parsing functionality might be installed.
 # the following code attempts to find and import the best...
