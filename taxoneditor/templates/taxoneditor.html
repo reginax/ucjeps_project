@@ -27,7 +27,7 @@
     {% endif %}
     <form action="" method="get">
         Enter a scientific name to search for:
-        <input type="text" name="determination" value="{{ taxon }}" source="{{ suggestsource }}">
+        <input type="text" style="width: 400px" name="determination" value="{{ taxon }}" source="{{ suggestsource }}">
         <input type="submit" name="Search" value="Search">
         <input type="checkbox" name="source" value="CSpace" {% if "CSpace" in source %}checked{% endif %}>CSpace
         <input type="checkbox" name="source" value="GBIF" {% if "GBIF" in source %}checked{% endif %}>GBIF

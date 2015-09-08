@@ -151,9 +151,9 @@ def taxoneditor(request):
             resolutionservice = 'Tropicos'
             # do GBIF search
             # params = urllib.urlencode({'name': kw})
-            tropicosURL = "http://services.tropicos.org/Name/Search?name=%s&type=wildcard&apikey=d0a905a9-75c9-466e-bbab-5b568f4e8b91&format=json"
-            response = requests.get(tropicosURL % urllib.quote_plus(kw))
-            print tropicosURL % urllib.quote_plus(kw)
+            tropicosURL = "http://services.tropicos.org/Name/Search?name=%s&pagesize=%s&apikey=d0a905a9-75c9-466e-bbab-5b568f4e8b91&format=json"
+            response = requests.get(tropicosURL % (urllib.quote_plus(kw),numberWanted))
+            print tropicosURL % (urllib.quote_plus(kw),numberWanted)
             response.encoding = 'utf-8'
             try:
                 names2use = response.json()
