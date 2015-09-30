@@ -47,7 +47,7 @@ def search(request):
 
     loginfo(logger, 'start search', context, request)
     context['additionalInfo'] = AdditionalInfo.objects.filter(live=True)
-    return render(request, 'ucjeps_search.html', context)
+    return render(request, 'search.html', context)
 
 
 def retrieveResults(request):
