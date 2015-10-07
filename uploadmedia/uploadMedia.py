@@ -26,7 +26,7 @@ def mediaPayload(mh, institution):
 <copyrightStatement>%s</copyrightStatement>
 </ns2:media_common>
 <ns2:media_INSTITUTION xmlns:ns2="http://collectionspace.org/services/media/local/INSTITUTION" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-<approvedForWeb>true</approvedForWeb>
+<approvedForWeb>%s</approvedForWeb>
 <primaryDisplay>false</primaryDisplay>
 IMAGENUMBERELEMENT
 </ns2:media_INSTITUTION>
@@ -38,7 +38,9 @@ IMAGENUMBERELEMENT
         payload = payload.replace('IMAGENUMBERELEMENT', '')
     payload = payload.replace('INSTITUTION', institution)
     payload = payload % (
-        mh['blobCsid'], mh['rightsHolderRefname'], mh['creator'], mh['name'], mh['contributor'], mh['objectNumber'], mh['imageType'], mh['source'], mh['copyrightStatement'])
+        mh['blobCsid'], mh['rightsHolderRefname'], mh['creator'], mh['name'], mh['contributor'], mh['objectNumber'],
+        mh['imageType'], mh['source'], mh['copyrightStatement'], mh['approvedforweb'])
+    # print "mediaPayload..."
     # print payload
     return payload
 
@@ -51,17 +53,19 @@ def uploadmedia(mediaElements, config):
         password = config.get('connect', 'password')
         institution = config.get('info', 'institution')
         alwayscreatemedia = config.get('info', 'alwayscreatemedia')
+        alwayscreatemedia = True if alwayscreatemedia.lower() == 'true' else False
     except:
         print "could not get at least one of realm, hostname, username, password or institution from config file."
         # print "can't continue, exiting..."
         raise
 
     # for ucjeps
-    for extra in 'imagetype copyright source'.split(' '):
-        try:
-            mediaElements[extra] = config.get('info', extra)
-        except:
-            mediaElements[extra] = ''
+    if mediaElements['handling'] == 'slide':
+        for extra in 'imagetype copyright source'.split(' '):
+            try:
+                mediaElements[extra] = config.get('info', extra)
+            except:
+                mediaElements[extra] = ''
 
     objectCSID = getCSID('objectnumber', mediaElements['objectnumber'], config)
     if objectCSID == [] or objectCSID is None:
@@ -86,6 +90,7 @@ def uploadmedia(mediaElements, config):
                        'contributor': mediaElements['contributor'],
                        'creator': mediaElements['creator'],
                        'mediaDate': mediaElements['mediaDate'],
+                       'approvedforweb': mediaElements['approvedforweb'],
                        'imageType': mediaElements['imagetype'],
                        'copyrightStatement': mediaElements['copyrightstatement'],
                        'source': mediaElements['source'],
@@ -117,6 +122,7 @@ def uploadmedia(mediaElements, config):
         else:
             pass
 
+    # what about mediaElements['handling']?
     if objectCSID is not None:
         # now relate media record to collection object
 
@@ -133,7 +139,7 @@ def uploadmedia(mediaElements, config):
 
         payload = relationsPayload(updateItems)
         (url, data, csid, elapsedtime) = postxml('POST', uri, realm, hostname, username, password, payload)
-        #elapsedtimetotal += elapsedtime
+        # elapsedtimetotal += elapsedtime
         messages.append('got relation csid %s elapsedtime %s ' % (csid, elapsedtime))
         mediaElements['media2objCSID'] = csid
         messages.append("relations REST API post succeeded...")
@@ -210,9 +216,12 @@ if __name__ == "__main__":
 
         elapsedtimetotal = time.time()
         mediaElements = {}
-        for v1, v2 in enumerate(
-                'name size objectnumber blobCSID date creator contributor rightsholder imagenumber filenamewithpath'.split(' ')):
+        columns = 'name|size|objectnumber|blobCSID|mediaDate|creator|contributor|rightsholder|imagenumber|handling|approvedforweb|source|copyrightstatement|imagetype'.split('|')
+        # name|size|objectnumber|mediaDate|creator|contributor|rightsholder|imagenumber|handling|approvedforweb|source|copyright|imagetype
+        # name size objectnumber blobCSID mediaDate creator contributor rightsholder imagenumber handling approvedforweb filenamewithpath'.split(' ')):
+        for v1, v2 in enumerate(columns):
             mediaElements[v2] = r[v1]
+        mediaElements['approvedforweb'] == 'true' if mediaElements['approvedforweb'] == 'on' else 'false'
         # print mediaElements
         print 'objectnumber %s' % mediaElements['objectnumber']
         try:
@@ -226,5 +235,5 @@ if __name__ == "__main__":
         except:
             print "MEDIA: create failed for objectnumber %s, %8.2f" % (
                 mediaElements['objectnumber'], (time.time() - elapsedtimetotal))
-            # raise
+            raise
 

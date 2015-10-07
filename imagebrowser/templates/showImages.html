@@ -1,0 +1,80 @@
+{% extends "cspace_django_site/base_site.html" %}
+{% load i18n admin_static %}
+{% load staticfiles %}
+
+{% block extrastyle %}
+    <link rel="stylesheet" type="text/css" href="{% static "common/css/theme.blue.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "cspace_django_site/css/smoothness/jquery-ui-1.10.3.custom.min.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static "common/css/PublicSearch.css" %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/' %}{{ device }}.css"/>
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-1.10.0.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "cspace_django_site/js/jquery-ui-1.10.3.custom.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "common/js/PublicSearch.js" %}"></script>
+    <script type="text/javascript">
+        var googleAnalytics = {{ googleAnalytics }};
+    </script>
+    <script type="text/javascript" src="{% static "cspace_django_site/js/jquery.tablesorter.min.js" %}"></script>
+    <!-- uses jQuery masonry http://masonry.desandro.com/-->
+    <script src="{% static 'cspace_django_site/js/masonry.pkgd.min.js' %}"></script>
+    <script src="{% static 'cspace_django_site/js/imagesloaded.pkgd.min.js' %}"></script>
+{% endblock %}
+
+<!-- Overwrite default placement of login button, included below in branding block -->
+{% block loginBtn %}{% endblock %}
+
+{% block branding %}
+    <h4 class="bannerLeft"></h4>
+    <h4 class="bannerRight"></h4>
+    <h1 class="bannerTitle" id="site-name">{{ apptitle }}</h1>
+
+    <!-- div class="user-tools" -->
+    <div class="unitnav">
+        {% include "cspace_django_site/loginBtn.html" with loginBtnNext="search/" %}
+    </div>
+    <div class="unitnav">
+        {% for info in additionalInfo %}
+            <a href="#" id="{{ info.slug }}" class="expandInfo">{{ info.name }}</a>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+
+{% block content %}
+    {% include "toggled.html" %}
+    {% if error %}
+        <p style="color: red;">Please submit a search term.</p>
+    {% endif %}
+    <form action="" method="get">
+        <input type="text" name="keyword" value="{{ keyword }}"> keywords<br/>
+        <input type="text" name="maxresults" value="{{ maxresults }}"> maximum number of objects to retrieve<br/>
+        <input type="hidden" name="pixonly" value="{{ pixonly }}">
+        <input type="submit" value="Search">
+        {% for field in form.hidden_fields %}
+            <div style="display:none;">{{ field }}</div>
+        {% endfor %}
+
+        <hr/>
+
+        {% if errormsg %}
+            <span style="color: red">{{ errormsg }}</span>
+        {% endif %}
+        {% if url %}
+            <i>Emailable version of this search: <a href="?{{ url }}">{{ url }}</a></i>
+            <hr/>
+        {% endif %}
+        {% if count > 0 %}
+            {{ imagecount }} images displayed for {{ maxresults }} objects out of {{ count }} altogether.
+        {% endif %}
+        {% if time %}
+            solr query took {{ time }} seconds
+            <hr/>
+        {% endif %}
+        {% for field in form.hidden_fields %}
+            <div style="display:none;">{{ field }}</div>
+        {% endfor %}
+    </form>
+    {% include "masonrycontainer.html" %}
+{% endblock %}

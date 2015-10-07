@@ -5,12 +5,12 @@ import codecs
 import re
 import json
 import logging
+from os import path, listdir
+from os.path import isfile, isdir, join
 from xml.sax.saxutils import escape
 
 from common import cspace  # we use the config file reading function
 from cspace_django_site import settings
-from os import path, listdir
-from os.path import isfile, isdir, join
 
 config = cspace.getConfig(path.join(settings.BASE_PARENT_DIR, 'config'), 'uploadmedia')
 TEMPIMAGEDIR = config.get('files', 'directory')
@@ -22,10 +22,18 @@ SERVERINFO = {
 }
 INSTITUTION = config.get('info', 'institution')
 
+SLIDEHANDLING = {}
+for slide_parameter in 'imagetype copyright source'.split(' '):
+    try:
+        SLIDEHANDLING[slide_parameter] = config.get('info', slide_parameter)
+    except:
+        pass
+
+
 if isdir(TEMPIMAGEDIR):
     print "Using %s as working directory for images and metadata files" % TEMPIMAGEDIR
 else:
-    raise Exception("working directory %s does not exist. this webapp will not work!" % TEMPIMAGEDIR)
+    raise Exception("BMU working directory %s does not exist. this webapp will not work without it!" % TEMPIMAGEDIR)
 
 # Get an instance of a logger, log some startup info
 logger = logging.getLogger(__name__)
@@ -113,16 +121,28 @@ def getQueue(jobtypes):
     return [x for x in listdir(JOBDIR % '') if '%s.csv' % jobtypes in x]
 
 
-def getDropdowns():
+def getBMUoptions():
     allowintervention = config.get('info', 'allowintervention')
-    creators = config.get('info', 'creators')
-    creators = json.loads(creators)
-    rightsholders = config.get('info', 'rightsholders')
-    rightsholders = json.loads(rightsholders)
+    allowintervention = True if allowintervention.lower() == 'true' else False
+    usebmuoptions = config.get('info', 'usebmuoptions')
+    usebmuoptions = True if usebmuoptions.lower() == 'true' else False
+    bmuoptions = config.get('info', 'bmuoptions')
+    bmuoptions = json.loads(bmuoptions.replace('\n', ''))
+    overrides = config.get('info', 'overrides')
+    overrides = json.loads(overrides.replace('\n', ''))
+    for override in overrides:
+        if override[1] == 'dropdown':
+            dropdown = config.get('info', override[2]+'s')
+            dropdown = json.loads(dropdown)
+            override.append(dropdown)
+        else:
+            # add an empty dropdown element -- has to be a dict
+            override.append({})
     return {
         'allowintervention': allowintervention,
-        'creators': creators,
-        'rightsholders': rightsholders
+        'usebmuoptions': usebmuoptions,
+        'bmuoptions': bmuoptions,
+        'overrides': overrides
     }
 
 
@@ -138,43 +158,6 @@ def get_exif(fn):
     except:
         pass
     return ret
-
-
-objectnumberpattern = re.compile('([a-z]+)\.([a-zA-Z0-9]+)')
-
-
-def getNumber(filename):
-    imagenumber = ''
-    # the following is only for bampfa filenames...
-    # input is something like: bampfa_1995-46-194-a-199.jpg, output should be: 1995.46.194.a-199
-    if INSTITUTION == 'bampfa':
-        objectnumber = filename.replace('bampfa_', '')
-        try:
-            objectnumber, imagenumber, imagetype = objectnumber.split('_')
-        except:
-            imagenumber = '1'
-        # these legacy statement retained, just in case...
-        # numHyphens = objectnumber.count("-") - 1
-        #objectnumber = objectnumber.replace('-', '.', numHyphens)
-        objectnumber = objectnumber.replace('-', '.')
-        objectnumber = objectnumberpattern.sub(r'\1-\2', objectnumber)
-    elif INSTITUTION == 'ucjeps':
-        # typically, UC1107670.JPG
-        filenameparts = filename.split('.')
-        objectnumber = filenameparts[0]
-        imagenumber = ''
-    elif INSTITUTION == 'cinefiles':
-        # e.g. 56306.p3.300gray.tif
-        filenameparts = filename.split('.')
-        objectnumber = filenameparts[0]
-        imagenumber = filenameparts[1].replace('p','')
-    # for pahma it suffices to split on underscore...
-    elif INSTITUTION == 'pahma':
-        objectnumber = filename
-        objectnumber = objectnumber.split('_')[0]
-    # the following is a last ditch attempt to get an object number from a filename...
-    objectnumber = objectnumber.replace('.JPG', '').replace('.jpg', '').replace('.TIF', '').replace('.tif', '')
-    return filename, objectnumber, imagenumber
 
 
 def getCSID(objectnumber):
@@ -224,10 +207,9 @@ def assignValue(defaultValue, override, imageData, exifvalue, refnameList):
         imageValue = imageValue.replace('\r', '')
         imageValue = escape(imageValue)
         return imageValue, refnameList.get(imageValue, imageValue)
-    elif override == 'ifblank':
-        return defaultValue, refnameList.get(defaultValue, defaultValue)
+    # the follow is really the 'ifblank' condition
     else:
-        return '', ''
+        return defaultValue, refnameList.get(defaultValue, defaultValue)
 
 
 # this function not currently in use. Copied from another script, it's not Django-compatible
