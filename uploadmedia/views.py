@@ -108,7 +108,7 @@ def prepareFiles(request, validateonly, BMUoptions, constants):
             if not validateonly:
                 loginfo('start', getJobfile(jobnumber), request)
                 try:
-                    retcode = subprocess.call([path.join(POSTBLOBPATH, 'postblob.sh'), INSTITUTION, getJobfile(jobnumber, BATCHPARAMETERS)])
+                    retcode = subprocess.call([path.join(POSTBLOBPATH, 'postblob.sh'), INSTITUTION, getJobfile(jobnumber), BATCHPARAMETERS])
                     if retcode < 0:
                         loginfo('process', jobnumber + " Child was terminated by signal %s" % -retcode, request)
                     else:
