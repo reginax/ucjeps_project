@@ -502,9 +502,10 @@ def doSearch(context, prmz):
                         # eliminate some characters that might confuse solr's query parser
                         index = prmz.PARMS[p][3]
                         #index = index.replace('_ss', '_txt').replace('_s', '_txt')
-                        # only our own double quotes are unescaped
-                        t = t.replace('"', '\\"')
+                        # escape funny characters
+                        t = re.sub(r'([\[\]\:\(\)\")\-\. ])', r'\\\g<1>', t)
                         #t = '"' + t + '"'
+                        print t
                 if t == 'OR': t = '"OR"'
                 if t == 'AND': t = '"AND"'
                 ORs.append(querypattern % (index, t))
