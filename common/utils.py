@@ -505,7 +505,6 @@ def doSearch(context, prmz):
                         # escape funny characters
                         t = re.sub(r'([\[\]\:\(\)\")\-\. ])', r'\\\g<1>', t)
                         #t = '"' + t + '"'
-                        print t
                 if t == 'OR': t = '"OR"'
                 if t == 'AND': t = '"AND"'
                 ORs.append(querypattern % (index, t))
