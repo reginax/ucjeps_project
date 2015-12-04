@@ -15,7 +15,7 @@
                         <td><button id="taxon-item">X</button></td>
                         <!-- a target="cspace" href="{{ row.0 }}">{{ row.0 }}</a></td -->
                         {% for cell in row %}
-                            <td>{{ cell }}</td>
+                            <td class="{{ cell.0 }}">{{ cell.1 }}</td>
                         {% endfor %}
                     </tr>
                 {% endfor %}

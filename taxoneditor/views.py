@@ -45,6 +45,7 @@ termTypeDropdowns = [('descriptor', 'descriptor'), ('Leave empty', '')]
 termStatusDropdowns = [('accepted', 'accepted'), ('Leave empty', '')]
 taxonRankDropdowns = [('species', 'species'), ('genus', 'genus')]
 taxonfields = [
+    ('select', '', 'ignore'),
     ('n', 'N', 'ignore'),
     ('family', 'Family', 'refName'),
     ('taxonMajorGroup', 'Major Group', 'string'),
@@ -66,7 +67,7 @@ taxonfields = [
 
 # labels = 'n,family,major group,scientific name with authors,scientific name,idsource,id'.split(',')
 labels = [n[1] for n in taxonfields]
-labels = labels[:7]
+labels = labels[:9]
 
 formfields = [{'name': f[0], 'label': f[1], 'fieldtype': f[2], 'value': '', 'type': 'text'} for f in taxonfields]
 
@@ -74,11 +75,11 @@ formfields = [{'name': f[0], 'label': f[1], 'fieldtype': f[2], 'value': '', 'typ
 def xName(name, fieldname):
     if fieldname in name:
         if name[fieldname] is not None:
-            return name[fieldname]
+            return [fieldname, name[fieldname]]
         else:
-            return ''
+            return [fieldname, '']
     else:
-        return 'not found'
+        return [fieldname, 'not found']
 
 
 def extractTag(xml, tag):
@@ -141,6 +142,8 @@ def taxoneditor(request):
                 commonName = extractTag(taxonXML, 'commonName')
 
                 r = [Ourid, family, '', termDisplayName, termName, commonName, 'CSpace', csid]
+                r = [ ['', x] for x in r]
+
                 # hardcoded here for now, should eventually get these from the authentication backend
                 # but tenant is not even stored there...
                 #h ostname = 'pahma.cspace.berkeley.edu'
@@ -170,8 +173,8 @@ def taxoneditor(request):
                 r = []
                 for fieldname in 'X Family X ScientificNameWithAuthors ScientificName CommonName X NameId'.split(' '):
                     r.append(xName(name, fieldname))
-                r[0] = Ourid
-                r[6] = 'Tropicos'
+                r[0] = ['id', Ourid]
+                r[6] = ['source', 'Tropicos']
                 #r = {'id': Ourid, 'family': name['Family'], 'idsource': 'Tropicos', 'id': name['NameId'],
                 #     'scientificnamewithauthors': name['ScientificNameWithAuthors'],
                 #     'scientificname': name['ScientificName']}
@@ -198,8 +201,8 @@ def taxoneditor(request):
                 r = []
                 for fieldname in 'X family family scientificName canonicalName CommonName X taxonID'.split(' '):
                     r.append(xName(name, fieldname))
-                r[0] = Ourid
-                r[6] = 'GBIF'
+                r[0] = ['id', Ourid]
+                r[6] = ['source', 'GBIF']
                 results['GBIF'].append(r)
             pass
         return render(request, 'taxoneditor.html', {'timestamp': timestamp, 'version': version, 'fields': formfields,
