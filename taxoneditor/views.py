@@ -72,14 +72,15 @@ labels = labels[:9]
 formfields = [{'name': f[0], 'label': f[1], 'fieldtype': f[2], 'value': '', 'type': 'text'} for f in taxonfields]
 
 
-def xName(name, fieldname):
+def xName(name, fieldname, idx):
+    csname = taxonfields[idx + 1][0]
     if fieldname in name:
         if name[fieldname] is not None:
-            return [fieldname, name[fieldname]]
+            return [csname, name[fieldname]]
         else:
-            return [fieldname, '']
+            return [csname, '']
     else:
-        return [fieldname, 'not found']
+        return [csname, 'not found']
 
 
 def extractTag(xml, tag):
@@ -171,10 +172,10 @@ def taxoneditor(request):
             for name in names2use:
                 Ourid += 1
                 r = []
-                for fieldname in 'X Family X ScientificNameWithAuthors ScientificName CommonName X NameId'.split(' '):
-                    r.append(xName(name, fieldname))
+                for i,fieldname in enumerate('X Family X ScientificNameWithAuthors ScientificName CommonName X NameId'.split(' ')):
+                    r.append(xName(name, fieldname, i))
                 r[0] = ['id', Ourid]
-                r[6] = ['source', 'Tropicos']
+                r[6] = ['termSource', 'Tropicos']
                 #r = {'id': Ourid, 'family': name['Family'], 'idsource': 'Tropicos', 'id': name['NameId'],
                 #     'scientificnamewithauthors': name['ScientificNameWithAuthors'],
                 #     'scientificname': name['ScientificName']}
@@ -199,10 +200,10 @@ def taxoneditor(request):
                 Ourid += 1
                 # get phylum from both?!
                 r = []
-                for fieldname in 'X family family scientificName canonicalName CommonName X taxonID'.split(' '):
-                    r.append(xName(name, fieldname))
+                for i,fieldname in enumerate('X family family scientificName canonicalName CommonName X taxonID'.split(' ')):
+                    r.append(xName(name, fieldname, i))
                 r[0] = ['id', Ourid]
-                r[6] = ['source', 'GBIF']
+                r[6] = ['termSource', 'GBIF']
                 results['GBIF'].append(r)
             pass
         return render(request, 'taxoneditor.html', {'timestamp': timestamp, 'version': version, 'fields': formfields,
