@@ -11,6 +11,8 @@ from common.utils import deURN
 from taxon import taxon_template
 
 from uploadmedia.cswaExtras import postxml, relationsPayload, getConfig, getCSID
+from utils import termTypeDropdowns, termStatusDropdowns, taxonRankDropdowns, taxonfields, labels, formfields, numberWanted
+from utils import extractTag, xName, TITLE
 
 # alas, there are many ways the XML parsing functionality might be installed.
 # the following code attempts to find and import the best...
@@ -42,62 +44,6 @@ from common import cspace
 from cspace_django_site.main import cspace_django_site
 
 config = cspace_django_site.getConfig()
-TITLE = 'Taxon Editor'
-numberWanted = 10
-
-termTypeDropdowns = [('descriptor', 'descriptor'), ('Leave empty', '')]
-termStatusDropdowns = [('accepted', 'accepted'), ('Leave empty', '')]
-taxonRankDropdowns = [('species', 'species'), ('genus', 'genus')]
-taxonfields = [
-    ('select', '', 'ignore'),
-    ('n', 'N', 'ignore'),
-    ('family', 'Family', 'refName'),
-    ('taxonMajorGroup', 'Major Group', 'string'),
-    ('termDisplayName', 'Scientific Name with Authors', 'string'),
-    ('termName', 'Scientific Name', 'string'),
-    ('commonName', 'Common Name', 'refName'),
-    ('termSource', 'Source', 'string'),
-    ('termSourceID', 'Source ID', 'string'),
-    # these are constants or derived (i.e. not from service)
-    ('termFormattedDisplayName', 'Formatted Scientific Name', 'string'),
-    ('taxonomicStatus', 'Taxonomic Status', 'string'),
-    ('termPrefForLang', 'Term Language', 'string'),
-    ('termType', 'Term Type', 'dropdown', termTypeDropdowns),
-    ('termStatus', 'Term Status', 'dropdown', termStatusDropdowns),
-    ('taxonCurrency', 'Taxon Currency', 'string'),
-    ('inAuthority', 'Authority CSID', 'ignore'),
-    ('taxonRank', 'Rank', 'dropdown', taxonRankDropdowns),
-]
-
-# labels = 'n,family,major group,scientific name with authors,scientific name,idsource,id'.split(',')
-labels = [n[1] for n in taxonfields]
-labels = labels[:9]
-
-formfields = [{'name': f[0], 'label': f[1], 'fieldtype': f[2], 'value': '', 'type': 'text'} for f in taxonfields]
-
-
-def xName(name, fieldname, idx):
-    csname = taxonfields[idx + 1][0]
-    if fieldname in name:
-        if name[fieldname] is not None:
-            return [csname, name[fieldname]]
-        else:
-            return [csname, '']
-    else:
-        return [csname, 'not found']
-
-
-def extractTag(xml, tag):
-    element = xml.find('.//%s' % tag)
-    try:
-        if "urn:" in element.text:
-            element_text = deURN(str(element.text))
-        else:
-            element_text = element.text
-    except:
-        element_text = ''
-    return element_text
-
 
 @login_required()
 def taxoneditor(request):
