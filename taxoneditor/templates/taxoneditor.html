@@ -33,10 +33,21 @@
         <input type="checkbox" name="source" value="CSpace" {% if "CSpace" in source %}checked{% endif %}>CSpace
         <input type="checkbox" name="source" value="GBIF" {% if "GBIF" in source %}checked{% endif %}>GBIF
         <input type="checkbox" name="source" value="Tropicos" {% if "Tropicos" in source %}checked{% endif %}>Tropicos
+
+        {% for field in form.hidden_fields %}
+            <div style="display:none;">{{ field }}</div>
+        {% endfor %}
+
+    </form>
+
+
+    <form enctype="multipart/form-data" action="create" method="post">
+        {% csrf_token %}
         <hr/>
-        <p>Or upload a list of names to search in batch:<p>
-        <input type="file" name="taxonnamesfile" value="Upload Names to Search">
+        <p>Or upload a list of names to search in batch:</p>
+        <p><input type="file" name="taxonnamesfile" value="Upload Names to Search"></p>
         <hr/>
+
         {% for field in form.hidden_fields %}
             <div style="display:none;">{{ field }}</div>
         {% endfor %}

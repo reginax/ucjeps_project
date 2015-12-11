@@ -1,7 +1,8 @@
 {% spaceless %}
     <hr/>
     <h2>Edit / Create Taxon Data</h2>
-    <form>
+    <form action="create" method="post">
+        {% csrf_token %}
         <table width="100%">
             {% for field in fields %}
                 <tr>
@@ -41,5 +42,6 @@
                 </tr>
             {% endfor %}
         </table>
+        <input type="submit" name="Save" value="Save to CSpace">
     </form>
 {% endspaceless %}

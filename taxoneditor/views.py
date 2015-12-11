@@ -3,10 +3,14 @@ __author__ = 'jblowe'
 import re
 import requests
 import urllib
+import time
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from common.utils import deURN
+from taxon import taxon_template
+
+from uploadmedia.cswaExtras import postxml, relationsPayload, getConfig, getCSID
 
 # alas, there are many ways the XML parsing functionality might be installed.
 # the following code attempts to find and import the best...
@@ -215,3 +219,38 @@ def taxoneditor(request):
         return render(request, 'taxoneditor.html', {'timestamp': timestamp, 'version': version,
                                                     'title': TITLE, 'suggestsource': 'solr',
                                                     'resolutionservice': resolutionservice, 'apptitle': TITLE})
+
+
+def load_payload(payload,request,cspace_fields):
+    for field in cspace_fields:
+        if field in request:
+            payload = payload.replace('{%s}' % field, request[field])
+
+    # get rid of any unsubstituted items in the template
+    payload = re.sub(r'\{.*?\}', '', payload)
+    #payload = payload.replace('INSTITUTION', institution)
+    return payload
+
+
+@login_required()
+def create_taxon(request):
+
+    timestamp = 'timestamp'
+    version = 'version'
+
+    payload = load_payload(taxon_template,request,taxonfields)
+    uri = 'taxon'
+
+    elapsedtimetotal = time.time()
+    messages = []
+    messages.append("posting to %s REST API..." % uri)
+    # messages.append(payload)
+    (url, data, taxonCSID, elapsedtime) = postxml('POST', uri, http_parms.realm, http_parms.hostname, http_parms.username, http_parms.password, payload)
+    # elapsedtimetotal += elapsedtime
+    messages.append('got csid %s elapsedtime %s ' % (taxonCSID, elapsedtime))
+    messages.append("%s REST API post succeeded..." % uri)
+
+    return render(request, 'taxoneditor.html', {'timestamp': timestamp, 'version': version, 'fields': formfields,
+                                                'labels': labels, 'messages': messages, 'taxon': '',
+                                                'suggestsource': 'solr', 'source': ['Taxa Created'],
+                                                'resolutionservice': '', 'apptitle': TITLE})
