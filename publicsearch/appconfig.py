@@ -83,6 +83,6 @@ PARMS = {
     'phase': ['Phase', 'true', '', 'phase_txt', ''],
     'determinationdetails': ['Determination Details', 'true', '', 'determinationdetails_txt', ''],
     'determinationqualifier': ['Determination Qualifier', 'true', '', 'determinationqualifier_s', ''],
-    'comments': ['Comments', 'true', '', 'comments_ss', ''],
+    'comments': ['Comments', 'true', '', 'comments_ss', 'ss'],
     'blobs': ['blob_ss', 'true', '', 'blob_ss', ''],
 }
