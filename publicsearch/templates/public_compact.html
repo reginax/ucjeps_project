@@ -172,7 +172,11 @@
                     </a>
                 </div>{% endif %}
             {% if item.comments %}
-                <div>{{ labels.comments }}: {{ item.comments }}</div>{% endif %}
+                <div><h4>{{ labels.comments }}</h4>
+                {% for t in item.comments %}
+                    <li>{{ t }}</li>
+                {% endfor %}
+                </div>{% endif %}
             {% if item.loanstatus %}
                 <div><span style="color:red;"><b>{{ labels.loanstatus }}: {{ item.loanstatus }} ({{ item.loannumber }})</b></span>
                 <a href="mailto:ucjepscomments@lists.berkeley.edu?Subject=Loan of {{ item.accession }}, ({{ item.loannumber }})">email a request for this item</a>
