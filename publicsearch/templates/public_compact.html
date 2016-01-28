@@ -28,9 +28,10 @@
             {% if item.majorgroup %}
                 <div>{{ labels.majorgroup }}: <a class="facet-item" data-facetType="majorgroup">{{ item.majorgroup }}</a></div>
             {% endif %}
-            <h2><a class="facet-item" data-facetType="determination">{{ item.termformatteddisplayname|safe }}</a>
-            {% if item.determinationqualifier %}
-                [{{ item.determinationqualifier }}]{% endif %}
+            <h2>
+                {% if item.determinationqualifier %}
+                {{ item.determinationqualifier }}{% endif %}
+                <a class="facet-item" data-facetType="determination">{{ item.termformatteddisplayname|safe }}</a>
             </h2>
             {% if item.determinationdetails %}
                 <div>{{ labels.determinationdetails }}: {{ item.determinationdetails }}</div>{% endif %}
