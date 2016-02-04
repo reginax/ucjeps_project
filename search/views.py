@@ -137,4 +137,4 @@ def loadNewFields(request, fieldfile, prmz):
 
     context = setConstants({}, prmz)
     loginfo(logger, 'loaded fields', context, request)
-    return render(request, 'search.html', context)
+    return render(request, 'ucjeps_search.html', context)
