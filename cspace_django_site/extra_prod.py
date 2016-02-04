@@ -50,6 +50,7 @@ INSTALLED_APPS = (
     'ireports',
     'landing',
     'search',
+    'searchmedia',
     'publicsearch',
     #'toolbox',
     'simplesearch',
