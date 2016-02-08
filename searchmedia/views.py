@@ -36,7 +36,7 @@ logger.info('%s :: %s :: %s' % ('public portal startup', '-', '%s | %s | %s' % (
 def direct(request):
     return redirect('search/')
 
-
+@login_required()
 def search(request):
     if request.method == 'GET' and request.GET != {}:
         context = {'searchValues': dict(request.GET.iteritems())}
@@ -49,7 +49,7 @@ def search(request):
     context['additionalInfo'] = AdditionalInfo.objects.filter(live=True)
     return render(request, 'ucjeps_search.html', context)
 
-
+@login_required()
 def retrieveResults(request):
     if request.method == 'POST' and request.POST != {}:
         requestObject = dict(request.POST.iteritems())
