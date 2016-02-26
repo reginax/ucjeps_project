@@ -3,10 +3,16 @@ __author__ = 'jblowe'
 import re
 import requests
 import urllib
+import time
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from common.utils import deURN
+from taxon import taxon_template
+
+from uploadmedia.cswaExtras import postxml, relationsPayload, getConfig, getCSID
+from utils import termTypeDropdowns, termStatusDropdowns, taxonRankDropdowns, taxonfields, labels, formfields, numberWanted
+from utils import extractTag, xName, TITLE
 
 # alas, there are many ways the XML parsing functionality might be installed.
 # the following code attempts to find and import the best...
@@ -38,60 +44,6 @@ from common import cspace
 from cspace_django_site.main import cspace_django_site
 
 config = cspace_django_site.getConfig()
-TITLE = 'Taxon Editor'
-numberWanted = 10
-
-termTypeDropdowns = [('descriptor', 'descriptor'), ('Leave empty', '')]
-termStatusDropdowns = [('accepted', 'accepted'), ('Leave empty', '')]
-taxonRankDropdowns = [('species', 'species'), ('genus', 'genus')]
-taxonfields = [
-    ('n', 'N', 'ignore'),
-    ('family', 'Family', 'refName'),
-    ('taxonMajorGroup', 'Major Group', 'string'),
-    ('termDisplayName', 'Scientific Name with Authors', 'string'),
-    ('termName', 'Scientific Name', 'string'),
-    ('commonName', 'Common Name', 'refName'),
-    ('termSource', 'Source', 'string'),
-    ('termSourceID', 'Source ID', 'string'),
-    # these are constants or derived (i.e. not from service)
-    ('termFormattedDisplayName', 'Formatted Scientific Name', 'string'),
-    ('taxonomicStatus', 'Taxonomic Status', 'string'),
-    ('termPrefForLang', 'Term Language', 'string'),
-    ('termType', 'Term Type', 'dropdown', termTypeDropdowns),
-    ('termStatus', 'Term Status', 'dropdown', termStatusDropdowns),
-    ('taxonCurrency', 'Taxon Currency', 'string'),
-    ('inAuthority', 'Authority CSID', 'ignore'),
-    ('taxonRank', 'Rank', 'dropdown', taxonRankDropdowns),
-]
-
-# labels = 'n,family,major group,scientific name with authors,scientific name,idsource,id'.split(',')
-labels = [n[1] for n in taxonfields]
-labels = labels[:7]
-
-formfields = [{'name': f[0], 'label': f[1], 'fieldtype': f[2], 'value': '', 'type': 'text'} for f in taxonfields]
-
-
-def xName(name, fieldname):
-    if fieldname in name:
-        if name[fieldname] is not None:
-            return name[fieldname]
-        else:
-            return ''
-    else:
-        return 'not found'
-
-
-def extractTag(xml, tag):
-    element = xml.find('.//%s' % tag)
-    try:
-        if "urn:" in element.text:
-            element_text = deURN(str(element.text))
-        else:
-            element_text = element.text
-    except:
-        element_text = ''
-    return element_text
-
 
 @login_required()
 def taxoneditor(request):
@@ -141,6 +93,8 @@ def taxoneditor(request):
                 commonName = extractTag(taxonXML, 'commonName')
 
                 r = [Ourid, family, '', termDisplayName, termName, commonName, 'CSpace', csid]
+                r = [ ['', x] for x in r]
+
                 # hardcoded here for now, should eventually get these from the authentication backend
                 # but tenant is not even stored there...
                 #h ostname = 'pahma.cspace.berkeley.edu'
@@ -168,10 +122,10 @@ def taxoneditor(request):
             for name in names2use:
                 Ourid += 1
                 r = []
-                for fieldname in 'X Family X ScientificNameWithAuthors ScientificName CommonName X NameId'.split(' '):
-                    r.append(xName(name, fieldname))
-                r[0] = Ourid
-                r[6] = 'Tropicos'
+                for i,fieldname in enumerate('X Family X ScientificNameWithAuthors ScientificName CommonName X NameId'.split(' ')):
+                    r.append(xName(name, fieldname, i))
+                r[0] = ['id', Ourid]
+                r[6] = ['termSource', 'Tropicos']
                 #r = {'id': Ourid, 'family': name['Family'], 'idsource': 'Tropicos', 'id': name['NameId'],
                 #     'scientificnamewithauthors': name['ScientificNameWithAuthors'],
                 #     'scientificname': name['ScientificName']}
@@ -196,10 +150,10 @@ def taxoneditor(request):
                 Ourid += 1
                 # get phylum from both?!
                 r = []
-                for fieldname in 'X family family scientificName canonicalName CommonName X taxonID'.split(' '):
-                    r.append(xName(name, fieldname))
-                r[0] = Ourid
-                r[6] = 'GBIF'
+                for i,fieldname in enumerate('X family family scientificName canonicalName CommonName X taxonID'.split(' ')):
+                    r.append(xName(name, fieldname, i))
+                r[0] = ['id', Ourid]
+                r[6] = ['termSource', 'GBIF']
                 results['GBIF'].append(r)
             pass
         return render(request, 'taxoneditor.html', {'timestamp': timestamp, 'version': version, 'fields': formfields,
@@ -211,3 +165,38 @@ def taxoneditor(request):
         return render(request, 'taxoneditor.html', {'timestamp': timestamp, 'version': version,
                                                     'title': TITLE, 'suggestsource': 'solr',
                                                     'resolutionservice': resolutionservice, 'apptitle': TITLE})
+
+
+def load_payload(payload,request,cspace_fields):
+    for field in cspace_fields:
+        if field in request:
+            payload = payload.replace('{%s}' % field, request[field])
+
+    # get rid of any unsubstituted items in the template
+    payload = re.sub(r'\{.*?\}', '', payload)
+    #payload = payload.replace('INSTITUTION', institution)
+    return payload
+
+
+@login_required()
+def create_taxon(request):
+
+    timestamp = 'timestamp'
+    version = 'version'
+
+    payload = load_payload(taxon_template,request,taxonfields)
+    uri = 'taxon'
+
+    elapsedtimetotal = time.time()
+    messages = []
+    messages.append("posting to %s REST API..." % uri)
+    # messages.append(payload)
+    (url, data, taxonCSID, elapsedtime) = postxml('POST', uri, http_parms.realm, http_parms.hostname, http_parms.username, http_parms.password, payload)
+    # elapsedtimetotal += elapsedtime
+    messages.append('got csid %s elapsedtime %s ' % (taxonCSID, elapsedtime))
+    messages.append("%s REST API post succeeded..." % uri)
+
+    return render(request, 'taxoneditor.html', {'timestamp': timestamp, 'version': version, 'fields': formfields,
+                                                'labels': labels, 'messages': messages, 'taxon': '',
+                                                'suggestsource': 'solr', 'source': ['Taxa Created'],
+                                                'resolutionservice': '', 'apptitle': TITLE})

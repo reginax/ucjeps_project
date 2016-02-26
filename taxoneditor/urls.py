@@ -5,4 +5,5 @@ from taxoneditor import views
 
 urlpatterns = patterns('',
                        url(r'^$', views.taxoneditor, name='index'),
+                       url(r'^create$', views.taxoneditor, name='create_taxon'),
                        )

@@ -28,7 +28,11 @@
             {% if item.majorgroup %}
                 <div>{{ labels.majorgroup }}: <a class="facet-item" data-facetType="majorgroup">{{ item.majorgroup }}</a></div>
             {% endif %}
-            <h2><a class="facet-item" data-facetType="determination">{{ item.termformatteddisplayname|safe }}</a></h2>
+            <h2>
+                {% if item.determinationqualifier %}
+                {{ item.determinationqualifier }}{% endif %}
+                <a class="facet-item" data-facetType="determination">{{ item.termformatteddisplayname|safe }}</a>
+            </h2>
             {% if item.determinationdetails %}
                 <div>{{ labels.determinationdetails }}: {{ item.determinationdetails }}</div>{% endif %}
             {% if item.previousdeterminations %}
@@ -167,6 +171,12 @@
                         <img src="{% static "publicsearch/images/open_cspace.png" %}" class="cspaceLink"> Open {{ item.ucbgaccessionnumber }}
                         in UCBG portal
                     </a>
+                </div>{% endif %}
+            {% if item.comments %}
+                <div><h4>{{ labels.comments }}</h4>
+                {% for t in item.comments %}
+                    <li>{{ t }}</li>
+                {% endfor %}
                 </div>{% endif %}
             {% if item.loanstatus %}
                 <div><span style="color:red;"><b>{{ labels.loanstatus }}: {{ item.loanstatus }} ({{ item.loannumber }})</b></span>

@@ -405,7 +405,7 @@ def doSearch(solr_server, solr_core, context):
                 pass
 
         # the following multivalue fields need to be split
-        for fld in 'previousdeterminations,associatedtaxa,typeassertions,othernumber,collector,otherlocalities'.split(','):
+        for fld in 'previousdeterminations,associatedtaxa,typeassertions,othernumber,collector,otherlocalities,comments'.split(','):
             if fld in item.keys():
                 item[fld] = item[fld].split(';')
 
