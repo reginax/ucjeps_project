@@ -228,7 +228,7 @@ def setupBMapper(requestObject, context, prmz):
     filehandle = open(path.join(prmz.LOCALDIR, filename), 'wb')
     writeCsv(filehandle, getfields('bMapper', 'name', prmz), mappableitems, writeheader=False, csvFormat='bmapper')
     filehandle.close()
-    context['mapmsg'].append('%s points of the %s selected objects examined had latlongs (%s in result set).' % (
+    context['mapmsg'].append('%s points of the %s selected objects examined had coordinates (%s in result set).' % (
         len(mappableitems), numSelected, context['count']))
     # context['mapmsg'].append('if our connection to berkeley mapper were working, you be able see them plotted there.')
     context['items'] = mappableitems

@@ -219,7 +219,7 @@ def setupGoogleMap(requestObject, context):
 
     # if len(markerlist) >= MAXMARKERS:
     #    context['mapmsg'].append(
-    #        '%s points is the limit. Only first %s accessions (with latlongs) plotted!' % (MAXMARKERS, len(markerlist)))
+    #        '%s points is the limit. Only first %s accessions (with coordinates) plotted!' % (MAXMARKERS, len(markerlist)))
 
     return context
 
@@ -233,7 +233,7 @@ def setupBMapper(requestObject, context):
     filehandle = open(path.join(LOCALDIR, filename), 'wb')
     writeCsv(filehandle, getfields('bMapper', 'name'), mappableitems, writeheader=False, csvFormat='bmapper')
     filehandle.close()
-    context['mapmsg'].append('%s points of the %s selected objects examined had latlongs (%s in result set).' % (
+    context['mapmsg'].append('%s points of the %s selected objects examined had coordinates (%s in result set).' % (
         len(mappableitems), numSelected, context['count']))
     # context['mapmsg'].append('if our connection to berkeley mapper were working, you be able see them plotted there.')
     context['items'] = mappableitems
