@@ -1,5 +1,4 @@
 taxon_template = """
-<?xml version="1.0" encoding="UTF-8"?>
 <document name="taxon">
     <ns2:taxon_common xmlns:ns2="http://collectionspace.org/services/taxonomy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <taxonTermGroupList>

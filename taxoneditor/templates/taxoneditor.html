@@ -41,7 +41,7 @@
     </form>
 
 
-    <form enctype="multipart/form-data" action="create" method="post">
+    <form enctype="multipart/form-data" action="batch" method="post">
         {% csrf_token %}
         <hr/>
         <p>Or upload a list of names to search in batch:</p>
@@ -54,9 +54,11 @@
     </form>
 
     <div id="content-main">
-        {% include "taxon_serviceResults.html" %}
-        {% if fields %}
-            {% include "taxon_edit_form.html" %}
+        {% if results != None %}
+            {% include "taxon_serviceResults.html" %}
+            {% if fields %}
+                {% include "taxon_edit_form.html" %}
+            {% endif %}
         {% endif %}
     </div>
 

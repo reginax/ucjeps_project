@@ -4,6 +4,8 @@ from uploadmedia.cswaExtras import postxml, relationsPayload, getConfig, getCSID
 TITLE = 'Taxon Editor'
 numberWanted = 10
 
+taxon_authority_csid = '87036424-e55f-4e39-bd12'
+tropicos_api_key = 'd0a905a9-75c9-466e-bbab-5b568f4e8b91'
 termTypeDropdowns = [('descriptor', 'descriptor'), ('Leave empty', '')]
 termStatusDropdowns = [('accepted', 'accepted'), ('Leave empty', '')]
 taxonRankDropdowns = [('species', 'species'), ('genus', 'genus')]

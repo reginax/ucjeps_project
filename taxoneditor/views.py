@@ -12,7 +12,7 @@ from taxon import taxon_template
 
 from uploadmedia.cswaExtras import postxml, relationsPayload, getConfig, getCSID
 from utils import termTypeDropdowns, termStatusDropdowns, taxonRankDropdowns, taxonfields, labels, formfields, numberWanted
-from utils import extractTag, xName, TITLE
+from utils import extractTag, xName, TITLE, taxon_authority_csid, tropicos_api_key
 
 # alas, there are many ways the XML parsing functionality might be installed.
 # the following code attempts to find and import the best...
@@ -47,13 +47,20 @@ config = cspace_django_site.getConfig()
 
 @login_required()
 def taxoneditor(request):
+
     resolutionservice = ''
     formfield = 'determination'
-
     timestamp = 'timestamp'
     version = 'version'
+    results = None
+    sources = []
+    kw = ''
 
-    if formfield in request.GET:
+    if request.method == 'POST':
+        messages = create_taxon(request)
+        kw = request.GET[formfield]
+
+    elif formfield in request.GET:
         kw = request.GET[formfield]
         if 'source' in request.GET:
             sources = request.GET.getlist('source')
@@ -65,11 +72,11 @@ def taxoneditor(request):
         # '() NameId Family ScientificNameWithAuthors ScientificName () NameId'
         if 'CSpace' in sources:
             connection = cspace.connection.create_connection(config, request.user)
-            print 'cspace-services/taxonomyauthority/87036424-e55f-4e39-bd12/items?pt=%s&wf_deleted=false&pgSz=%s' % (
-                urllib.quote_plus(kw), numberWanted)
+            print 'cspace-services/taxonomyauthority/%s/items?pt=%s&wf_deleted=false&pgSz=%s' % (
+                taxon_authority_csid, urllib.quote_plus(kw), numberWanted)
             (url, data, statusCode) = connection.make_get_request(
-                'cspace-services/taxonomyauthority/87036424-e55f-4e39-bd12/items?pt=%s&wf_deleted=false&pgSz=%s' % (
-                    urllib.quote_plus(kw), numberWanted))
+                'cspace-services/taxonomyauthority/%s/items?pt=%s&wf_deleted=false&pgSz=%s' % (
+                    taxon_authority_csid, urllib.quote_plus(kw), numberWanted))
             # 'cspace-services/%s?kw=%s&wf_deleted=false' % ('taxon', kw))
             # ...collectionobjects?kw=%27orchid%27&wf_deleted=false
             cspaceXML = fromstring(data)
@@ -83,9 +90,9 @@ def taxoneditor(request):
                 termDisplayName = extractTag(i,'termDisplayName')
                 taxonRefname = extractTag(i,'taxon')
 
-                print 'cspace-services/taxonomyauthority/87036424-e55f-4e39-bd12/items/%s' % csid
+                print 'cspace-services/taxonomyauthority/%s/items/%s' % (taxon_authority_csid, csid)
                 (url, taxondata, statusCode) = connection.make_get_request(
-                    'cspace-services/taxonomyauthority/87036424-e55f-4e39-bd12/items/%s' % csid)
+                    'cspace-services/taxonomyauthority/%s/items/%s' % (taxon_authority_csid, csid))
                 taxonXML = fromstring(taxondata)
                 family = extractTag(taxonXML, 'family')
                 #termDisplayName = extractTag(taxonXML, 'termDisplayName')
@@ -105,9 +112,9 @@ def taxoneditor(request):
             resolutionservice = 'Tropicos'
             # do GBIF search
             # params = urllib.urlencode({'name': kw})
-            tropicosURL = "http://services.tropicos.org/Name/Search?name=%s&pagesize=%s&apikey=d0a905a9-75c9-466e-bbab-5b568f4e8b91&format=json"
-            response = requests.get(tropicosURL % (urllib.quote_plus(kw),numberWanted))
-            print tropicosURL % (urllib.quote_plus(kw),numberWanted)
+            tropicosURL = "http://services.tropicos.org/Name/Search?name=%s&pagesize=%s&apikey=%s&format=json" % (urllib.quote_plus(kw), numberWanted, tropicos_api_key)
+            response = requests.get(tropicosURL)
+            print tropicosURL
             response.encoding = 'utf-8'
             try:
                 names2use = response.json()
@@ -156,21 +163,17 @@ def taxoneditor(request):
                 r[6] = ['termSource', 'GBIF']
                 results['GBIF'].append(r)
             pass
-        return render(request, 'taxoneditor.html', {'timestamp': timestamp, 'version': version, 'fields': formfields,
-                                                    'labels': labels, 'results': results, 'taxon': kw,
-                                                    'suggestsource': 'solr', 'source': sources,
-                                                    'resolutionservice': resolutionservice, 'apptitle': TITLE})
 
-    else:
-        return render(request, 'taxoneditor.html', {'timestamp': timestamp, 'version': version,
-                                                    'title': TITLE, 'suggestsource': 'solr',
-                                                    'resolutionservice': resolutionservice, 'apptitle': TITLE})
+    return render(request, 'taxoneditor.html', {'timestamp': timestamp, 'version': version, 'fields': formfields,
+                                                'labels': labels, 'results': results, 'taxon': kw,
+                                                'suggestsource': 'solr', 'source': sources,
+                                                'resolutionservice': resolutionservice, 'apptitle': TITLE})
 
-
-def load_payload(payload,request,cspace_fields):
+def load_payload(payload, request, cspace_fields):
     for field in cspace_fields:
-        if field in request:
-            payload = payload.replace('{%s}' % field, request[field])
+        cspace_name = field[0]
+        if cspace_name in request.POST.keys():
+            payload = payload.replace('{%s}' % cspace_name, request.POST[cspace_name])
 
     # get rid of any unsubstituted items in the template
     payload = re.sub(r'\{.*?\}', '', payload)
@@ -181,22 +184,26 @@ def load_payload(payload,request,cspace_fields):
 @login_required()
 def create_taxon(request):
 
-    timestamp = 'timestamp'
-    version = 'version'
-
     payload = load_payload(taxon_template,request,taxonfields)
-    uri = 'taxon'
+    uri = 'cspace-services/%s/%s' % ('taxonomyauthority', taxon_authority_csid)
+    #uri = 'cspace-services/%s' % 'taxonomyauthority'
 
     elapsedtimetotal = time.time()
     messages = []
     messages.append("posting to %s REST API..." % uri)
+    print payload
     # messages.append(payload)
-    (url, data, taxonCSID, elapsedtime) = postxml('POST', uri, http_parms.realm, http_parms.hostname, http_parms.username, http_parms.password, payload)
+
+    connection = cspace.connection.create_connection(config, request.user)
+    try:
+        (url, data, taxonCSID, elapsedtime) = connection.postxml(uri=uri, payload=payload, requesttype='POST')
+        #(url, data, statusCode) = connection.postxml('cspace-services/%s/%s' % (service,item_csid))
+        #(url, data, taxonCSID, elapsedtime) = postxml('POST', uri, http_parms.realm, http_parms.hostname, http_parms.username, http_parms.password, payload)
     # elapsedtimetotal += elapsedtime
+    except:
+        messages.append("%s REST API post failed..." % uri)
+        return messages
+
     messages.append('got csid %s elapsedtime %s ' % (taxonCSID, elapsedtime))
     messages.append("%s REST API post succeeded..." % uri)
-
-    return render(request, 'taxoneditor.html', {'timestamp': timestamp, 'version': version, 'fields': formfields,
-                                                'labels': labels, 'messages': messages, 'taxon': '',
-                                                'suggestsource': 'solr', 'source': ['Taxa Created'],
-                                                'resolutionservice': '', 'apptitle': TITLE})
+    return messages
