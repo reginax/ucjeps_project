@@ -26,7 +26,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
+    #'rest_framework',
     'django_tables2',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
@@ -46,7 +46,7 @@ INSTALLED_APPS = (
     'imagebrowser',
     'imageserver',
     'imaginator',
-    'internal',
+    #'internal',
     #'ireports',
     'landing',
     'search',
@@ -56,6 +56,6 @@ INSTALLED_APPS = (
     #'toolbox',
     #'simplesearch',
     'uploadmedia',
-    'taxoneditor',
+    #'taxoneditor',
     #'uploadtricoder',
 )
